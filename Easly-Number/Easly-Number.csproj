@@ -58,8 +58,13 @@
   <ItemGroup>
     <Compile Include="Arithmetic.cs" />
     <Compile Include="Flags.cs" />
+    <Compile Include="FormattedNumber.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Number-Parser.cs" />
     <Compile Include="Number.cs" />
+    <Compile Include="OptionalExponent.cs" />
+    <Compile Include="OptionalSeparator.cs" />
+    <Compile Include="OptionalSign.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rounding.cs" />
   </ItemGroup>

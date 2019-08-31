@@ -1,9 +1,12 @@
 ﻿namespace EaslyNumber
 {
+    using System;
+    using System.Diagnostics;
+
     /// <summary>
     /// Describes and manipulates real numbers with arbitrary precision.
     /// </summary>
-    public struct Number
+    public partial struct Number
     {
         #region Special Values
         /// <summary>
@@ -33,8 +36,42 @@
         /// This contructor creates the number from plain text.
         /// </summary>
         /// <param name="text">The number in plain text.</param>
+        /// <exception cref="ArgumentException">The text is not a valid number.</exception>
         public Number(string text)
         {
+            Parse(text, out string DiscardedProlog, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent Exponent, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
+
+            if (DiscardedProlog.Length > 0)
+                throw new ArgumentException();
+
+            if (InvalidPart.Length > 0)
+                throw new ArgumentException();
+
+            IsSpecial = false;
+            SignificandPrecision = Arithmetic.SignificandPrecision;
+            ExponentPrecision = Arithmetic.ExponentPrecision;
+            Rounding = Arithmetic.Rounding;
+            IsSignificandNegative = false;
+            IsExponentNegative = false;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Number"/> struct.
+        /// This contructor creates the number from parsed parts.
+        /// </summary>
+        /// <param name="significandSign">The optional sign of the significand.</param>
+        /// <param name="integerPart">The integer part in front of the separator (if any).</param>
+        /// <param name="separator">The optional separator.</param>
+        /// <param name="fractionalPart">The fractional part after the separator (if any).</param>
+        /// <param name="exponent">The optional exponent character.</param>
+        /// <param name="exponentSign">The optional exponent sign.</param>
+        /// <param name="exponentPart">The exponent part (if any).</param>
+        internal Number(OptionalSign significandSign, string integerPart, OptionalSeparator separator, string fractionalPart, OptionalExponent exponent, OptionalSign exponentSign, string exponentPart)
+        {
+            Debug.Assert(integerPart.Length > 0 || fractionalPart.Length > 0);
+            Debug.Assert(exponentSign == OptionalSign.None || exponent != OptionalExponent.None);
+            Debug.Assert(exponentPart.Length == 0 || exponent != OptionalExponent.None);
+
             IsSpecial = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
@@ -222,7 +259,7 @@
         }
         #endregion
 
-        #region Text repesentation
+        #region Text representation
         /// <summary>
         /// Returns the default text representation of the number.
         /// </summary>
