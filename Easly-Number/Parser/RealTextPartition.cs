@@ -5,7 +5,7 @@
     /// <summary>
     /// The partition of a string into different components of a real number.
     /// </summary>
-    public class RealTextPartition : TextPartition
+    internal class RealTextPartition : TextPartition
     {
         /// <summary>
         /// Parses a new character.

@@ -6,7 +6,7 @@
     /// <summary>
     /// The partition of a string into different components of a number.
     /// </summary>
-    public abstract class TextPartition
+    internal abstract class TextPartition
     {
         /// <summary>
         /// Parses a new character.

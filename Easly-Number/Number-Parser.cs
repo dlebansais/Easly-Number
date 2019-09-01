@@ -20,6 +20,11 @@
         public const int OctalIntegerBase = 8;
 
         /// <summary>
+        /// The base of decimal digits.
+        /// </summary>
+        public const int DecimalIntegerBase = 10;
+
+        /// <summary>
         /// The base of hexadecimal digits.
         /// </summary>
         public const int HexadecimalIntegerBase = 16;
@@ -54,7 +59,7 @@
             if (InvalidPart.Length > 0)
                 return false;
 
-            if (IntegerBase == 10)
+            if (IntegerBase == DecimalIntegerBase)
                 value = new Number(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart);
             else
                 value = new Number(IntegerBase, IntegerPart);
@@ -159,7 +164,7 @@
         /// <param name="integerBase">The integer base.</param>
         internal static string BasePrefixText(int integerBase)
         {
-            Debug.Assert(integerBase == 2 || integerBase == 8 || integerBase == 10 || integerBase == 16);
+            Debug.Assert(integerBase == BinaryIntegerBase || integerBase == OctalIntegerBase || integerBase == DecimalIntegerBase || integerBase == HexadecimalIntegerBase);
 
             if (integerBase == 2)
                 return "0b";

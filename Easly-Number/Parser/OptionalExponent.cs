@@ -3,7 +3,7 @@
     /// <summary>
     /// Optional exponent in a number.
     /// </summary>
-    public enum OptionalExponent
+    internal enum OptionalExponent
     {
         /// <summary>
         /// No exponent (the number uses fixed-point notation).

@@ -3,7 +3,7 @@
     /// <summary>
     /// States of a number parser.
     /// </summary>
-    public enum ParsingState
+    internal enum ParsingState
     {
         /// <summary>
         /// The initial state.

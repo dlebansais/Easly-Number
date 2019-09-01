@@ -3,7 +3,7 @@
     /// <summary>
     /// Optional separator between the decimal part and the fractionla part of a significand.
     /// </summary>
-    public enum OptionalSeparator
+    internal enum OptionalSeparator
     {
         /// <summary>
         /// No separator (the number is an integer).

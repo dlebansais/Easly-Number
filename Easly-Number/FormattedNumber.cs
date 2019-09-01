@@ -21,7 +21,7 @@
             string BeforeExponentText;
             string ExponentText;
 
-            if (IntegerBase == 10)
+            if (IntegerBase == Number.DecimalIntegerBase)
             {
                 Value = new Number(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart);
                 GetFormattedTextForReal(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart, out BeforeExponentText, out ExponentText);
