@@ -1,5 +1,7 @@
 ﻿namespace EaslyNumber
 {
+    using System.Diagnostics;
+
     /// <summary>
     /// Describes a number with discarded and invalid parts.
     /// </summary>
@@ -12,19 +14,56 @@
         /// <param name="text">The number in plain text.</param>
         public FormattedNumber(string text)
         {
-            Number.Parse(text, out string DiscardedProlog, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent ExponentCharacter, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
+            Number.Parse(text, out string DiscardedProlog, out int IntegerBase, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent ExponentCharacter, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
 
             this.DiscardedProlog = DiscardedProlog;
-            Value = new Number(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart);
+
+            string BeforeExponentText;
+            string ExponentText;
+
+            if (IntegerBase == 10)
+            {
+                Value = new Number(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart);
+                GetFormattedTextForReal(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart, out BeforeExponentText, out ExponentText);
+
+                if (Value.IsInteger)
+                {
+                    GetFormattedTextForInteger(IntegerBase, IntegerPart, out string BeforeExponentTextInteger, out string ExponentTextInteger);
+
+                    Debug.Assert(Separator == OptionalSeparator.None && ExponentCharacter == OptionalExponent.None);
+                    Debug.Assert(BeforeExponentTextInteger == BeforeExponentText);
+                    Debug.Assert(ExponentTextInteger == ExponentText);
+                }
+            }
+            else
+            {
+                Value = new Number(IntegerBase, IntegerPart);
+                GetFormattedTextForInteger(IntegerBase, IntegerPart, out BeforeExponentText, out ExponentText);
+            }
+
+            BeforeExponent = BeforeExponentText;
+            Exponent = ExponentText;
+
             this.InvalidPart = InvalidPart;
+        }
 
-            string SignificandSignText = Number.SignText(SignificandSign);
-            string SeparatorText = Number.SeparatorText(Separator);
-            string ExponentCharacterText = Number.ExponentCharacterText(ExponentCharacter);
-            BeforeExponent = $"{SignificandSignText}{IntegerPart}{SeparatorText}{FractionalPart}{ExponentCharacterText}";
+        private static void GetFormattedTextForInteger(int integerBase, string integerPart, out string beforeExponentText, out string exponentText)
+        {
+            string IntegerBaseText = Number.BasePrefixText(integerBase);
 
-            string ExponentSignText = Number.SignText(ExponentSign);
-            Exponent = $"{ExponentSignText}{ExponentPart}";
+            beforeExponentText = $"{IntegerBaseText}{integerPart}";
+            exponentText = string.Empty;
+        }
+
+        private static void GetFormattedTextForReal(OptionalSign significandSign, string integerPart, OptionalSeparator separator, string fractionalPart, OptionalExponent exponentCharacter, OptionalSign exponentSign, string exponentPart, out string beforeExponentText, out string exponentText)
+        {
+            string SignificandSignText = Number.SignText(significandSign);
+            string SeparatorText = Number.SeparatorText(separator);
+            string ExponentCharacterText = Number.ExponentCharacterText(exponentCharacter);
+            beforeExponentText = $"{SignificandSignText}{integerPart}{SeparatorText}{fractionalPart}{ExponentCharacterText}";
+
+            string ExponentSignText = Number.SignText(exponentSign);
+            exponentText = $"{ExponentSignText}{exponentPart}";
         }
         #endregion
 

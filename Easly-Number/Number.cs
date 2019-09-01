@@ -39,7 +39,7 @@
         /// <exception cref="ArgumentException">The text is not a valid number.</exception>
         public Number(string text)
         {
-            Parse(text, out string DiscardedProlog, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent Exponent, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
+            Parse(text, out string DiscardedProlog, out int IntegerBase, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent Exponent, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
 
             if (DiscardedProlog.Length > 0)
                 throw new ArgumentException();
@@ -63,14 +63,32 @@
         /// <param name="integerPart">The integer part in front of the separator (if any).</param>
         /// <param name="separator">The optional separator.</param>
         /// <param name="fractionalPart">The fractional part after the separator (if any).</param>
-        /// <param name="exponent">The optional exponent character.</param>
+        /// <param name="exponentCharacter">The optional exponent character.</param>
         /// <param name="exponentSign">The optional exponent sign.</param>
         /// <param name="exponentPart">The exponent part (if any).</param>
-        internal Number(OptionalSign significandSign, string integerPart, OptionalSeparator separator, string fractionalPart, OptionalExponent exponent, OptionalSign exponentSign, string exponentPart)
+        internal Number(OptionalSign significandSign, string integerPart, OptionalSeparator separator, string fractionalPart, OptionalExponent exponentCharacter, OptionalSign exponentSign, string exponentPart)
         {
             Debug.Assert(integerPart.Length > 0 || fractionalPart.Length > 0);
-            Debug.Assert(exponentSign == OptionalSign.None || exponent != OptionalExponent.None);
-            Debug.Assert(exponentPart.Length == 0 || exponent != OptionalExponent.None);
+            Debug.Assert(exponentSign == OptionalSign.None || exponentCharacter != OptionalExponent.None);
+            Debug.Assert(exponentPart.Length == 0 || exponentCharacter != OptionalExponent.None);
+
+            IsSpecial = false;
+            SignificandPrecision = Arithmetic.SignificandPrecision;
+            ExponentPrecision = Arithmetic.ExponentPrecision;
+            Rounding = Arithmetic.Rounding;
+            IsSignificandNegative = false;
+            IsExponentNegative = false;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Number"/> struct.
+        /// This contructor creates the number from parsed parts.
+        /// </summary>
+        /// <param name="integerBase">The integer base (if not 10).</param>
+        /// <param name="integerPart">The integer part in front of the separator (if any).</param>
+        internal Number(int integerBase, string integerPart)
+        {
+            Debug.Assert(integerPart.Length > 0);
 
             IsSpecial = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
@@ -230,6 +248,11 @@
         /// True if the absolute value of the number is between zero and 1.
         /// </summary>
         public bool IsExponentNegative { get; private set; }
+
+        /// <summary>
+        /// True if the number is an integer.
+        /// </summary>
+        public bool IsInteger { get { return false; } }
         #endregion
 
         #region Basic Operations
