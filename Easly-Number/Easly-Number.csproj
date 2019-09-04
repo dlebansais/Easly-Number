@@ -65,7 +65,7 @@
     <Compile Include="Parser\OptionalExponent.cs" />
     <Compile Include="Parser\OptionalSeparator.cs" />
     <Compile Include="Parser\OptionalSign.cs" />
-    <Compile Include="Parser\CustomBaseIntegerTextPartition.cs" />
+    <Compile Include="Parser\CustomRadixIntegerTextPartition.cs" />
     <Compile Include="Parser\ParsingState.cs" />
     <Compile Include="Parser\RealTextPartition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -21,9 +21,9 @@
         LeadingZeroes,
 
         /// <summary>
-        /// Parsing the integer base.
+        /// Parsing the radix.
         /// </summary>
-        IntegerBase,
+        Radix,
 
         /// <summary>
         /// Parsing the integer part.

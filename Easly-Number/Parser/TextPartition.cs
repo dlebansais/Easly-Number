@@ -41,9 +41,9 @@
         public OptionalSign SignificandSign { get; set; } = OptionalSign.None;
 
         /// <summary>
-        /// Index of the prefix indicating a base, -1 if not parsed.
+        /// Index of the prefix indicating a radix, -1 if not parsed.
         /// </summary>
-        public int BasePrefix { get; set; } = -1;
+        public int RadixPrefix { get; set; } = -1;
 
         /// <summary>
         /// Index of the integer part, -1 if not parsed.

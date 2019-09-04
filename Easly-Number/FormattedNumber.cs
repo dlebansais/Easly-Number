@@ -14,31 +14,41 @@
         /// <param name="text">The number in plain text.</param>
         public FormattedNumber(string text)
         {
-            Number.Parse(text, out string DiscardedProlog, out int IntegerBase, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent ExponentCharacter, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
+            Number.Parse(text, out string DiscardedProlog, out Number SpecialNumber, out int Radix, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent ExponentCharacter, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
 
             this.DiscardedProlog = DiscardedProlog;
 
             string BeforeExponentText;
             string ExponentText;
 
-            if (IntegerBase == Number.DecimalIntegerBase)
+            if (Radix == Number.DecimalRadix)
             {
                 Value = new Number(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart);
+                Debug.Assert(!Value.IsNaN);
+
                 GetFormattedTextForReal(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart, out BeforeExponentText, out ExponentText);
 
                 if (Value.IsInteger)
                 {
-                    GetFormattedTextForInteger(IntegerBase, IntegerPart, out string BeforeExponentTextInteger, out string ExponentTextInteger);
+                    GetFormattedTextForInteger(Radix, IntegerPart, out string BeforeExponentTextInteger, out string ExponentTextInteger);
 
                     Debug.Assert(Separator == OptionalSeparator.None && ExponentCharacter == OptionalExponent.None);
                     Debug.Assert(BeforeExponentTextInteger == BeforeExponentText);
                     Debug.Assert(ExponentTextInteger == ExponentText);
                 }
             }
+            else if (Radix == Number.BinaryRadix || Radix == Number.OctalRadix || Radix == Number.HexadecimalRadix)
+            {
+                Value = new Number(Radix, IntegerPart);
+                Debug.Assert(!Value.IsNaN);
+
+                GetFormattedTextForInteger(Radix, IntegerPart, out BeforeExponentText, out ExponentText);
+            }
             else
             {
-                Value = new Number(IntegerBase, IntegerPart);
-                GetFormattedTextForInteger(IntegerBase, IntegerPart, out BeforeExponentText, out ExponentText);
+                Value = SpecialNumber;
+                BeforeExponentText = string.Empty;
+                ExponentText = string.Empty;
             }
 
             BeforeExponent = BeforeExponentText;
@@ -47,11 +57,11 @@
             this.InvalidPart = InvalidPart;
         }
 
-        private static void GetFormattedTextForInteger(int integerBase, string integerPart, out string beforeExponentText, out string exponentText)
+        private static void GetFormattedTextForInteger(int radix, string integerPart, out string beforeExponentText, out string exponentText)
         {
-            string IntegerBaseText = Number.BasePrefixText(integerBase);
+            string RadixText = Number.RadixPrefixText(radix);
 
-            beforeExponentText = $"{IntegerBaseText}{integerPart}";
+            beforeExponentText = $"{RadixText}{integerPart}";
             exponentText = string.Empty;
         }
 
@@ -92,6 +102,11 @@
         /// The invalid part after the number.
         /// </summary>
         public string InvalidPart { get; private set; }
+
+        /// <summary>
+        /// True if the number is invalid.
+        /// </summary>
+        public bool IsValid { get { return InvalidPart.Length == 0; } }
         #endregion
 
         #region Text representation

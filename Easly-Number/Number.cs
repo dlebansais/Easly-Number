@@ -10,24 +10,24 @@
     {
         #region Special Values
         /// <summary>
+        /// The special value for not-a-number.
+        /// </summary>
+        public static readonly Number NaN = new Number(true, false, false);
+
+        /// <summary>
         /// The special value for positive infinity.
         /// </summary>
-        public static readonly Number PositiveInfinity = new Number(true);
+        public static readonly Number PositiveInfinity = new Number(false, true, false);
 
         /// <summary>
         /// The special value for negative infinity.
         /// </summary>
-        public static readonly Number NegativeInfinity = new Number(true);
-
-        /// <summary>
-        /// The special value for not-a-number.
-        /// </summary>
-        public static readonly Number NaN = new Number(true);
+        public static readonly Number NegativeInfinity = new Number(false, false, true);
 
         /// <summary>
         /// The special value zero.
         /// </summary>
-        public static readonly Number Zero = new Number(false);
+        public static readonly Number Zero = new Number(false, false, false);
         #endregion
 
         #region Init
@@ -39,7 +39,7 @@
         /// <exception cref="ArgumentException">The text is not a valid number.</exception>
         public Number(string text)
         {
-            Parse(text, out string DiscardedProlog, out int IntegerBase, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent Exponent, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
+            Parse(text, out string DiscardedProlog, out Number SpecialNumber, out int Radix, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent Exponent, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
 
             if (DiscardedProlog.Length > 0)
                 throw new ArgumentException();
@@ -47,12 +47,42 @@
             if (InvalidPart.Length > 0)
                 throw new ArgumentException();
 
-            IsSpecial = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
-            Rounding = Arithmetic.Rounding;
-            IsSignificandNegative = false;
-            IsExponentNegative = false;
+            if (Radix == DecimalRadix)
+            {
+                IsNaN = false;
+                IsPositiveInfinity = false;
+                IsNegativeInfinity = false;
+                IsZero = false;
+                SignificandPrecision = Arithmetic.SignificandPrecision;
+                ExponentPrecision = Arithmetic.ExponentPrecision;
+                Rounding = Arithmetic.Rounding;
+                IsSignificandNegative = false;
+                IsExponentNegative = false;
+            }
+            else if (Radix == BinaryRadix || Radix == OctalRadix || Radix == HexadecimalRadix)
+            {
+                IsNaN = false;
+                IsPositiveInfinity = false;
+                IsNegativeInfinity = false;
+                IsZero = false;
+                SignificandPrecision = Arithmetic.SignificandPrecision;
+                ExponentPrecision = Arithmetic.ExponentPrecision;
+                Rounding = Arithmetic.Rounding;
+                IsSignificandNegative = false;
+                IsExponentNegative = false;
+            }
+            else
+            {
+                IsNaN = SpecialNumber.IsNaN;
+                IsPositiveInfinity = SpecialNumber.IsPositiveInfinity;
+                IsNegativeInfinity = SpecialNumber.IsNegativeInfinity;
+                IsZero = SpecialNumber.IsZero;
+                SignificandPrecision = Arithmetic.SignificandPrecision;
+                ExponentPrecision = Arithmetic.ExponentPrecision;
+                Rounding = Arithmetic.Rounding;
+                IsSignificandNegative = false;
+                IsExponentNegative = false;
+            }
         }
 
         /// <summary>
@@ -72,7 +102,10 @@
             Debug.Assert(exponentSign == OptionalSign.None || exponentCharacter != OptionalExponent.None);
             Debug.Assert(exponentPart.Length == 0 || exponentCharacter != OptionalExponent.None);
 
-            IsSpecial = false;
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -84,13 +117,16 @@
         /// Initializes a new instance of the <see cref="Number"/> struct.
         /// This contructor creates the number from parsed parts.
         /// </summary>
-        /// <param name="integerBase">The integer base (if not 10).</param>
+        /// <param name="radix">The radix (if not 10).</param>
         /// <param name="integerPart">The integer part in front of the separator (if any).</param>
-        internal Number(int integerBase, string integerPart)
+        internal Number(int radix, string integerPart)
         {
             Debug.Assert(integerPart.Length > 0);
 
-            IsSpecial = false;
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -105,7 +141,10 @@
         /// <param name="value">The number value.</param>
         public Number(float value)
         {
-            IsSpecial = false;
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -120,7 +159,10 @@
         /// <param name="value">The number value.</param>
         public Number(double value)
         {
-            IsSpecial = false;
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -135,7 +177,10 @@
         /// <param name="value">The number value.</param>
         public Number(decimal value)
         {
-            IsSpecial = false;
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -150,7 +195,10 @@
         /// <param name="value">The number value.</param>
         public Number(int value)
         {
-            IsSpecial = false;
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -165,7 +213,10 @@
         /// <param name="value">The number value.</param>
         public Number(uint value)
         {
-            IsSpecial = false;
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -180,7 +231,10 @@
         /// <param name="value">The number value.</param>
         public Number(long value)
         {
-            IsSpecial = false;
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -195,7 +249,10 @@
         /// <param name="value">The number value.</param>
         public Number(ulong value)
         {
-            IsSpecial = false;
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -206,10 +263,17 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Number"/> struct.
         /// </summary>
-        /// <param name="isSpecial">The special flag. If false, the number is just zero.</param>
-        private Number(bool isSpecial)
+        /// <param name="isNaN">Value of the special NaN flag.</param>
+        /// <param name="isPositiveInfinity">Value of the special positive infinity flag.</param>
+        /// <param name="isNegativeInfinity">Value of the special negative infinity flag.</param>
+        private Number(bool isNaN, bool isPositiveInfinity, bool isNegativeInfinity)
         {
-            IsSpecial = isSpecial;
+            Debug.Assert((!isPositiveInfinity && !isNegativeInfinity) || (!isNaN && !isNegativeInfinity) || (!isNaN && !isPositiveInfinity));
+
+            IsNaN = isNaN;
+            IsPositiveInfinity = isPositiveInfinity;
+            IsNegativeInfinity = isNegativeInfinity;
+            IsZero = !isNaN && !isPositiveInfinity && !isNegativeInfinity;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -222,7 +286,32 @@
         /// <summary>
         /// True if the number is one of the special numbers.
         /// </summary>
-        public bool IsSpecial { get; private set; }
+        public bool IsSpecial { get { return IsNaN || IsInfinite; } }
+
+        /// <summary>
+        /// True if the number is a NaN.
+        /// </summary>
+        public bool IsNaN { get; private set; }
+
+        /// <summary>
+        /// True if the number is one of the infinite values.
+        /// </summary>
+        public bool IsInfinite { get { return IsPositiveInfinity || IsNegativeInfinity; } }
+
+        /// <summary>
+        /// True if the number is the positive infinite value.
+        /// </summary>
+        public bool IsPositiveInfinity { get; private set; }
+
+        /// <summary>
+        /// True if the number is the negative infinite value.
+        /// </summary>
+        public bool IsNegativeInfinity { get; private set; }
+
+        /// <summary>
+        /// True if the number is 0.
+        /// </summary>
+        public bool IsZero { get; private set; }
 
         /// <summary>
         /// The number of bits in the significand.

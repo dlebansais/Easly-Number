@@ -3,31 +3,31 @@
     /// <summary>
     /// The partition of a string into different components of an integer number.
     /// </summary>
-    internal class CustomBaseIntegerTextPartition : TextPartition
+    internal class CustomRadixIntegerTextPartition : TextPartition
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CustomBaseIntegerTextPartition"/> class.
+        /// Initializes a new instance of the <see cref="CustomRadixIntegerTextPartition"/> class.
         /// </summary>
-        /// <param name="integerBase">The integer base to use.</param>
-        /// <param name="basePrefixCharacter">The prefix character to use.</param>
+        /// <param name="radix">The radix to use.</param>
+        /// <param name="radixPrefixCharacter">The prefix character to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
-        public CustomBaseIntegerTextPartition(int integerBase, char basePrefixCharacter, IsValidDigitHandler validityHandler)
+        public CustomRadixIntegerTextPartition(int radix, char radixPrefixCharacter, IsValidDigitHandler validityHandler)
         {
-            IntegerBase = integerBase;
-            HasBasePrefixCharacter = true;
-            BasePrefixCharacter = basePrefixCharacter;
+            Radix = radix;
+            HasRadixPrefixCharacter = true;
+            RadixPrefixCharacter = radixPrefixCharacter;
             ValidityHandler = validityHandler;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CustomBaseIntegerTextPartition"/> class.
+        /// Initializes a new instance of the <see cref="CustomRadixIntegerTextPartition"/> class.
         /// </summary>
-        /// <param name="integerBase">The integer base to use.</param>
+        /// <param name="radix">The radix to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
-        public CustomBaseIntegerTextPartition(int integerBase, IsValidDigitHandler validityHandler)
+        public CustomRadixIntegerTextPartition(int radix, IsValidDigitHandler validityHandler)
         {
-            IntegerBase = integerBase;
-            HasBasePrefixCharacter = false;
+            Radix = radix;
+            HasRadixPrefixCharacter = false;
             ValidityHandler = validityHandler;
         }
 
@@ -56,10 +56,10 @@
                     }
                     else if (c == '0')
                     {
-                        if (index + 1 == text.Length || !HasBasePrefixCharacter)
+                        if (index + 1 == text.Length || !HasRadixPrefixCharacter)
                             State = ParsingState.IntegerPart;
                         else
-                            State = ParsingState.IntegerBase;
+                            State = ParsingState.Radix;
                     }
                     else
                     {
@@ -68,8 +68,8 @@
                     }
                     break;
 
-                case ParsingState.IntegerBase:
-                    if (c == BasePrefixCharacter && index + 1 < text.Length)
+                case ParsingState.Radix:
+                    if (c == RadixPrefixCharacter && index + 1 < text.Length)
                     {
                         FirstIntegerPartIndex = index + 1;
                         State = ParsingState.IntegerPart;
@@ -95,19 +95,19 @@
         }
 
         /// <summary>
-        /// The integer base for digits.
+        /// The radix for digits.
         /// </summary>
-        public int IntegerBase { get; }
+        public int Radix { get; }
 
         /// <summary>
-        /// True of there is a base character used to prefix the string.
+        /// True of there is a radix character used to prefix the string.
         /// </summary>
-        public bool HasBasePrefixCharacter { get; }
+        public bool HasRadixPrefixCharacter { get; }
 
         /// <summary>
-        /// The base character used to prefix the string.
+        /// The radix character used to prefix the string.
         /// </summary>
-        public char BasePrefixCharacter { get; }
+        public char RadixPrefixCharacter { get; }
 
         /// <summary>
         /// Delegate type of a method that validates a digit.

@@ -14,6 +14,8 @@
         /// <param name="index">The position of the character to parse in <paramref name="text"/>.</param>
         public override void Parse(string text, int index)
         {
+            int DigitValue;
+
             char c = text[index];
 
             switch (State)
@@ -95,7 +97,7 @@
                     break;
 
                 case ParsingState.IntegerPart:
-                    if (c >= '0' && c <= '9')
+                    if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
                     }
                     else if (index == FirstIntegerPartIndex)
@@ -126,7 +128,7 @@
                     break;
 
                 case ParsingState.FractionalPart:
-                    if (c >= '0' && c <= '9')
+                    if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
                     }
                     else if (c == 'E' || c == 'e')
@@ -143,7 +145,7 @@
                     break;
 
                 case ParsingState.ExponentPart:
-                    if (c >= '0' && c <= '9')
+                    if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
                     }
                     else if (c == '-' || c == '+')
