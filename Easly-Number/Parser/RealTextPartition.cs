@@ -8,49 +8,87 @@
     internal class RealTextPartition : TextPartition
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="RealTextPartition"/> class.
+        /// <param name="text">The string to parse.</param>
+        /// </summary>
+        public RealTextPartition(string text)
+            : base(text, Number.DecimalRadix)
+        {
+        }
+
+        /// <summary>
+        /// The optional separator. This partition cannot have one.
+        /// </summary>
+        public override OptionalSeparator Separator
+        {
+            get
+            {
+                if (DecimalSeparatorIndex < 0)
+                    return OptionalSeparator.None;
+                else if (Text[DecimalSeparatorIndex] != CultureDecimalSeparator)
+                    return OptionalSeparator.Normalized;
+                else
+                    return OptionalSeparator.CultureSpecific;
+            }
+        }
+
+        /// <summary>
         /// Parses a new character.
         /// </summary>
-        /// <param name="text">The string to parse.</param>
-        /// <param name="index">The position of the character to parse in <paramref name="text"/>.</param>
-        public override void Parse(string text, int index)
+        /// <param name="index">The position of the character to parse in <see cref="TextPartition.Text"/>.</param>
+        public override void Parse(int index)
         {
             int DigitValue;
 
-            char c = text[index];
+            char c = Text[index];
 
             switch (State)
             {
                 case ParsingState.Init:
                     InitCultureSeparator();
                     State = ParsingState.LeadingWhitespaces;
-                    Parse(text, index);
+                    Parse(index);
                     break;
 
                 case ParsingState.LeadingWhitespaces:
                     if (char.IsWhiteSpace(c))
                     {
                         LastLeadingSpaceIndex = index;
-                        break;
-                    }
-                    else if (c == '0')
-                    {
-                        LastLeadingZeroIndex = index;
-                        State = ParsingState.LeadingZeroes;
                     }
                     else if (c == '-' || c == '+')
                     {
                         SignificandSign = c == '-' ? OptionalSign.Negative : OptionalSign.Positive;
                         FirstIntegerPartIndex = index + 1;
+                        IntegerField.SetZero();
+                        FractionalField.SetZero();
+                        ExponentField.SetZero();
                         State = ParsingState.IntegerPart;
                     }
-                    else if (c > '0' && c <= '9')
+                    else if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
-                        FirstIntegerPartIndex = index;
-                        State = ParsingState.IntegerPart;
+                        if (DigitValue == 0)
+                        {
+                            LastLeadingZeroIndex = index;
+                            IntegerField.SetZero();
+                            FractionalField.SetZero();
+                            ExponentField.SetZero();
+                            State = ParsingState.LeadingZeroes;
+                        }
+                        else
+                        {
+                            FirstIntegerPartIndex = index;
+                            IntegerField.SetFromDigit(DigitValue);
+                            FractionalField.SetZero();
+                            ExponentField.SetZero();
+                            State = ParsingState.IntegerPart;
+                        }
                     }
                     else if (c == '.' || c == CultureDecimalSeparator)
                     {
                         DecimalSeparatorIndex = index;
+                        IntegerField.SetZero();
+                        FractionalField.SetZero();
+                        ExponentField.SetZero();
                         State = ParsingState.FractionalPart;
                     }
                     else
@@ -61,14 +99,18 @@
                     break;
 
                 case ParsingState.LeadingZeroes:
-                    if (c == '0')
+                    if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
-                        LastLeadingZeroIndex = index;
-                    }
-                    else if (c > '0' && c <= '9')
-                    {
-                        FirstIntegerPartIndex = index;
-                        State = ParsingState.IntegerPart;
+                        if (DigitValue == 0)
+                        {
+                            LastLeadingZeroIndex = index;
+                        }
+                        else
+                        {
+                            FirstIntegerPartIndex = index;
+                            IntegerField.SetFromDigit(DigitValue);
+                            State = ParsingState.IntegerPart;
+                        }
                     }
                     else if (c == '.' || c == CultureDecimalSeparator)
                     {
@@ -77,21 +119,26 @@
                         LastLeadingZeroIndex--;
 
                         DecimalSeparatorIndex = index;
+                        LastIntegerPartIndex = index;
                         State = ParsingState.FractionalPart;
                     }
                     else if (c == 'E' || c == 'e')
                     {
-                        Exponent = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
+                        ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
 
                         Debug.Assert(LastLeadingZeroIndex >= 0);
                         FirstIntegerPartIndex = LastLeadingZeroIndex;
                         LastLeadingZeroIndex--;
+                        LastIntegerPartIndex = index;
+                        FirstExponentPartIndex = index + 1;
+                        LastExponentPartIndex = FirstExponentPartIndex;
 
                         State = ParsingState.ExponentPart;
                     }
                     else
                     {
                         FirstInvalidCharacterIndex = index;
+                        LastIntegerPartIndex = index;
                         State = ParsingState.InvalidPart;
                     }
                     break;
@@ -99,6 +146,7 @@
                 case ParsingState.IntegerPart:
                     if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
+                        IntegerField.MultiplyBy10AndAdd(DigitValue);
                     }
                     else if (index == FirstIntegerPartIndex)
                     {
@@ -107,22 +155,28 @@
                         Debug.Assert(LastLeadingZeroIndex == -1);
 
                         FirstInvalidCharacterIndex = 0;
+                        LastIntegerPartIndex = FirstIntegerPartIndex;
                         State = ParsingState.InvalidPart;
                     }
                     else if (c == '.' || c == CultureDecimalSeparator)
                     {
                         DecimalSeparatorIndex = index;
+                        LastIntegerPartIndex = index;
                         State = ParsingState.FractionalPart;
                     }
                     else if (c == 'E' || c == 'e')
                     {
-                        Exponent = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
+                        ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
                         ExponentIndex = index;
+                        LastIntegerPartIndex = index;
+                        FirstExponentPartIndex = index + 1;
+                        LastExponentPartIndex = FirstExponentPartIndex;
                         State = ParsingState.ExponentPart;
                     }
                     else
                     {
                         FirstInvalidCharacterIndex = index;
+                        LastIntegerPartIndex = index;
                         State = ParsingState.InvalidPart;
                     }
                     break;
@@ -130,16 +184,21 @@
                 case ParsingState.FractionalPart:
                     if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
+                        FractionalField.MultiplyBy10AndAdd(DigitValue);
                     }
                     else if (c == 'E' || c == 'e')
                     {
-                        Exponent = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
+                        ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
                         ExponentIndex = index;
+                        LastFractionalPartIndex = index;
+                        FirstExponentPartIndex = index + 1;
+                        LastExponentPartIndex = FirstExponentPartIndex;
                         State = ParsingState.ExponentPart;
                     }
                     else
                     {
                         FirstInvalidCharacterIndex = index;
+                        LastFractionalPartIndex = index;
                         State = ParsingState.InvalidPart;
                     }
                     break;
@@ -147,13 +206,16 @@
                 case ParsingState.ExponentPart:
                     if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
+                        ExponentField.MultiplyBy10AndAdd(DigitValue);
+                        LastExponentPartIndex = index + 1;
                     }
                     else if (c == '-' || c == '+')
                     {
-                        if (index == ExponentIndex)
+                        if (index == FirstExponentPartIndex)
                         {
                             ExponentSign = c == '-' ? OptionalSign.Negative : OptionalSign.Positive;
-                            ExponentIndex = index + 1;
+                            FirstExponentPartIndex++;
+                            LastExponentPartIndex = FirstExponentPartIndex;
                         }
                         else
                         {
@@ -167,6 +229,16 @@
                         State = ParsingState.InvalidPart;
                     }
                     break;
+            }
+
+            if (index + 1 == Text.Length)
+            {
+                if (FirstIntegerPartIndex >= 0 && LastIntegerPartIndex < 0)
+                    LastIntegerPartIndex = Text.Length;
+                else if (FirstFractionalPartIndex >= 0 && LastFractionalPartIndex < 0)
+                    LastFractionalPartIndex = Text.Length;
+                else if (FirstExponentPartIndex >= 0 && LastExponentPartIndex < 0)
+                    LastExponentPartIndex = Text.Length;
             }
         }
     }

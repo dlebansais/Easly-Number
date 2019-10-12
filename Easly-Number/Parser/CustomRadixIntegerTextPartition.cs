@@ -8,44 +8,49 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomRadixIntegerTextPartition"/> class.
         /// </summary>
+        /// <param name="text">The string to parse.</param>
         /// <param name="radix">The radix to use.</param>
         /// <param name="radixPrefixCharacter">The prefix character to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
-        public CustomRadixIntegerTextPartition(int radix, char radixPrefixCharacter, IsValidDigitHandler validityHandler)
+        /// <param name="fieldHandler">The handler used to update the data field.</param>
+        public CustomRadixIntegerTextPartition(string text, int radix, char radixPrefixCharacter, IsValidDigitHandler validityHandler, UpdateFieldHandler fieldHandler)
+            : base(text, radix)
         {
-            Radix = radix;
             HasRadixPrefixCharacter = true;
             RadixPrefixCharacter = radixPrefixCharacter;
             ValidityHandler = validityHandler;
+            FieldHandler = fieldHandler;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomRadixIntegerTextPartition"/> class.
         /// </summary>
+        /// <param name="text">The string to parse.</param>
         /// <param name="radix">The radix to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
-        public CustomRadixIntegerTextPartition(int radix, IsValidDigitHandler validityHandler)
+        /// <param name="fieldHandler">The handler used to update the data field.</param>
+        public CustomRadixIntegerTextPartition(string text, int radix, IsValidDigitHandler validityHandler, UpdateFieldHandler fieldHandler)
+            : base(text, radix)
         {
-            Radix = radix;
             HasRadixPrefixCharacter = false;
             ValidityHandler = validityHandler;
+            FieldHandler = fieldHandler;
         }
 
         /// <summary>
         /// Parses a new character.
         /// </summary>
-        /// <param name="text">The string to parse.</param>
-        /// <param name="index">The position of the character to parse in <paramref name="text"/>.</param>
-        public override void Parse(string text, int index)
+        /// <param name="index">The position of the character to parse in <see cref="TextPartition.Text"/>.</param>
+        public override void Parse(int index)
         {
-            char c = text[index];
+            char c = Text[index];
 
             switch (State)
             {
                 case ParsingState.Init:
                     InitCultureSeparator();
                     State = ParsingState.LeadingWhitespaces;
-                    Parse(text, index);
+                    Parse(index);
                     break;
 
                 case ParsingState.LeadingWhitespaces:
@@ -56,22 +61,29 @@
                     }
                     else if (c == '0')
                     {
-                        if (index + 1 == text.Length || !HasRadixPrefixCharacter)
+                        IntegerField.SetZero();
+
+                        if (index + 1 == Text.Length || !HasRadixPrefixCharacter)
                             State = ParsingState.IntegerPart;
                         else
+                        {
+                            LastIntegerPartIndex = index;
                             State = ParsingState.Radix;
+                        }
                     }
                     else
                     {
                         FirstInvalidCharacterIndex = 0;
+                        LastIntegerPartIndex = index;
                         State = ParsingState.InvalidPart;
                     }
                     break;
 
                 case ParsingState.Radix:
-                    if (c == RadixPrefixCharacter && index + 1 < text.Length)
+                    if (c == RadixPrefixCharacter && index + 1 < Text.Length)
                     {
                         FirstIntegerPartIndex = index + 1;
+                        IntegerField.SetZero();
                         State = ParsingState.IntegerPart;
                     }
                     else
@@ -82,22 +94,22 @@
                     break;
 
                 case ParsingState.IntegerPart:
-                    if (ValidityHandler(c, out int Value))
+                    if (ValidityHandler(c, out int DigitValue))
                     {
+                        FieldHandler(IntegerField, DigitValue);
                     }
                     else
                     {
                         FirstInvalidCharacterIndex = index;
+                        LastIntegerPartIndex = index;
                         State = ParsingState.InvalidPart;
                     }
                     break;
             }
-        }
 
-        /// <summary>
-        /// The radix for digits.
-        /// </summary>
-        public int Radix { get; }
+            if (index + 1 == Text.Length && FirstIntegerPartIndex >= 0 && LastIntegerPartIndex < 0)
+                LastIntegerPartIndex = Text.Length;
+        }
 
         /// <summary>
         /// True of there is a radix character used to prefix the string.
@@ -108,6 +120,11 @@
         /// The radix character used to prefix the string.
         /// </summary>
         public char RadixPrefixCharacter { get; }
+
+        /// <summary>
+        /// The optional separator. This partition cannot have one.
+        /// </summary>
+        public override OptionalSeparator Separator { get { return OptionalSeparator.None; } }
 
         /// <summary>
         /// Delegate type of a method that validates a digit.
@@ -121,5 +138,17 @@
         /// The handler used to validate digits.
         /// </summary>
         public IsValidDigitHandler ValidityHandler { get; }
+
+        /// <summary>
+        /// Delegate type of a method that update the data field with a digit.
+        /// </summary>
+        /// <param name="field">The data field to update.</param>
+        /// <param name="value">The digit value.</param>
+        public delegate void UpdateFieldHandler(BitField field, int value);
+
+        /// <summary>
+        /// The handler used to update the data field.
+        /// </summary>
+        public UpdateFieldHandler FieldHandler { get; }
     }
 }

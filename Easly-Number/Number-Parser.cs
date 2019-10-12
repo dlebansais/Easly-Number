@@ -52,18 +52,23 @@
         {
             value = NaN;
 
-            Parse(text, out string DiscardedProlog, out Number SpecialNumber, out int Radix, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent ExponentCharacter, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
+            Parse(text, out TextPartition Partition, out Number SpecialNumber);
 
-            if (DiscardedProlog.Length > 0)
+            if (Partition == null)
                 return false;
 
-            if (InvalidPart.Length > 0)
+            if (Partition.DiscardedProlog.Length > 0)
                 return false;
+
+            if (Partition.InvalidPart.Length > 0)
+                return false;
+
+            int Radix = Partition.Radix;
 
             if (Radix == DecimalRadix)
-                value = new Number(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart);
+                value = new Number(Partition);
             else if (Radix == BinaryRadix || Radix == OctalRadix || Radix == HexadecimalRadix)
-                value = new Number(Radix, IntegerPart);
+                value = new Number(Partition.IntegerField);
             else
                 value = SpecialNumber;
 
@@ -76,47 +81,60 @@
         /// Parses a string to extract relevant parts for a number.
         /// </summary>
         /// <param name="text">The string to parse.</param>
-        /// <param name="discardedProlog">The beginning of the string that can be ignored.</param>
+        /// <param name="partition">The text partition of <paramref name="text"/> if parsed successfully.</param>
         /// <param name="specialNumber">The special number if NaN or infinity.</param>
-        /// <param name="radix">The radix (10 for decimal integers and reals).</param>
-        /// <param name="significandSign">The optional sign of the significand.</param>
-        /// <param name="integerPart">The integer part in front of the separator (if any).</param>
-        /// <param name="separator">The optional separator.</param>
-        /// <param name="fractionalPart">The fractional part after the separator (if any).</param>
-        /// <param name="exponentCharacter">The optional exponent character.</param>
-        /// <param name="exponentSign">The optional exponent sign.</param>
-        /// <param name="exponentPart">The exponent part (if any).</param>
-        /// <param name="invalidPart">The remaining part of the string that is not parsed in the number.</param>
-        internal static void Parse(string text, out string discardedProlog, out Number specialNumber, out int radix, out OptionalSign significandSign, out string integerPart, out OptionalSeparator separator, out string fractionalPart, out OptionalExponent exponentCharacter, out OptionalSign exponentSign, out string exponentPart, out string invalidPart)
+        internal static void Parse(string text, out TextPartition partition, out Number specialNumber)
         {
-            discardedProlog = null;
+            partition = null;
             specialNumber = NaN;
-            radix = -1;
-            significandSign = OptionalSign.None;
-            integerPart = null;
-            separator = OptionalSeparator.None;
-            fractionalPart = null;
-            exponentCharacter = OptionalExponent.None;
-            exponentSign = OptionalSign.None;
-            exponentPart = null;
-            invalidPart = null;
 
-            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit);
-            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(OctalRadix, IsValidOctalDigit);
-            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit);
-            TextPartition RealPartition = new RealTextPartition();
+            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, UpdateFieldWithBinary);
+            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, IsValidOctalDigit, UpdateFieldWithOctal);
+            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, UpdateFieldWithHexadecimal);
+            TextPartition RealPartition = new RealTextPartition(text);
 
-            for (int Index = 0; Index < text.Length; Index++)
+            for (int Index = 0; Index < text.Length && (RealPartition.IsValid || BinaryIntegerPartition.IsValid || OctalIntegerPartition.IsValid || HexadecimalIntegerPartition.IsValid); Index++)
             {
-                BinaryIntegerPartition.Parse(text, Index);
-                OctalIntegerPartition.Parse(text, Index);
-                HexadecimalIntegerPartition.Parse(text, Index);
-                RealPartition.Parse(text, Index);
+                RealPartition.Parse(Index);
+                BinaryIntegerPartition.Parse(Index);
+                OctalIntegerPartition.Parse(Index);
+                HexadecimalIntegerPartition.Parse(Index);
             }
 
-            Debug.Assert(integerPart.Length > 0 || fractionalPart.Length > 0);
-            Debug.Assert(exponentSign == OptionalSign.None || exponentCharacter != OptionalExponent.None);
-            Debug.Assert(exponentPart.Length == 0 || exponentCharacter != OptionalExponent.None);
+            UpdatePreferredPartition(ref partition, ref RealPartition);
+            UpdatePreferredPartition(ref partition, ref BinaryIntegerPartition);
+            UpdatePreferredPartition(ref partition, ref OctalIntegerPartition);
+            UpdatePreferredPartition(ref partition, ref HexadecimalIntegerPartition);
+
+            if (partition != null)
+            {
+                string integerPart = partition.IntegerPart;
+                string fractionalPart = partition.FractionalPart;
+                OptionalExponent exponentCharacter = partition.ExponentCharacter;
+                OptionalSign exponentSign = partition.ExponentSign;
+                string exponentPart = partition.ExponentPart;
+
+                Debug.Assert(integerPart.Length > 0 || fractionalPart.Length > 0);
+                Debug.Assert(exponentSign == OptionalSign.None || exponentCharacter != OptionalExponent.None);
+                Debug.Assert(exponentPart.Length == 0 || exponentCharacter != OptionalExponent.None);
+            }
+        }
+
+        private static void UpdatePreferredPartition(ref TextPartition preferredPartition, ref TextPartition candidatePartition)
+        {
+            if (preferredPartition == null)
+            {
+                if (candidatePartition.Text.Length > 0 && candidatePartition.FirstInvalidCharacterIndex != 0)
+                    preferredPartition = candidatePartition;
+            }
+            else
+            {
+                int PreferredIndex = preferredPartition.FirstInvalidCharacterIndex < 0 ? preferredPartition.Text.Length : preferredPartition.FirstInvalidCharacterIndex;
+                int CandidateIndex = candidatePartition.FirstInvalidCharacterIndex < 0 ? candidatePartition.Text.Length : candidatePartition.FirstInvalidCharacterIndex;
+
+                if (PreferredIndex < CandidateIndex)
+                    preferredPartition = candidatePartition;
+            }
         }
 
         /// <summary>
@@ -154,16 +172,26 @@
         }
 
         /// <summary>
+        /// Updates a data field with a binary digit.
+        /// </summary>
+        /// <param name="field">The data field to update.</param>
+        /// <param name="value">The digit value.</param>
+        internal static void UpdateFieldWithBinary(BitField field, int value)
+        {
+            field.ShiftLeftAndAdd(1, value);
+        }
+
+        /// <summary>
         /// Checks if a string is a number in binary format.
         /// </summary>
         /// <param name="text">The string to check.</param>
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidBinaryNumber(string text)
         {
-            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit);
+            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, UpdateFieldWithBinary);
 
             for (int Index = 0; Index < text.Length; Index++)
-                BinaryIntegerPartition.Parse(text, Index);
+                BinaryIntegerPartition.Parse(Index);
 
             return BinaryIntegerPartition.FirstInvalidCharacterIndex < 0;
         }
@@ -203,16 +231,26 @@
         }
 
         /// <summary>
+        /// Updates a data field with an octal digit.
+        /// </summary>
+        /// <param name="field">The data field to update.</param>
+        /// <param name="value">The digit value.</param>
+        internal static void UpdateFieldWithOctal(BitField field, int value)
+        {
+            field.ShiftLeftAndAdd(3, value);
+        }
+
+        /// <summary>
         /// Checks if a string is a number in octal format.
         /// </summary>
         /// <param name="text">The string to check.</param>
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidOctalNumber(string text)
         {
-            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(OctalRadix, IsValidOctalDigit);
+            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, IsValidOctalDigit, UpdateFieldWithOctal);
 
             for (int Index = 0; Index < text.Length; Index++)
-                OctalIntegerPartition.Parse(text, Index);
+                OctalIntegerPartition.Parse(Index);
 
             return OctalIntegerPartition.FirstInvalidCharacterIndex < 0;
         }
@@ -302,16 +340,26 @@
         }
 
         /// <summary>
+        /// Updates a data field with an hexadecimal digit.
+        /// </summary>
+        /// <param name="field">The data field to update.</param>
+        /// <param name="value">The digit value.</param>
+        internal static void UpdateFieldWithHexadecimal(BitField field, int value)
+        {
+            field.ShiftLeftAndAdd(4, value);
+        }
+
+        /// <summary>
         /// Checks if a string is a number in hexadecimal format.
         /// </summary>
         /// <param name="text">The string to check.</param>
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidHexadecimalNumber(string text)
         {
-            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit);
+            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, UpdateFieldWithHexadecimal);
 
             for (int Index = 0; Index < text.Length; Index++)
-                HexadecimalIntegerPartition.Parse(text, Index);
+                HexadecimalIntegerPartition.Parse(Index);
 
             return HexadecimalIntegerPartition.FirstInvalidCharacterIndex < 0;
         }

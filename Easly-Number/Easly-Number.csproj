@@ -57,6 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arithmetic.cs" />
+    <None Include="BitField\BitField_Template.cstext" />
+    <Compile Include="BitField\BitField.cs" />
+    <Compile Include="BitField\BitField_byte.cs" />
+    <Compile Include="BitField\BitField_uint.cs" />
     <Compile Include="Flags.cs" />
     <Compile Include="FormattedNumber.cs" />
     <Compile Include="GlobalSuppressions.cs" />

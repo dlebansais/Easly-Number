@@ -14,35 +14,42 @@
         /// <param name="text">The number in plain text.</param>
         public FormattedNumber(string text)
         {
-            Number.Parse(text, out string DiscardedProlog, out Number SpecialNumber, out int Radix, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent ExponentCharacter, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
+            Number.Parse(text, out TextPartition Partition, out Number SpecialNumber);
 
-            this.DiscardedProlog = DiscardedProlog;
+            DiscardedProlog = Partition != null ? Partition.DiscardedProlog : string.Empty;
 
             string BeforeExponentText;
             string ExponentText;
 
-            if (Radix == Number.DecimalRadix)
+            if (Partition != null)
             {
-                Value = new Number(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart);
-                Debug.Assert(!Value.IsNaN);
+                int Radix = Partition.Radix;
 
-                GetFormattedTextForReal(SignificandSign, IntegerPart, Separator, FractionalPart, ExponentCharacter, ExponentSign, ExponentPart, out BeforeExponentText, out ExponentText);
-
-                if (Value.IsInteger)
+                if (Radix == Number.DecimalRadix)
                 {
-                    GetFormattedTextForInteger(Radix, IntegerPart, out string BeforeExponentTextInteger, out string ExponentTextInteger);
+                    Value = new Number(Partition);
+                    Debug.Assert(!Value.IsNaN);
 
-                    Debug.Assert(Separator == OptionalSeparator.None && ExponentCharacter == OptionalExponent.None);
-                    Debug.Assert(BeforeExponentTextInteger == BeforeExponentText);
-                    Debug.Assert(ExponentTextInteger == ExponentText);
+                    GetFormattedTextForReal(Partition, out BeforeExponentText, out ExponentText);
+
+                    if (Value.IsInteger)
+                    {
+                        GetFormattedTextForInteger(Partition, out string BeforeExponentTextInteger, out string ExponentTextInteger);
+
+                        Debug.Assert(Partition.Separator == OptionalSeparator.None && Partition.ExponentCharacter == OptionalExponent.None);
+                        Debug.Assert(BeforeExponentTextInteger == BeforeExponentText);
+                        Debug.Assert(ExponentTextInteger == ExponentText);
+                    }
                 }
-            }
-            else if (Radix == Number.BinaryRadix || Radix == Number.OctalRadix || Radix == Number.HexadecimalRadix)
-            {
-                Value = new Number(Radix, IntegerPart);
-                Debug.Assert(!Value.IsNaN);
+                else
+                {
+                    Debug.Assert(Radix == Number.BinaryRadix || Radix == Number.OctalRadix || Radix == Number.HexadecimalRadix);
 
-                GetFormattedTextForInteger(Radix, IntegerPart, out BeforeExponentText, out ExponentText);
+                    Value = new Number(Partition.IntegerField);
+                    Debug.Assert(!Value.IsNaN);
+
+                    GetFormattedTextForInteger(Partition, out BeforeExponentText, out ExponentText);
+                }
             }
             else
             {
@@ -54,26 +61,26 @@
             BeforeExponent = BeforeExponentText;
             Exponent = ExponentText;
 
-            this.InvalidPart = InvalidPart;
+            InvalidPart = Partition != null ? Partition.InvalidPart : text;
         }
 
-        private static void GetFormattedTextForInteger(int radix, string integerPart, out string beforeExponentText, out string exponentText)
+        private static void GetFormattedTextForInteger(TextPartition partition, out string beforeExponentText, out string exponentText)
         {
-            string RadixText = Number.RadixPrefixText(radix);
+            string RadixText = Number.RadixPrefixText(partition.Radix);
 
-            beforeExponentText = $"{RadixText}{integerPart}";
+            beforeExponentText = $"{RadixText}{partition.IntegerPart}";
             exponentText = string.Empty;
         }
 
-        private static void GetFormattedTextForReal(OptionalSign significandSign, string integerPart, OptionalSeparator separator, string fractionalPart, OptionalExponent exponentCharacter, OptionalSign exponentSign, string exponentPart, out string beforeExponentText, out string exponentText)
+        private static void GetFormattedTextForReal(TextPartition partition, out string beforeExponentText, out string exponentText)
         {
-            string SignificandSignText = Number.SignText(significandSign);
-            string SeparatorText = Number.SeparatorText(separator);
-            string ExponentCharacterText = Number.ExponentCharacterText(exponentCharacter);
-            beforeExponentText = $"{SignificandSignText}{integerPart}{SeparatorText}{fractionalPart}{ExponentCharacterText}";
+            string SignificandSignText = Number.SignText(partition.SignificandSign);
+            string SeparatorText = Number.SeparatorText(partition.Separator);
+            string ExponentCharacterText = Number.ExponentCharacterText(partition.ExponentCharacter);
+            beforeExponentText = $"{SignificandSignText}{partition.IntegerPart}{SeparatorText}{partition.FractionalPart}{ExponentCharacterText}";
 
-            string ExponentSignText = Number.SignText(exponentSign);
-            exponentText = $"{ExponentSignText}{exponentPart}";
+            string ExponentSignText = Number.SignText(partition.ExponentSign);
+            exponentText = $"{ExponentSignText}{partition.ExponentPart}";
         }
         #endregion
 

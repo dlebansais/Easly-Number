@@ -39,15 +39,20 @@
         /// <exception cref="ArgumentException">The text is not a valid number.</exception>
         public Number(string text)
         {
-            Parse(text, out string DiscardedProlog, out Number SpecialNumber, out int Radix, out OptionalSign SignificandSign, out string IntegerPart, out OptionalSeparator Separator, out string FractionalPart, out OptionalExponent Exponent, out OptionalSign ExponentSign, out string ExponentPart, out string InvalidPart);
+            Parse(text, out TextPartition Partition, out Number SpecialNumber);
 
-            if (DiscardedProlog.Length > 0)
+            if (Partition == null)
                 throw new ArgumentException();
 
-            if (InvalidPart.Length > 0)
+            if (Partition.DiscardedProlog.Length > 0)
                 throw new ArgumentException();
 
-            if (Radix == DecimalRadix)
+            if (Partition.InvalidPart.Length > 0)
+                throw new ArgumentException();
+
+            int Radix = Partition.Radix;
+
+            if (Radix == DecimalRadix || Radix == BinaryRadix || Radix == OctalRadix || Radix == HexadecimalRadix)
             {
                 IsNaN = false;
                 IsPositiveInfinity = false;
@@ -58,18 +63,10 @@
                 Rounding = Arithmetic.Rounding;
                 IsSignificandNegative = false;
                 IsExponentNegative = false;
-            }
-            else if (Radix == BinaryRadix || Radix == OctalRadix || Radix == HexadecimalRadix)
-            {
-                IsNaN = false;
-                IsPositiveInfinity = false;
-                IsNegativeInfinity = false;
-                IsZero = false;
-                SignificandPrecision = Arithmetic.SignificandPrecision;
-                ExponentPrecision = Arithmetic.ExponentPrecision;
-                Rounding = Arithmetic.Rounding;
-                IsSignificandNegative = false;
-                IsExponentNegative = false;
+
+                IntegerField = Partition.IntegerField;
+                FractionalField = Partition.FractionalField;
+                ExponentField = Partition.ExponentField;
             }
             else
             {
@@ -82,6 +79,10 @@
                 Rounding = Arithmetic.Rounding;
                 IsSignificandNegative = false;
                 IsExponentNegative = false;
+
+                IntegerField = null;
+                FractionalField = null;
+                ExponentField = null;
             }
         }
 
@@ -89,18 +90,13 @@
         /// Initializes a new instance of the <see cref="Number"/> struct.
         /// This contructor creates the number from parsed parts.
         /// </summary>
-        /// <param name="significandSign">The optional sign of the significand.</param>
-        /// <param name="integerPart">The integer part in front of the separator (if any).</param>
-        /// <param name="separator">The optional separator.</param>
-        /// <param name="fractionalPart">The fractional part after the separator (if any).</param>
-        /// <param name="exponentCharacter">The optional exponent character.</param>
-        /// <param name="exponentSign">The optional exponent sign.</param>
-        /// <param name="exponentPart">The exponent part (if any).</param>
-        internal Number(OptionalSign significandSign, string integerPart, OptionalSeparator separator, string fractionalPart, OptionalExponent exponentCharacter, OptionalSign exponentSign, string exponentPart)
+        /// <param name="partition">The parsed parts.</param>
+        internal Number(TextPartition partition)
         {
-            Debug.Assert(integerPart.Length > 0 || fractionalPart.Length > 0);
-            Debug.Assert(exponentSign == OptionalSign.None || exponentCharacter != OptionalExponent.None);
-            Debug.Assert(exponentPart.Length == 0 || exponentCharacter != OptionalExponent.None);
+            Debug.Assert(partition != null);
+            Debug.Assert(partition.IntegerPart.Length > 0 || partition.FractionalPart.Length > 0);
+            Debug.Assert(partition.ExponentSign == OptionalSign.None || partition.ExponentCharacter != OptionalExponent.None);
+            Debug.Assert(partition.ExponentPart.Length == 0 || partition.ExponentCharacter != OptionalExponent.None);
 
             IsNaN = false;
             IsPositiveInfinity = false;
@@ -111,18 +107,19 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = partition.IntegerField;
+            FractionalField = partition.FractionalField;
+            ExponentField = partition.ExponentField;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Number"/> struct.
-        /// This contructor creates the number from parsed parts.
+        /// This contructor creates the number from a parsed integer.
         /// </summary>
-        /// <param name="radix">The radix (if not 10).</param>
-        /// <param name="integerPart">The integer part in front of the separator (if any).</param>
-        internal Number(int radix, string integerPart)
+        /// <param name="integerField">The integer data field.</param>
+        internal Number(BitField integerField)
         {
-            Debug.Assert(integerPart.Length > 0);
-
             IsNaN = false;
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
@@ -132,6 +129,10 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = integerField;
+            FractionalField = null;
+            ExponentField = null;
         }
 
         /// <summary>
@@ -150,6 +151,10 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
         }
 
         /// <summary>
@@ -168,6 +173,10 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
         }
 
         /// <summary>
@@ -186,6 +195,10 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
         }
 
         /// <summary>
@@ -204,6 +217,10 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
         }
 
         /// <summary>
@@ -222,6 +239,10 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
         }
 
         /// <summary>
@@ -240,6 +261,10 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
         }
 
         /// <summary>
@@ -258,6 +283,10 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
         }
 
         /// <summary>
@@ -279,6 +308,10 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
         }
         #endregion
 
@@ -342,6 +375,21 @@
         /// True if the number is an integer.
         /// </summary>
         public bool IsInteger { get { return false; } }
+
+        /// <summary>
+        /// The binary data corresponding to the integer part.
+        /// </summary>
+        internal BitField IntegerField { get; }
+
+        /// <summary>
+        /// The binary data corresponding to the fractional part.
+        /// </summary>
+        internal BitField FractionalField { get; }
+
+        /// <summary>
+        /// The binary data corresponding to the exponent part.
+        /// </summary>
+        internal BitField ExponentField { get; }
         #endregion
 
         #region Basic Operations
@@ -378,7 +426,16 @@
         /// <returns>The default text representation of the number.</returns>
         public override string ToString()
         {
-            return string.Empty;
+            if (IsNaN)
+                return double.NaN.ToString();
+            else if (IsPositiveInfinity)
+                return double.PositiveInfinity.ToString();
+            else if (IsNegativeInfinity)
+                return double.NegativeInfinity.ToString();
+            else
+            {
+                return string.Empty;
+            }
         }
         #endregion
     }
