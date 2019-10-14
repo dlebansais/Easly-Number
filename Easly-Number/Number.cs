@@ -39,41 +39,15 @@
         /// <exception cref="ArgumentException">The text is not a valid number.</exception>
         public Number(string text)
         {
-            Parse(text, out TextPartition Partition, out Number SpecialNumber);
+            if (!Parse(text, out TextPartition Partition, out Number SpecialNumber))
+                throw new ArgumentException();
 
             if (Partition == null)
-                throw new ArgumentException();
-
-            if (Partition.DiscardedProlog.Length > 0)
-                throw new ArgumentException();
-
-            if (Partition.InvalidPart.Length > 0)
-                throw new ArgumentException();
-
-            int Radix = Partition.Radix;
-
-            if (Radix == DecimalRadix || Radix == BinaryRadix || Radix == OctalRadix || Radix == HexadecimalRadix)
-            {
-                IsNaN = false;
-                IsPositiveInfinity = false;
-                IsNegativeInfinity = false;
-                IsZero = false;
-                SignificandPrecision = Arithmetic.SignificandPrecision;
-                ExponentPrecision = Arithmetic.ExponentPrecision;
-                Rounding = Arithmetic.Rounding;
-                IsSignificandNegative = false;
-                IsExponentNegative = false;
-
-                IntegerField = Partition.IntegerField;
-                FractionalField = Partition.FractionalField;
-                ExponentField = Partition.ExponentField;
-            }
-            else
             {
                 IsNaN = SpecialNumber.IsNaN;
                 IsPositiveInfinity = SpecialNumber.IsPositiveInfinity;
                 IsNegativeInfinity = SpecialNumber.IsNegativeInfinity;
-                IsZero = SpecialNumber.IsZero;
+                IsZero = false;
                 SignificandPrecision = Arithmetic.SignificandPrecision;
                 ExponentPrecision = Arithmetic.ExponentPrecision;
                 Rounding = Arithmetic.Rounding;
@@ -84,55 +58,56 @@
                 FractionalField = null;
                 ExponentField = null;
             }
-        }
+            else
+            {
+                if (Partition.DiscardedProlog.Length > 0)
+                    throw new ArgumentException();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Number"/> struct.
-        /// This contructor creates the number from parsed parts.
-        /// </summary>
-        /// <param name="partition">The parsed parts.</param>
-        internal Number(TextPartition partition)
-        {
-            Debug.Assert(partition != null);
-            Debug.Assert(partition.IntegerPart.Length > 0 || partition.FractionalPart.Length > 0);
-            Debug.Assert(partition.ExponentSign == OptionalSign.None || partition.ExponentCharacter != OptionalExponent.None);
-            Debug.Assert(partition.ExponentPart.Length == 0 || partition.ExponentCharacter != OptionalExponent.None);
+                if (Partition.InvalidPart.Length > 0)
+                    throw new ArgumentException();
 
-            IsNaN = false;
-            IsPositiveInfinity = false;
-            IsNegativeInfinity = false;
-            IsZero = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
-            Rounding = Arithmetic.Rounding;
-            IsSignificandNegative = false;
-            IsExponentNegative = false;
+                IsNaN = false;
+                IsPositiveInfinity = false;
+                IsNegativeInfinity = false;
+                IsZero = false;
+                SignificandPrecision = Arithmetic.SignificandPrecision;
+                ExponentPrecision = Arithmetic.ExponentPrecision;
+                Rounding = Arithmetic.Rounding;
+                IsSignificandNegative = false;
+                IsExponentNegative = false;
 
-            IntegerField = partition.IntegerField;
-            FractionalField = partition.FractionalField;
-            ExponentField = partition.ExponentField;
+                Partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField InitIntegerField, out BitField InitFractionalField, out BitField InitExponentField);
+
+                IntegerField = InitIntegerField;
+                FractionalField = InitFractionalField;
+                ExponentField = InitExponentField;
+            }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Number"/> struct.
         /// This contructor creates the number from a parsed integer.
         /// </summary>
+        /// <param name="significandPrecision">The precision used to obtain the integer and fractional data fields.</param>
+        /// <param name="exponentPrecision">The precision used to obtain the exponent data fields.</param>
         /// <param name="integerField">The integer data field.</param>
-        internal Number(BitField integerField)
+        /// <param name="fractionalField">The fractional data field.</param>
+        /// <param name="exponentField">The exponent data field.</param>
+        internal Number(long significandPrecision, long exponentPrecision, BitField integerField, BitField fractionalField, BitField exponentField)
         {
             IsNaN = false;
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
             IsZero = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
+            SignificandPrecision = significandPrecision;
+            ExponentPrecision = exponentPrecision;
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
 
             IntegerField = integerField;
-            FractionalField = null;
-            ExponentField = null;
+            FractionalField = fractionalField;
+            ExponentField = exponentField;
         }
 
         /// <summary>

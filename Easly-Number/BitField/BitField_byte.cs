@@ -6,13 +6,11 @@
     {
         public BitField_byte()
         {
-            Content = null;
+            Content = new byte[0];
             SignificantBits = 0;
-            FractionalBits = 0;
         }
 
-        public ulong SignificantBits { get; private set; }
-        public ulong FractionalBits { get; private set; }
+        public long SignificantBits { get; set; }
 
         public void SetZero()
         {
@@ -23,15 +21,12 @@
         {
             Content = new byte[sizeof(long) / sizeof(byte)];
             Content[0] = (byte)digitValue;
-
-            SignificantBits = sizeof(sbyte);
-            FractionalBits = 0;
         }
 
         public void MultiplyBy10AndAdd(int addValue)
         {
             long Carry = 0;
-            long LastElementIndex = (long)(SignificantBits / sizeof(byte));
+            long LastElementIndex = SignificantBits / sizeof(byte);
 
             for (long i = 0; i + 1 < LastElementIndex; i++)
             {
@@ -47,15 +42,13 @@
             {
                 Array.Resize(ref Content, Content.Length + 1);
                 Content[LastElementIndex] = (byte)Carry;
-
-                SignificantBits += 4;
             }
         }
 
         public void ShiftLeftAndAdd(int shiftValue, int addValue)
         {
             long Carry = 0;
-            long LastElementIndex = (long)(SignificantBits / sizeof(byte));
+            long LastElementIndex = SignificantBits / sizeof(byte);
 
             for (long i = 0; i + 1 < LastElementIndex; i++)
             {
@@ -71,8 +64,32 @@
             {
                 Array.Resize(ref Content, Content.Length + 1);
                 Content[LastElementIndex] = (byte)Carry;
+            }
+        }
 
-                SignificantBits += 4;
+        public void ShiftRight(int shiftValue)
+        {
+        }
+
+        public void SetBit(long index, bool value)
+        {
+            long ElementIndex = (long)(index / (sizeof(byte) * 8));
+            int ElementBitIndex = (int)(index & byte.MaxValue);
+
+            if (index >= SignificantBits)
+            {
+                if (ElementIndex >= Content.Length)
+                {
+                    Array.Resize(ref Content, (int)(ElementIndex + 1));
+                }
+
+                SignificantBits = index + 1;
+            }
+
+            if (value)
+            {
+                byte Mask = (byte)(1UL << ElementBitIndex);
+                Content[ElementIndex] |= Mask;
             }
         }
 

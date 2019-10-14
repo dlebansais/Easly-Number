@@ -59,9 +59,6 @@
                     {
                         SignificandSign = c == '-' ? OptionalSign.Negative : OptionalSign.Positive;
                         FirstIntegerPartIndex = index + 1;
-                        IntegerField.SetZero();
-                        FractionalField.SetZero();
-                        ExponentField.SetZero();
                         State = ParsingState.IntegerPart;
                     }
                     else if (Number.IsValidDecimalDigit(c, out DigitValue))
@@ -69,26 +66,17 @@
                         if (DigitValue == 0)
                         {
                             LastLeadingZeroIndex = index;
-                            IntegerField.SetZero();
-                            FractionalField.SetZero();
-                            ExponentField.SetZero();
                             State = ParsingState.LeadingZeroes;
                         }
                         else
                         {
                             FirstIntegerPartIndex = index;
-                            IntegerField.SetFromDigit(DigitValue);
-                            FractionalField.SetZero();
-                            ExponentField.SetZero();
                             State = ParsingState.IntegerPart;
                         }
                     }
                     else if (c == '.' || c == CultureDecimalSeparator)
                     {
                         DecimalSeparatorIndex = index;
-                        IntegerField.SetZero();
-                        FractionalField.SetZero();
-                        ExponentField.SetZero();
                         State = ParsingState.FractionalPart;
                     }
                     else
@@ -108,7 +96,6 @@
                         else
                         {
                             FirstIntegerPartIndex = index;
-                            IntegerField.SetFromDigit(DigitValue);
                             State = ParsingState.IntegerPart;
                         }
                     }
@@ -146,7 +133,6 @@
                 case ParsingState.IntegerPart:
                     if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
-                        IntegerField.MultiplyBy10AndAdd(DigitValue);
                     }
                     else if (index == FirstIntegerPartIndex)
                     {
@@ -184,7 +170,6 @@
                 case ParsingState.FractionalPart:
                     if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
-                        FractionalField.MultiplyBy10AndAdd(DigitValue);
                     }
                     else if (c == 'E' || c == 'e')
                     {
@@ -206,7 +191,6 @@
                 case ParsingState.ExponentPart:
                     if (Number.IsValidDecimalDigit(c, out DigitValue))
                     {
-                        ExponentField.MultiplyBy10AndAdd(DigitValue);
                         LastExponentPartIndex = index + 1;
                     }
                     else if (c == '-' || c == '+')
@@ -239,6 +223,75 @@
                     LastFractionalPartIndex = Text.Length;
                 else if (FirstExponentPartIndex >= 0 && LastExponentPartIndex < 0)
                     LastExponentPartIndex = Text.Length;
+            }
+        }
+
+        public override void ConvertToBitField(long significandPrecision, long exponentPrecision, out BitField integerField, out BitField fractionalField, out BitField exponentField)
+        {
+            long BitIndex;
+
+            string IntegerString = Text.Substring(FirstIntegerPartIndex, LastIntegerPartIndex - FirstIntegerPartIndex);
+            integerField = new BitField();
+            BitIndex = 0;
+
+            do
+            {
+                if (BitIndex >= significandPrecision)
+                {
+                    integerField.ShiftRight(1);
+                    BitIndex--;
+                }
+
+                IntegerString = DividedByTwo(IntegerString, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
+                integerField.SetBit(BitIndex++, HasCarry);
+            }
+            while (IntegerString != "0");
+
+            long IntegerBitIndex = integerField.SignificantBits;
+
+            fractionalField = new BitField();
+
+            if (HasFractionalPart)
+            {
+                string FractionalString = Text.Substring(FirstFractionalPartIndex, LastFractionalPartIndex - FirstFractionalPartIndex);
+                BitIndex = 0;
+                int StartingLength = FractionalString.Length;
+
+                do
+                {
+                    if (IntegerBitIndex + BitIndex >= significandPrecision)
+                        break;
+
+                    FractionalString = MultipliedByTwo(FractionalString, Number.IsValidDecimalDigit, Number.ToDecimalDigit, false);
+
+                    bool HasCarry = FractionalString.Length > StartingLength;
+                    fractionalField.SetBit(BitIndex++, HasCarry);
+
+                    if (HasCarry)
+                        FractionalString = FractionalString.Substring(1);
+                }
+                while (FractionalString != "0");
+            }
+
+            exponentField = new BitField();
+
+            if (HasExponentPart)
+            {
+                string ExponentString = Text.Substring(FirstExponentPartIndex, LastExponentPartIndex - FirstExponentPartIndex);
+                BitIndex = 0;
+
+                do
+                {
+                    if (BitIndex >= exponentPrecision)
+                    {
+                        exponentField.ShiftRight(1);
+                        BitIndex--;
+                    }
+
+                    ExponentString = DividedByTwo(ExponentString, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
+                    exponentField.SetBit(BitIndex++, HasCarry);
+                }
+                while (ExponentString != "0");
             }
         }
     }

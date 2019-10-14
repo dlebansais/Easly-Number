@@ -85,6 +85,11 @@
         public int LastFractionalPartIndex { get; set; } = -1;
 
         /// <summary>
+        /// True if the partition includes a fractional part.
+        /// </summary>
+        public bool HasFractionalPart { get { return FirstFractionalPartIndex >= 0 && FirstFractionalPartIndex < LastFractionalPartIndex; } }
+
+        /// <summary>
         /// The fractional part after the decimal separator (if any).
         /// </summary>
         public string FractionalPart { get { return FirstFractionalPartIndex < 0 ? string.Empty : Text.Substring(FirstFractionalPartIndex, LastFractionalPartIndex - FirstFractionalPartIndex); } }
@@ -120,6 +125,11 @@
         public int LastExponentPartIndex { get; set; } = -1;
 
         /// <summary>
+        /// True if the partition includes a fractional part.
+        /// </summary>
+        public bool HasExponentPart { get { return FirstExponentPartIndex >= 0 && FirstExponentPartIndex < LastExponentPartIndex; } }
+
+        /// <summary>
         /// The exponent part (if any) after the exponent character and optional sign.
         /// </summary>
         public string ExponentPart { get { return FirstExponentPartIndex < 0 ? string.Empty : Text.Substring(FirstExponentPartIndex, LastExponentPartIndex - FirstExponentPartIndex); } }
@@ -140,21 +150,6 @@
         public string InvalidPart { get { return FirstInvalidCharacterIndex < 0 ? string.Empty : Text.Substring(FirstInvalidCharacterIndex); } }
 
         /// <summary>
-        /// The binary data corresponding to the integer part.
-        /// </summary>
-        public BitField IntegerField { get; private set; } = new BitField();
-
-        /// <summary>
-        /// The binary data corresponding to the fractional part.
-        /// </summary>
-        public BitField FractionalField { get; private set; } = new BitField();
-
-        /// <summary>
-        /// The binary data corresponding to the exponent part.
-        /// </summary>
-        public BitField ExponentField { get; private set; } = new BitField();
-
-        /// <summary>
         /// The parser current state.
         /// </summary>
         protected ParsingState State { get; set; } = ParsingState.Init;
@@ -170,6 +165,8 @@
         /// <param name="index">The position of the character to parse in <see cref="Text"/>.</param>
         public abstract void Parse(int index);
 
+        public abstract void ConvertToBitField(long significandPrecision, long exponentPrecision, out BitField integerField, out BitField fractionalField, out BitField exponentField);
+
         /// <summary>
         /// Gets the decimal separator character for the current culture.
         /// </summary>
@@ -179,6 +176,87 @@
 
             Debug.Assert(CurrentCultureSeparator.Length == 1);
             CultureDecimalSeparator = CurrentCultureSeparator[0];
+        }
+
+        /// <summary>
+        /// Delegate type of a method that validates a digit.
+        /// </summary>
+        /// <param name="digit">The digit to validate.</param>
+        /// <param name="value">The digit value, if valid.</param>
+        /// <returns>True if valid; Otherwise, false.</returns>
+        public delegate bool IsValidDigitHandler(char digit, out int value);
+
+        /// <summary>
+        /// Delegate type of a method that validates a digit.
+        /// </summary>
+        /// <param name="value">The value to turn convert to a digit.</param>
+        /// <returns>The digit corresponding to <paramref name="value"/>.</returns>
+        public delegate char ToDigitHandler(int value);
+
+        /// <summary>
+        /// Returns the input number divided by two.
+        /// </summary>
+        /// <param name="text">The number to divide.</param>
+        /// <param name="validityHandler">The handler to use to validate digits.</param>
+        /// <param name="digitHandler">The handler to use to convert to digits.</param>
+        /// <param name="hasCarry">True upon return if <paramref name="text"/> is odd.</param>
+        protected string DividedByTwo(string text, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, out bool hasCarry)
+        {
+            string Result = string.Empty;
+            int Carry = 0;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                bool IsValid = validityHandler(text[i], out int Value);
+                Debug.Assert(IsValid);
+
+                Value += Carry;
+                char Digit = digitHandler(Value / 2);
+
+                if (Digit != '0' || i > 0 || text.Length == 1)
+                    Result += Digit;
+
+                Carry = Value % 2 != 0 ? Radix : 0;
+            }
+
+            hasCarry = Carry != 0;
+
+            return Result;
+        }
+
+        /// <summary>
+        /// Returns the input number multiplied by two, with an optional carry to add.
+        /// </summary>
+        /// <param name="text">The number to multiply.</param>
+        /// <param name="validityHandler">The handler to use to validate digits.</param>
+        /// <param name="digitHandler">The handler to use to convert to digits.</param>
+        /// <param name="addCarry">True if a carry should be added.</param>
+        protected string MultipliedByTwo(string text, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, bool addCarry)
+        {
+            string Result = string.Empty;
+            int Carry = addCarry ? 1 : 0;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                bool IsValid = validityHandler(text[text.Length - 1 - i], out int Value);
+                Debug.Assert(IsValid);
+
+                Value = (Value * 2) + Carry;
+                if (Value >= Radix)
+                {
+                    Value -= Radix;
+                    Carry = 1;
+                }
+                else
+                    Carry = 0;
+
+                Result = digitHandler(Value) + Result;
+            }
+
+            if (Carry > 0)
+                Result = digitHandler(Carry) + Result;
+
+            return Result;
         }
     }
 }

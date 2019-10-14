@@ -14,62 +14,51 @@
         /// <param name="text">The number in plain text.</param>
         public FormattedNumber(string text)
         {
-            Number.Parse(text, out TextPartition Partition, out Number SpecialNumber);
+            DiscardedProlog = string.Empty;
+            Value = Number.NaN;
+            BeforeExponent = string.Empty;
+            Exponent = string.Empty;
+            InvalidPart = string.Empty;
 
-            DiscardedProlog = Partition != null ? Partition.DiscardedProlog : string.Empty;
-
-            string BeforeExponentText;
-            string ExponentText;
-
-            if (Partition != null)
+            if (Number.Parse(text, out TextPartition Partition, out Number SpecialNumber))
             {
-                int Radix = Partition.Radix;
-
-                if (Radix == Number.DecimalRadix)
-                {
-                    Value = new Number(Partition);
-                    Debug.Assert(!Value.IsNaN);
-
-                    GetFormattedTextForReal(Partition, out BeforeExponentText, out ExponentText);
-
-                    if (Value.IsInteger)
-                    {
-                        GetFormattedTextForInteger(Partition, out string BeforeExponentTextInteger, out string ExponentTextInteger);
-
-                        Debug.Assert(Partition.Separator == OptionalSeparator.None && Partition.ExponentCharacter == OptionalExponent.None);
-                        Debug.Assert(BeforeExponentTextInteger == BeforeExponentText);
-                        Debug.Assert(ExponentTextInteger == ExponentText);
-                    }
-                }
+                if (Partition != null)
+                    CreateFromPartition(Partition);
                 else
-                {
-                    Debug.Assert(Radix == Number.BinaryRadix || Radix == Number.OctalRadix || Radix == Number.HexadecimalRadix);
+                    Value = SpecialNumber;
+            }
+            else
+                InvalidPart = text;
+        }
 
-                    Value = new Number(Partition.IntegerField);
-                    Debug.Assert(!Value.IsNaN);
+        private void CreateFromPartition(TextPartition partition)
+        {
+            DiscardedProlog = partition.DiscardedProlog;
+            InvalidPart = partition.InvalidPart;
 
-                    GetFormattedTextForInteger(Partition, out BeforeExponentText, out ExponentText);
-                }
+            long SignificandPrecision = Arithmetic.SignificandPrecision;
+            long ExponentPrecision = Arithmetic.ExponentPrecision;
+            partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField IntegerField, out BitField FractionalField, out BitField ExponentField);
+
+            Value = new Number(SignificandPrecision, ExponentPrecision, IntegerField, FractionalField, ExponentField);
+            Debug.Assert(!Value.IsNaN);
+
+            if (partition.HasFractionalPart)
+            {
+                Debug.Assert(partition.Radix == Number.DecimalRadix);
+
+                GetFormattedTextForReal(partition, out string BeforeExponentText, out string ExponentText);
+
+                BeforeExponent = BeforeExponentText;
+                Exponent = ExponentText;
             }
             else
             {
-                Value = SpecialNumber;
-                BeforeExponentText = string.Empty;
-                ExponentText = string.Empty;
+                GetFormattedTextForInteger(partition, out string BeforeExponentText, out string ExponentText);
+
+                BeforeExponent = BeforeExponentText;
+                Exponent = ExponentText;
             }
-
-            BeforeExponent = BeforeExponentText;
-            Exponent = ExponentText;
-
-            InvalidPart = Partition != null ? Partition.InvalidPart : text;
-        }
-
-        private static void GetFormattedTextForInteger(TextPartition partition, out string beforeExponentText, out string exponentText)
-        {
-            string RadixText = Number.RadixPrefixText(partition.Radix);
-
-            beforeExponentText = $"{RadixText}{partition.IntegerPart}";
-            exponentText = string.Empty;
         }
 
         private static void GetFormattedTextForReal(TextPartition partition, out string beforeExponentText, out string exponentText)
@@ -81,6 +70,14 @@
 
             string ExponentSignText = Number.SignText(partition.ExponentSign);
             exponentText = $"{ExponentSignText}{partition.ExponentPart}";
+        }
+
+        private static void GetFormattedTextForInteger(TextPartition partition, out string beforeExponentText, out string exponentText)
+        {
+            string RadixText = Number.RadixPrefixText(partition.Radix);
+
+            beforeExponentText = $"{RadixText}{partition.IntegerPart}";
+            exponentText = string.Empty;
         }
         #endregion
 

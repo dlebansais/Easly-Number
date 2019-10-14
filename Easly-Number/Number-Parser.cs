@@ -52,10 +52,14 @@
         {
             value = NaN;
 
-            Parse(text, out TextPartition Partition, out Number SpecialNumber);
+            if (!Parse(text, out TextPartition Partition, out Number SpecialNumber))
+                return false;
 
             if (Partition == null)
-                return false;
+            {
+                value = SpecialNumber;
+                return true;
+            }
 
             if (Partition.DiscardedProlog.Length > 0)
                 return false;
@@ -63,14 +67,10 @@
             if (Partition.InvalidPart.Length > 0)
                 return false;
 
-            int Radix = Partition.Radix;
-
-            if (Radix == DecimalRadix)
-                value = new Number(Partition);
-            else if (Radix == BinaryRadix || Radix == OctalRadix || Radix == HexadecimalRadix)
-                value = new Number(Partition.IntegerField);
-            else
-                value = SpecialNumber;
+            long SignificandPrecision = Arithmetic.SignificandPrecision;
+            long ExponentPrecision = Arithmetic.ExponentPrecision;
+            Partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField IntegerField, out BitField FractionalField, out BitField ExponentField);
+            value = new Number(SignificandPrecision, ExponentPrecision, IntegerField, FractionalField, ExponentField);
 
             return true;
         }
@@ -83,14 +83,14 @@
         /// <param name="text">The string to parse.</param>
         /// <param name="partition">The text partition of <paramref name="text"/> if parsed successfully.</param>
         /// <param name="specialNumber">The special number if NaN or infinity.</param>
-        internal static void Parse(string text, out TextPartition partition, out Number specialNumber)
+        internal static bool Parse(string text, out TextPartition partition, out Number specialNumber)
         {
             partition = null;
             specialNumber = NaN;
 
-            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, UpdateFieldWithBinary);
-            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, IsValidOctalDigit, UpdateFieldWithOctal);
-            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, UpdateFieldWithHexadecimal);
+            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
+            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
+            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
             TextPartition RealPartition = new RealTextPartition(text);
 
             for (int Index = 0; Index < text.Length && (RealPartition.IsValid || BinaryIntegerPartition.IsValid || OctalIntegerPartition.IsValid || HexadecimalIntegerPartition.IsValid); Index++)
@@ -117,7 +117,23 @@
                 Debug.Assert(integerPart.Length > 0 || fractionalPart.Length > 0);
                 Debug.Assert(exponentSign == OptionalSign.None || exponentCharacter != OptionalExponent.None);
                 Debug.Assert(exponentPart.Length == 0 || exponentCharacter != OptionalExponent.None);
+
+                return true;
             }
+            else if (text == double.PositiveInfinity.ToString())
+            {
+                specialNumber = PositiveInfinity;
+                return true;
+            }
+            else if (text == double.NegativeInfinity.ToString())
+            {
+                specialNumber = NegativeInfinity;
+                return true;
+            }
+            else if (text == double.NaN.ToString())
+                return true;
+            else
+                return false;
         }
 
         private static void UpdatePreferredPartition(ref TextPartition preferredPartition, ref TextPartition candidatePartition)
@@ -188,7 +204,7 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidBinaryNumber(string text)
         {
-            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, UpdateFieldWithBinary);
+            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
 
             for (int Index = 0; Index < text.Length; Index++)
                 BinaryIntegerPartition.Parse(Index);
@@ -247,7 +263,7 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidOctalNumber(string text)
         {
-            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, IsValidOctalDigit, UpdateFieldWithOctal);
+            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
 
             for (int Index = 0; Index < text.Length; Index++)
                 OctalIntegerPartition.Parse(Index);
@@ -340,6 +356,17 @@
         }
 
         /// <summary>
+        /// Gets the hexadecimal digit of a value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The digit.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Parameter <paramref name="value"/> is not in the valid range for the hexadecimal digit.</exception>
+        public static char ToUpperCaseHexadecimalDigit(int value)
+        {
+            return ToHexadecimalDigit(value, false);
+        }
+
+        /// <summary>
         /// Updates a data field with an hexadecimal digit.
         /// </summary>
         /// <param name="field">The data field to update.</param>
@@ -356,7 +383,7 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidHexadecimalNumber(string text)
         {
-            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, UpdateFieldWithHexadecimal);
+            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
 
             for (int Index = 0; Index < text.Length; Index++)
                 HexadecimalIntegerPartition.Parse(Index);

@@ -1,5 +1,7 @@
 ﻿namespace EaslyNumber
 {
+    using System.Diagnostics;
+
     /// <summary>
     /// The partition of a string into different components of an integer number.
     /// </summary>
@@ -12,13 +14,15 @@
         /// <param name="radix">The radix to use.</param>
         /// <param name="radixPrefixCharacter">The prefix character to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
+        /// <param name="digitHandler">The handler to use to convert to digits.</param>
         /// <param name="fieldHandler">The handler used to update the data field.</param>
-        public CustomRadixIntegerTextPartition(string text, int radix, char radixPrefixCharacter, IsValidDigitHandler validityHandler, UpdateFieldHandler fieldHandler)
+        public CustomRadixIntegerTextPartition(string text, int radix, char radixPrefixCharacter, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, UpdateFieldHandler fieldHandler)
             : base(text, radix)
         {
             HasRadixPrefixCharacter = true;
             RadixPrefixCharacter = radixPrefixCharacter;
             ValidityHandler = validityHandler;
+            DigitHandler = digitHandler;
             FieldHandler = fieldHandler;
         }
 
@@ -28,12 +32,14 @@
         /// <param name="text">The string to parse.</param>
         /// <param name="radix">The radix to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
+        /// <param name="digitHandler">The handler to use to convert to digits.</param>
         /// <param name="fieldHandler">The handler used to update the data field.</param>
-        public CustomRadixIntegerTextPartition(string text, int radix, IsValidDigitHandler validityHandler, UpdateFieldHandler fieldHandler)
+        public CustomRadixIntegerTextPartition(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, UpdateFieldHandler fieldHandler)
             : base(text, radix)
         {
             HasRadixPrefixCharacter = false;
             ValidityHandler = validityHandler;
+            DigitHandler = digitHandler;
             FieldHandler = fieldHandler;
         }
 
@@ -61,8 +67,6 @@
                     }
                     else if (c == '0')
                     {
-                        IntegerField.SetZero();
-
                         if (index + 1 == Text.Length || !HasRadixPrefixCharacter)
                             State = ParsingState.IntegerPart;
                         else
@@ -83,7 +87,6 @@
                     if (c == RadixPrefixCharacter && index + 1 < Text.Length)
                     {
                         FirstIntegerPartIndex = index + 1;
-                        IntegerField.SetZero();
                         State = ParsingState.IntegerPart;
                     }
                     else
@@ -96,7 +99,6 @@
                 case ParsingState.IntegerPart:
                     if (ValidityHandler(c, out int DigitValue))
                     {
-                        FieldHandler(IntegerField, DigitValue);
                     }
                     else
                     {
@@ -127,17 +129,14 @@
         public override OptionalSeparator Separator { get { return OptionalSeparator.None; } }
 
         /// <summary>
-        /// Delegate type of a method that validates a digit.
-        /// </summary>
-        /// <param name="digit">The digit to validate.</param>
-        /// <param name="value">The digit value, if valid.</param>
-        /// <returns>True if valid; Otherwise, false.</returns>
-        public delegate bool IsValidDigitHandler(char digit, out int value);
-
-        /// <summary>
         /// The handler used to validate digits.
         /// </summary>
         public IsValidDigitHandler ValidityHandler { get; }
+
+        /// <summary>
+        /// The handler to use to convert to digits.
+        /// </summary>
+        public ToDigitHandler DigitHandler { get; }
 
         /// <summary>
         /// Delegate type of a method that update the data field with a digit.
@@ -150,5 +149,32 @@
         /// The handler used to update the data field.
         /// </summary>
         public UpdateFieldHandler FieldHandler { get; }
+
+        public override void ConvertToBitField(long significandPrecision, long exponentPrecision, out BitField integerField, out BitField fractionalField, out BitField exponentField)
+        {
+            long BitIndex;
+
+            string IntegerString = Text.Substring(FirstIntegerPartIndex, LastIntegerPartIndex - FirstIntegerPartIndex);
+            integerField = new BitField();
+            BitIndex = 0;
+
+            do
+            {
+                if (BitIndex >= significandPrecision)
+                {
+                    integerField.ShiftRight(1);
+                    BitIndex--;
+                }
+
+                IntegerString = DividedByTwo(IntegerString, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
+                integerField.SetBit(BitIndex++, HasCarry);
+            }
+            while (IntegerString != "0");
+
+            fractionalField = new BitField();
+
+            exponentField = new BitField();
+            exponentField.SetBit(0, false);
+        }
     }
 }
