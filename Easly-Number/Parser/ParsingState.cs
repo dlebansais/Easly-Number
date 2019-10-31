@@ -41,6 +41,11 @@
         ExponentPart,
 
         /// <summary>
+        /// Parsing the suffix part at the end.
+        /// </summary>
+        SuffixPart,
+
+        /// <summary>
         /// Parsing the invalid part at the end.
         /// </summary>
         InvalidPart,

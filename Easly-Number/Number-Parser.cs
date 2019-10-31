@@ -36,9 +36,24 @@
         public const char BinaryPrefixCharacter = 'b';
 
         /// <summary>
+        /// The suffix character for binary integer string format.
+        /// </summary>
+        public const char BinarySuffixCharacter = 'B';
+
+        /// <summary>
+        /// The suffix character for octal integer string format.
+        /// </summary>
+        public const char OctalSuffixCharacter = 'O';
+
+        /// <summary>
         /// The prefix character for hexadecimal integer string format.
         /// </summary>
         public const char HexadecimalPrefixCharacter = 'x';
+
+        /// <summary>
+        /// The suffix character for hexadecimal integer string format.
+        /// </summary>
+        public const char HexadecimalSuffixCharacter = 'H';
         #endregion
 
         #region Client Interface
@@ -86,11 +101,43 @@
         internal static bool Parse(string text, out TextPartition partition, out Number specialNumber)
         {
             partition = null;
+
+            if (text == "0")
+            {
+                specialNumber = Zero;
+                return true;
+            }
+            else if (text.Length == 3 && text.Substring(0, 2) == "0:")
+            {
+                char Suffix = text[2];
+
+                if (Suffix == BinarySuffixCharacter || Suffix == OctalSuffixCharacter || Suffix == HexadecimalSuffixCharacter)
+                {
+                    specialNumber = Zero;
+                    return true;
+                }
+            }
+            else if (text == double.NaN.ToString())
+            {
+                specialNumber = NaN;
+                return true;
+            }
+            else if (text == double.PositiveInfinity.ToString())
+            {
+                specialNumber = PositiveInfinity;
+                return true;
+            }
+            else if (text == double.NegativeInfinity.ToString())
+            {
+                specialNumber = NegativeInfinity;
+                return true;
+            }
+
             specialNumber = NaN;
 
-            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
-            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
-            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
+            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, BinarySuffixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
+            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, OctalSuffixCharacter, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
+            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, HexadecimalSuffixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
             TextPartition RealPartition = new RealTextPartition(text);
 
             for (int Index = 0; Index < text.Length && (RealPartition.IsValid || BinaryIntegerPartition.IsValid || OctalIntegerPartition.IsValid || HexadecimalIntegerPartition.IsValid); Index++)
@@ -120,37 +167,19 @@
 
                 return true;
             }
-            else if (text == double.PositiveInfinity.ToString())
-            {
-                specialNumber = PositiveInfinity;
-                return true;
-            }
-            else if (text == double.NegativeInfinity.ToString())
-            {
-                specialNumber = NegativeInfinity;
-                return true;
-            }
-            else if (text == double.NaN.ToString())
-                return true;
-            else
-                return false;
+
+            return false;
         }
 
         private static void UpdatePreferredPartition(ref TextPartition preferredPartition, ref TextPartition candidatePartition)
         {
             if (preferredPartition == null)
             {
-                if (candidatePartition.Text.Length > 0 && candidatePartition.FirstInvalidCharacterIndex != 0)
+                if (candidatePartition.IsPartiallyValid)
                     preferredPartition = candidatePartition;
             }
-            else
-            {
-                int PreferredIndex = preferredPartition.FirstInvalidCharacterIndex < 0 ? preferredPartition.Text.Length : preferredPartition.FirstInvalidCharacterIndex;
-                int CandidateIndex = candidatePartition.FirstInvalidCharacterIndex < 0 ? candidatePartition.Text.Length : candidatePartition.FirstInvalidCharacterIndex;
-
-                if (PreferredIndex < CandidateIndex)
-                    preferredPartition = candidatePartition;
-            }
+            else if (preferredPartition.ComparisonIndex < candidatePartition.ComparisonIndex)
+                preferredPartition = candidatePartition;
         }
 
         /// <summary>
@@ -204,12 +233,12 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidBinaryNumber(string text)
         {
-            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
+            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, BinarySuffixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
 
             for (int Index = 0; Index < text.Length; Index++)
                 BinaryIntegerPartition.Parse(Index);
 
-            return BinaryIntegerPartition.FirstInvalidCharacterIndex < 0;
+            return BinaryIntegerPartition.IsValid;
         }
 
         /// <summary>
@@ -263,12 +292,12 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidOctalNumber(string text)
         {
-            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
+            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, OctalSuffixCharacter, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
 
             for (int Index = 0; Index < text.Length; Index++)
                 OctalIntegerPartition.Parse(Index);
 
-            return OctalIntegerPartition.FirstInvalidCharacterIndex < 0;
+            return OctalIntegerPartition.IsValid;
         }
 
         /// <summary>
@@ -346,7 +375,7 @@
         {
             if (value >= 0 && value < 10)
                 return (char)('0' + value);
-            else if (value > 10 && value < 16)
+            else if (value >= 10 && value < 16)
                 if (lowerCase)
                     return (char)('a' + value - 10);
                 else
@@ -383,12 +412,12 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidHexadecimalNumber(string text)
         {
-            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
+            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, HexadecimalSuffixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
 
             for (int Index = 0; Index < text.Length; Index++)
                 HexadecimalIntegerPartition.Parse(Index);
 
-            return HexadecimalIntegerPartition.FirstInvalidCharacterIndex < 0;
+            return HexadecimalIntegerPartition.IsValid;
         }
         #endregion
 
@@ -443,12 +472,34 @@
         {
             Debug.Assert(radix == BinaryRadix || radix == OctalRadix || radix == DecimalRadix || radix == HexadecimalRadix);
 
+            string Result = "0";
+
             if (radix == 2)
-                return "0b";
+                return Result + BinaryPrefixCharacter;
             else if (radix == 8)
-                return "0";
+                return Result;
             else if (radix == 16)
-                return "0x";
+                return Result + HexadecimalPrefixCharacter;
+            else
+                return string.Empty;
+        }
+
+        /// <summary>
+        /// Returns the text of the radix suffix.
+        /// </summary>
+        /// <param name="radix">The radix.</param>
+        internal static string RadixSuffixText(int radix)
+        {
+            Debug.Assert(radix == BinaryRadix || radix == OctalRadix || radix == DecimalRadix || radix == HexadecimalRadix);
+
+            string Result = ":";
+
+            if (radix == 2)
+                return Result + BinarySuffixCharacter;
+            else if (radix == 8)
+                return Result + OctalSuffixCharacter;
+            else if (radix == 16)
+                return Result + HexadecimalSuffixCharacter;
             else
                 return string.Empty;
         }

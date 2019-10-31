@@ -65,8 +65,16 @@
                     {
                         if (DigitValue == 0)
                         {
-                            LastLeadingZeroIndex = index;
-                            State = ParsingState.LeadingZeroes;
+                            if (index + 1 == Text.Length)
+                            {
+                                FirstIntegerPartIndex = index;
+                                State = ParsingState.IntegerPart;
+                            }
+                            else
+                            {
+                                LastLeadingZeroIndex = index;
+                                State = ParsingState.LeadingZeroes;
+                            }
                         }
                         else
                         {
@@ -226,6 +234,14 @@
             }
         }
 
+        /// <summary>
+        /// Index to use for partition comparison.
+        /// </summary>
+        public override int ComparisonIndex
+        {
+            get { return FirstInvalidCharacterIndex < 0 ? Text.Length : FirstInvalidCharacterIndex; }
+        }
+
         public override void ConvertToBitField(long significandPrecision, long exponentPrecision, out BitField integerField, out BitField fractionalField, out BitField exponentField)
         {
             long BitIndex;
@@ -242,7 +258,7 @@
                     BitIndex--;
                 }
 
-                IntegerString = DividedByTwo(IntegerString, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
+                IntegerString = DividedByTwo(IntegerString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
                 integerField.SetBit(BitIndex++, HasCarry);
             }
             while (IntegerString != "0");
@@ -256,19 +272,29 @@
                 string FractionalString = Text.Substring(FirstFractionalPartIndex, LastFractionalPartIndex - FirstFractionalPartIndex);
                 BitIndex = 0;
                 int StartingLength = FractionalString.Length;
+                bool DebugString = false; // FractionalString == "47856";
+
+                if (DebugString)
+                {
+                    Debug.Assert(false);
+                    Debug.WriteLine(FractionalString);
+                }
 
                 do
                 {
                     if (IntegerBitIndex + BitIndex >= significandPrecision)
                         break;
 
-                    FractionalString = MultipliedByTwo(FractionalString, Number.IsValidDecimalDigit, Number.ToDecimalDigit, false);
+                    FractionalString = MultipliedByTwo(FractionalString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, false);
 
                     bool HasCarry = FractionalString.Length > StartingLength;
                     fractionalField.SetBit(BitIndex++, HasCarry);
 
                     if (HasCarry)
                         FractionalString = FractionalString.Substring(1);
+
+                    if (DebugString)
+                        Debug.WriteLine((HasCarry ? "(1) " : "(0) ") + FractionalString);
                 }
                 while (FractionalString != "0");
             }
@@ -288,7 +314,7 @@
                         BitIndex--;
                     }
 
-                    ExponentString = DividedByTwo(ExponentString, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
+                    ExponentString = DividedByTwo(ExponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
                     exponentField.SetBit(BitIndex++, HasCarry);
                 }
                 while (ExponentString != "0");

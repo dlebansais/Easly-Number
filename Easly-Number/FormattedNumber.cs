@@ -17,6 +17,7 @@
             DiscardedProlog = string.Empty;
             Value = Number.NaN;
             BeforeExponent = string.Empty;
+            Suffix = string.Empty;
             Exponent = string.Empty;
             InvalidPart = string.Empty;
 
@@ -25,7 +26,17 @@
                 if (Partition != null)
                     CreateFromPartition(Partition);
                 else
+                {
                     Value = SpecialNumber;
+
+                    if (SpecialNumber.IsZero && text.Length >= 2 && text[text.Length - 2] == ':')
+                    {
+                        BeforeExponent = text.Substring(0, text.Length - 2);
+                        Suffix = text.Substring(text.Length - 2);
+                    }
+                    else
+                        BeforeExponent = text;
+                }
             }
             else
                 InvalidPart = text;
@@ -52,6 +63,11 @@
                 BeforeExponent = BeforeExponentText;
                 Exponent = ExponentText;
             }
+            else if (partition.HasRadixSuffix)
+            {
+                BeforeExponent = partition.IntegerPart;
+                Suffix = Number.RadixSuffixText(partition.Radix);
+            }
             else
             {
                 GetFormattedTextForInteger(partition, out string BeforeExponentText, out string ExponentText);
@@ -74,9 +90,9 @@
 
         private static void GetFormattedTextForInteger(TextPartition partition, out string beforeExponentText, out string exponentText)
         {
-            string RadixText = Number.RadixPrefixText(partition.Radix);
+            string RadixPrefixText = partition.HasRadixPrefix ? Number.RadixPrefixText(partition.Radix) : string.Empty;
 
-            beforeExponentText = $"{RadixText}{partition.IntegerPart}";
+            beforeExponentText = $"{RadixPrefixText}{partition.IntegerPart}";
             exponentText = string.Empty;
         }
         #endregion
@@ -103,6 +119,11 @@
         public string Exponent { get; private set; }
 
         /// <summary>
+        /// The suffix part after the number.
+        /// </summary>
+        public string Suffix { get; private set; }
+
+        /// <summary>
         /// The invalid part after the number.
         /// </summary>
         public string InvalidPart { get; private set; }
@@ -120,7 +141,7 @@
         /// <returns>The default text representation of the formatted number.</returns>
         public override string ToString()
         {
-            return $"{DiscardedProlog}{BeforeExponent}{Exponent}{InvalidPart}";
+            return $"{DiscardedProlog}{BeforeExponent}{Exponent}{Suffix}{InvalidPart}";
         }
         #endregion
     }

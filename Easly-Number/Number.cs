@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
 
     /// <summary>
     /// Describes and manipulates real numbers with arbitrary precision.
@@ -47,16 +48,15 @@
                 IsNaN = SpecialNumber.IsNaN;
                 IsPositiveInfinity = SpecialNumber.IsPositiveInfinity;
                 IsNegativeInfinity = SpecialNumber.IsNegativeInfinity;
-                IsZero = false;
-                SignificandPrecision = Arithmetic.SignificandPrecision;
-                ExponentPrecision = Arithmetic.ExponentPrecision;
-                Rounding = Arithmetic.Rounding;
-                IsSignificandNegative = false;
-                IsExponentNegative = false;
-
-                IntegerField = null;
-                FractionalField = null;
-                ExponentField = null;
+                IsZero = SpecialNumber.IsZero;
+                SignificandPrecision = SpecialNumber.SignificandPrecision;
+                ExponentPrecision = SpecialNumber.ExponentPrecision;
+                Rounding = SpecialNumber.Rounding;
+                IsSignificandNegative = SpecialNumber.IsSignificandNegative;
+                IsExponentNegative = SpecialNumber.IsExponentNegative;
+                IntegerField = SpecialNumber.IntegerField;
+                FractionalField = SpecialNumber.FractionalField;
+                ExponentField = SpecialNumber.ExponentField;
             }
             else
             {
@@ -278,9 +278,9 @@
             IsPositiveInfinity = isPositiveInfinity;
             IsNegativeInfinity = isNegativeInfinity;
             IsZero = !isNaN && !isPositiveInfinity && !isNegativeInfinity;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
-            Rounding = Arithmetic.Rounding;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
+            Rounding = Rounding.ToNearest;
             IsSignificandNegative = false;
             IsExponentNegative = false;
 
@@ -349,7 +349,7 @@
         /// <summary>
         /// True if the number is an integer.
         /// </summary>
-        public bool IsInteger { get { return false; } }
+        public bool IsInteger { get { return IsZero || FractionalField == null || FractionalField.SignificantBits == 0; } }
 
         /// <summary>
         /// The binary data corresponding to the integer part.
@@ -409,7 +409,51 @@
                 return double.NegativeInfinity.ToString();
             else
             {
-                return string.Empty;
+                long BitIndex;
+
+                string IntegerString = "0";
+                BitIndex = 1;
+
+                while (BitIndex <= IntegerField.SignificantBits)
+                {
+                    bool Carry = IntegerField.GetBit(IntegerField.SignificantBits - BitIndex);
+                    IntegerString = TextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
+                    BitIndex++;
+                }
+
+                string FractionalString;
+
+                if (!IsInteger)
+                {
+                    Debug.Assert(FractionalField != null && FractionalField.SignificantBits > 0);
+
+                    FractionalString = "500000000000";
+                    BitIndex = 1;
+
+                    while (BitIndex <= FractionalField.SignificantBits)
+                    {
+                        bool Carry = FractionalField.GetBit(FractionalField.SignificantBits - BitIndex);
+                        int OldLength = FractionalString.Length;
+
+                        if (Carry)
+                            FractionalString = "1" + FractionalString;
+
+                        FractionalString = TextPartition.DividedByTwo(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, out bool HasDivisionbCarry);
+
+                        if (FractionalString.Length < OldLength)
+                            FractionalString = "0" + FractionalString;
+
+                        BitIndex++;
+                    }
+
+                    FractionalString = TextPartition.RoundedToNearest(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, false);
+
+                    string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+
+                    return $"{IntegerString}{Separator}{FractionalString}";
+                }
+                else
+                    return $"{IntegerString}";
             }
         }
         #endregion

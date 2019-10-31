@@ -71,10 +71,21 @@
         {
         }
 
+        public bool GetBit(long index)
+        {
+            const int Domain = sizeof(byte) * 8;
+            long ElementIndex = index / Domain;
+            int ElementBitIndex = (int)(index % Domain);
+
+            byte Mask = (byte)(1UL << ElementBitIndex);
+            return (Content[ElementIndex] & Mask) != 0;
+        }
+
         public void SetBit(long index, bool value)
         {
-            long ElementIndex = (long)(index / (sizeof(byte) * 8));
-            int ElementBitIndex = (int)(index & byte.MaxValue);
+            const int Domain = sizeof(byte) * 8;
+            long ElementIndex = index / Domain;
+            int ElementBitIndex = (int)(index % Domain);
 
             if (index >= SignificantBits)
             {

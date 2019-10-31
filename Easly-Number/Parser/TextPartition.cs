@@ -50,6 +50,11 @@
         public OptionalSign SignificandSign { get; set; } = OptionalSign.None;
 
         /// <summary>
+        /// True if the partition includes a suffix part.
+        /// </summary>
+        public bool HasRadixPrefix { get { return RadixPrefix >= 0; } }
+
+        /// <summary>
         /// Index of the prefix indicating a radix, -1 if not parsed.
         /// </summary>
         public int RadixPrefix { get; set; } = -1;
@@ -135,14 +140,29 @@
         public string ExponentPart { get { return FirstExponentPartIndex < 0 ? string.Empty : Text.Substring(FirstExponentPartIndex, LastExponentPartIndex - FirstExponentPartIndex); } }
 
         /// <summary>
+        /// True if the partition includes a suffix part.
+        /// </summary>
+        public bool HasRadixSuffix { get { return RadixSuffix >= 0; } }
+
+        /// <summary>
+        /// Index of the suffix indicating a radix, -1 if not parsed.
+        /// </summary>
+        public int RadixSuffix { get; set; } = -1;
+
+        /// <summary>
         /// Index of the first invalid character, -1 if not parsed.
         /// </summary>
         public int FirstInvalidCharacterIndex { get; set; } = -1;
 
         /// <summary>
-        /// Index of the first invalid character, -1 if not parsed.
+        /// True if the partition represents a valid number.
         /// </summary>
-        public bool IsValid { get { return FirstInvalidCharacterIndex < 0; } }
+        public bool IsValid { get { return Text.Length > 0 && FirstInvalidCharacterIndex < 0; } }
+
+        /// <summary>
+        /// True if the partition represents a valid number, possibly followed by an invalid part.
+        /// </summary>
+        public bool IsPartiallyValid { get { return Text.Length > 0 && FirstInvalidCharacterIndex != 0; } }
 
         /// <summary>
         /// The remaining part of the string that is not parsed in the number.
@@ -164,6 +184,11 @@
         /// </summary>
         /// <param name="index">The position of the character to parse in <see cref="Text"/>.</param>
         public abstract void Parse(int index);
+
+        /// <summary>
+        /// Index to use for partition comparison.
+        /// </summary>
+        public abstract int ComparisonIndex { get; }
 
         public abstract void ConvertToBitField(long significandPrecision, long exponentPrecision, out BitField integerField, out BitField fractionalField, out BitField exponentField);
 
@@ -197,10 +222,11 @@
         /// Returns the input number divided by two.
         /// </summary>
         /// <param name="text">The number to divide.</param>
+        /// <param name="radix">The radix to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
         /// <param name="digitHandler">The handler to use to convert to digits.</param>
         /// <param name="hasCarry">True upon return if <paramref name="text"/> is odd.</param>
-        protected string DividedByTwo(string text, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, out bool hasCarry)
+        internal static string DividedByTwo(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, out bool hasCarry)
         {
             string Result = string.Empty;
             int Carry = 0;
@@ -216,7 +242,7 @@
                 if (Digit != '0' || i > 0 || text.Length == 1)
                     Result += Digit;
 
-                Carry = Value % 2 != 0 ? Radix : 0;
+                Carry = Value % 2 != 0 ? radix : 0;
             }
 
             hasCarry = Carry != 0;
@@ -228,10 +254,11 @@
         /// Returns the input number multiplied by two, with an optional carry to add.
         /// </summary>
         /// <param name="text">The number to multiply.</param>
+        /// <param name="radix">The radix to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
         /// <param name="digitHandler">The handler to use to convert to digits.</param>
         /// <param name="addCarry">True if a carry should be added.</param>
-        protected string MultipliedByTwo(string text, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, bool addCarry)
+        internal static string MultipliedByTwo(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, bool addCarry)
         {
             string Result = string.Empty;
             int Carry = addCarry ? 1 : 0;
@@ -242,9 +269,9 @@
                 Debug.Assert(IsValid);
 
                 Value = (Value * 2) + Carry;
-                if (Value >= Radix)
+                if (Value >= radix)
                 {
-                    Value -= Radix;
+                    Value -= radix;
                     Carry = 1;
                 }
                 else
@@ -255,6 +282,67 @@
 
             if (Carry > 0)
                 Result = digitHandler(Carry) + Result;
+
+            return Result;
+        }
+
+        /// <summary>
+        /// Returns the input number rounded to the nearest number ending with digit 0.
+        /// If exactly in the middle, round to lower.
+        /// </summary>
+        /// <param name="text">The number to multiply.</param>
+        /// <param name="radix">The radix to use.</param>
+        /// <param name="validityHandler">The handler to use to validate digits.</param>
+        /// <param name="digitHandler">The handler to use to convert to digits.</param>
+        /// <param name="includeEndingZeroes">True to add ending zeroes.</param>
+        internal static string RoundedToNearest(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, bool includeEndingZeroes)
+        {
+            Debug.Assert(text.Length > 0);
+
+            int DigitIndex = text.Length;
+            int Value;
+
+            --DigitIndex;
+            bool IsValid = validityHandler(text[DigitIndex], out Value);
+            Debug.Assert(IsValid);
+
+            bool RoundDown = Value < (radix / 2);
+            bool IsMiddle = Value == (radix / 2);
+
+            while (Value == radix - 1 && DigitIndex > 0)
+            {
+                --DigitIndex;
+                IsValid = validityHandler(text[DigitIndex], out Value);
+                Debug.Assert(IsValid);
+            }
+
+            string Result;
+
+            if (Value == radix - 1)
+            {
+                Debug.Assert(DigitIndex == 0);
+                Result = "1";
+            }
+            else if (RoundDown)
+            {
+                Result = text.Substring(0, DigitIndex);
+            }
+            else if (IsMiddle)
+            {
+                Result = text;
+            }
+            else
+            {
+                char RoundedDigit = digitHandler(Value + 1);
+
+                Result = text.Substring(0, DigitIndex);
+                Result += RoundedDigit;
+                DigitIndex++;
+            }
+
+            if (includeEndingZeroes)
+                for (int i = DigitIndex + 1; i < text.Length; i++)
+                    Result += "0";
 
             return Result;
         }
