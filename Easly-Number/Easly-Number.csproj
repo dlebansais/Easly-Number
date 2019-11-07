@@ -66,6 +66,8 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Number-Parser.cs" />
     <Compile Include="Number.cs" />
+    <Compile Include="Parser\RadixSuffixTextPartition.cs" />
+    <Compile Include="Parser\RadixPrefixTextPartition.cs" />
     <Compile Include="Parser\OptionalExponent.cs" />
     <Compile Include="Parser\OptionalSeparator.cs" />
     <Compile Include="Parser\OptionalSign.cs" />

@@ -135,23 +135,29 @@
 
             specialNumber = NaN;
 
-            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, BinarySuffixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
-            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, OctalSuffixCharacter, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
-            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, HexadecimalSuffixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
             TextPartition RealPartition = new RealTextPartition(text);
+            TextPartition BinaryPrefixIntegerPartition = new RadixPrefixTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
+            TextPartition HexadecimalPrefixIntegerPartition = new RadixPrefixTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
+            TextPartition BinarySuffixIntegerPartition = new RadixSuffixTextPartition(text, BinaryRadix, BinarySuffixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
+            TextPartition OctalSuffixIntegerPartition = new RadixSuffixTextPartition(text, OctalRadix, OctalSuffixCharacter, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
+            TextPartition HexadecimalSuffixIntegerPartition = new RadixSuffixTextPartition(text, HexadecimalRadix, HexadecimalSuffixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
 
-            for (int Index = 0; Index < text.Length && (RealPartition.IsValid || BinaryIntegerPartition.IsValid || OctalIntegerPartition.IsValid || HexadecimalIntegerPartition.IsValid); Index++)
+            for (int Index = 0; Index < text.Length && (RealPartition.IsValid || BinaryPrefixIntegerPartition.IsValid || HexadecimalPrefixIntegerPartition.IsValid || BinarySuffixIntegerPartition.IsValid || OctalSuffixIntegerPartition.IsValid || HexadecimalSuffixIntegerPartition.IsValid); Index++)
             {
                 RealPartition.Parse(Index);
-                BinaryIntegerPartition.Parse(Index);
-                OctalIntegerPartition.Parse(Index);
-                HexadecimalIntegerPartition.Parse(Index);
+                BinaryPrefixIntegerPartition.Parse(Index);
+                HexadecimalPrefixIntegerPartition.Parse(Index);
+                BinarySuffixIntegerPartition.Parse(Index);
+                OctalSuffixIntegerPartition.Parse(Index);
+                HexadecimalSuffixIntegerPartition.Parse(Index);
             }
 
             UpdatePreferredPartition(ref partition, ref RealPartition);
-            UpdatePreferredPartition(ref partition, ref BinaryIntegerPartition);
-            UpdatePreferredPartition(ref partition, ref OctalIntegerPartition);
-            UpdatePreferredPartition(ref partition, ref HexadecimalIntegerPartition);
+            UpdatePreferredPartition(ref partition, ref BinaryPrefixIntegerPartition);
+            UpdatePreferredPartition(ref partition, ref HexadecimalPrefixIntegerPartition);
+            UpdatePreferredPartition(ref partition, ref BinarySuffixIntegerPartition);
+            UpdatePreferredPartition(ref partition, ref OctalSuffixIntegerPartition);
+            UpdatePreferredPartition(ref partition, ref HexadecimalSuffixIntegerPartition);
 
             if (partition != null)
             {
@@ -233,12 +239,16 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidBinaryNumber(string text)
         {
-            TextPartition BinaryIntegerPartition = new CustomRadixIntegerTextPartition(text, BinaryRadix, BinaryPrefixCharacter, BinarySuffixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
+            TextPartition BinaryPrefixIntegerPartition = new RadixPrefixTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
+            TextPartition BinarySuffixIntegerPartition = new RadixSuffixTextPartition(text, BinaryRadix, BinarySuffixCharacter, IsValidBinaryDigit, ToBinaryDigit, UpdateFieldWithBinary);
 
             for (int Index = 0; Index < text.Length; Index++)
-                BinaryIntegerPartition.Parse(Index);
+            {
+                BinaryPrefixIntegerPartition.Parse(Index);
+                BinarySuffixIntegerPartition.Parse(Index);
+            }
 
-            return BinaryIntegerPartition.IsValid;
+            return BinaryPrefixIntegerPartition.IsValid || BinarySuffixIntegerPartition.IsValid;
         }
 
         /// <summary>
@@ -292,12 +302,12 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidOctalNumber(string text)
         {
-            TextPartition OctalIntegerPartition = new CustomRadixIntegerTextPartition(text, OctalRadix, OctalSuffixCharacter, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
+            TextPartition OctalSuffixIntegerPartition = new RadixSuffixTextPartition(text, OctalRadix, OctalSuffixCharacter, IsValidOctalDigit, ToOctalDigit, UpdateFieldWithOctal);
 
             for (int Index = 0; Index < text.Length; Index++)
-                OctalIntegerPartition.Parse(Index);
+                OctalSuffixIntegerPartition.Parse(Index);
 
-            return OctalIntegerPartition.IsValid;
+            return OctalSuffixIntegerPartition.IsValid;
         }
 
         /// <summary>
@@ -412,12 +422,16 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidHexadecimalNumber(string text)
         {
-            TextPartition HexadecimalIntegerPartition = new CustomRadixIntegerTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, HexadecimalSuffixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
+            TextPartition HexadecimalPrefixIntegerPartition = new RadixPrefixTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
+            TextPartition HexadecimalSuffixIntegerPartition = new RadixSuffixTextPartition(text, HexadecimalRadix, HexadecimalSuffixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit, UpdateFieldWithHexadecimal);
 
             for (int Index = 0; Index < text.Length; Index++)
-                HexadecimalIntegerPartition.Parse(Index);
+            {
+                HexadecimalPrefixIntegerPartition.Parse(Index);
+                HexadecimalSuffixIntegerPartition.Parse(Index);
+            }
 
-            return HexadecimalIntegerPartition.IsValid;
+            return HexadecimalPrefixIntegerPartition.IsValid || HexadecimalSuffixIntegerPartition.IsValid;
         }
         #endregion
 
