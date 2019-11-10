@@ -242,6 +242,14 @@
             get { return FirstInvalidCharacterIndex < 0 ? Text.Length : FirstInvalidCharacterIndex; }
         }
 
+        /// <summary>
+        /// Converts the parsed partition to bit fields.
+        /// </summary>
+        /// <param name="significandPrecision">The number of bits in the significand.</param>
+        /// <param name="exponentPrecision">The number of bits in the exponent.</param>
+        /// <param name="integerField">The bit field of the integer part upon return.</param>
+        /// <param name="fractionalField">The bit field of the fractional part upon return.</param>
+        /// <param name="exponentField">The bit field of the exponent part upon return.</param>
         public override void ConvertToBitField(long significandPrecision, long exponentPrecision, out BitField integerField, out BitField fractionalField, out BitField exponentField)
         {
             long BitIndex;
@@ -254,7 +262,7 @@
             {
                 if (BitIndex >= significandPrecision)
                 {
-                    integerField.ShiftRight(1);
+                    integerField.ShiftRight();
                     BitIndex--;
                 }
 
@@ -310,7 +318,7 @@
                 {
                     if (BitIndex >= exponentPrecision)
                     {
-                        exponentField.ShiftRight(1);
+                        exponentField.ShiftRight();
                         BitIndex--;
                     }
 

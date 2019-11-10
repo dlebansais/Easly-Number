@@ -1,54 +1,58 @@
 ﻿namespace EaslyNumber
 {
     using System;
+    using System.Diagnostics;
 
     internal class BitField_uint
     {
+        #region Init
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitField_uint"/> class.
+        /// </summary>
         public BitField_uint()
         {
             Content = new uint[0];
             SignificantBits = 0;
+            ShiftBits = 0;
         }
+        #endregion
 
+        #region Properties
+        /// <summary>
+        /// Number of significant bits in the field.
+        /// </summary>
         public long SignificantBits { get; set; }
 
+        /// <summary>
+        /// Number of unstored bits to the right of significant bits.
+        /// </summary>
+        public long ShiftBits { get; set; }
+        #endregion
+
+        #region Client Interface
+        /// <summary>
+        /// Sets the object to represent zero.
+        /// </summary>
         public void SetZero()
         {
-            SetFromDigit(0);
-        }
-
-        public void SetFromDigit(int digitValue)
-        {
             Content = new uint[sizeof(long) / sizeof(uint)];
-            Content[0] = (uint)digitValue;
+            Content[0] = 0;
+            SignificantBits = 1;
+            ShiftBits = 0;
         }
 
-        public void MultiplyBy10AndAdd(int addValue)
-        {
-            long Carry = 0;
-            long LastElementIndex = SignificantBits / sizeof(uint);
-
-            for (long i = 0; i + 1 < LastElementIndex; i++)
-            {
-                long ElementValue = Content[i];
-                ElementValue *= 10;
-                ElementValue += Carry;
-                Content[i] = (uint)ElementValue;
-
-                Carry = ElementValue >> (sizeof(uint) * 8);
-            }
-
-            if (Carry != 0 && LastElementIndex == Content.LongLength)
-            {
-                Array.Resize(ref Content, Content.Length + 1);
-                Content[LastElementIndex] = (uint)Carry;
-            }
-        }
-
+        /// <summary>
+        /// Shift bits to the left by <paramref name="shiftValue"/>, then add <paramref name="addValue"/>.
+        /// </summary>
+        /// <param name="shiftValue">The number of bits to shift.</param>
+        /// <param name="addValue">The value to add.</param>
         public void ShiftLeftAndAdd(int shiftValue, int addValue)
         {
-            long Carry = 0;
-            long LastElementIndex = SignificantBits / sizeof(uint);
+            Debug.Assert(shiftValue >= 0);
+            Debug.Assert(addValue >= 0 && addValue < (1 << shiftValue));
+
+            long Carry = addValue;
+            long LastElementIndex = SignificantBits / (sizeof(uint) * 8);
 
             for (long i = 0; i + 1 < LastElementIndex; i++)
             {
@@ -67,12 +71,48 @@
             }
         }
 
-        public void ShiftRight(int shiftValue)
+        /// <summary>
+        /// Shift bits to the right.
+        /// </summary>
+        public void ShiftRight()
         {
+            int shiftValue = 1;
+
+            long Carry = 0;
+            long LastElementIndex = SignificantBits / (sizeof(uint) * 8);
+            int CarryShift = (sizeof(uint) * 8) - shiftValue;
+
+            for (long i = LastElementIndex + 1; i > 0; i--)
+            {
+                long ElementValue = Content[i - 1];
+                long NextCarry = (uint)(ElementValue << CarryShift);
+
+                ElementValue >>= shiftValue;
+                ElementValue += Carry;
+                Content[i - 1] = (uint)ElementValue;
+
+                Carry = NextCarry;
+            }
+
+            SignificantBits -= shiftValue;
+            ShiftBits += shiftValue;
+
+            if (LastElementIndex > SignificantBits / (sizeof(uint) * 8))
+            {
+                Debug.Assert(Content[LastElementIndex] == 0);
+
+                Array.Resize(ref Content, Content.Length - 1);
+            }
         }
 
+        /// <summary>
+        /// Gets the value of the bit at position <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index">Position of the bit to get.</param>
         public bool GetBit(long index)
         {
+            Debug.Assert(index >= 0 && index < SignificantBits);
+
             const int Domain = sizeof(uint) * 8;
             long ElementIndex = index / Domain;
             int ElementBitIndex = (int)(index % Domain);
@@ -81,8 +121,15 @@
             return (Content[ElementIndex] & Mask) != 0;
         }
 
+        /// <summary>
+        /// Sets the bit at position <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index">Position of the bit to get.</param>
+        /// <param name="value">The new value.</param>
         public void SetBit(long index, bool value)
         {
+            Debug.Assert(index >= 0 && index <= SignificantBits);
+
             const int Domain = sizeof(uint) * 8;
             long ElementIndex = index / Domain;
             int ElementBitIndex = (int)(index % Domain);
@@ -103,7 +150,10 @@
                 Content[ElementIndex] |= Mask;
             }
         }
+        #endregion
 
+        #region Implementation
         private uint[] Content;
+        #endregion
     }
 }

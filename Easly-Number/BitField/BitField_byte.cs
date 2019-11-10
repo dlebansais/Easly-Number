@@ -13,6 +13,7 @@
         {
             Content = new byte[0];
             SignificantBits = 0;
+            ShiftBits = 0;
         }
         #endregion
 
@@ -21,6 +22,11 @@
         /// Number of significant bits in the field.
         /// </summary>
         public long SignificantBits { get; set; }
+
+        /// <summary>
+        /// Number of unstored bits to the right of significant bits.
+        /// </summary>
+        public long ShiftBits { get; set; }
         #endregion
 
         #region Client Interface
@@ -32,6 +38,7 @@
             Content = new byte[sizeof(long) / sizeof(byte)];
             Content[0] = 0;
             SignificantBits = 1;
+            ShiftBits = 0;
         }
 
         /// <summary>
@@ -44,8 +51,8 @@
             Debug.Assert(shiftValue >= 0);
             Debug.Assert(addValue >= 0 && addValue < (1 << shiftValue));
 
-            long Carry = 0;
-            long LastElementIndex = SignificantBits / sizeof(byte);
+            long Carry = addValue;
+            long LastElementIndex = SignificantBits / (sizeof(byte) * 8);
 
             for (long i = 0; i + 1 < LastElementIndex; i++)
             {
@@ -65,11 +72,37 @@
         }
 
         /// <summary>
-        /// Shift bits to the right by <paramref name="shiftValue"/>.
+        /// Shift bits to the right.
         /// </summary>
-        /// <param name="shiftValue">The number of bits to shift.</param>
-        public void ShiftRight(int shiftValue)
+        public void ShiftRight()
         {
+            int shiftValue = 1;
+
+            long Carry = 0;
+            long LastElementIndex = SignificantBits / (sizeof(byte) * 8);
+            int CarryShift = (sizeof(byte) * 8) - shiftValue;
+
+            for (long i = LastElementIndex + 1; i > 0; i--)
+            {
+                long ElementValue = Content[i - 1];
+                long NextCarry = (byte)(ElementValue << CarryShift);
+
+                ElementValue >>= shiftValue;
+                ElementValue += Carry;
+                Content[i - 1] = (byte)ElementValue;
+
+                Carry = NextCarry;
+            }
+
+            SignificantBits -= shiftValue;
+            ShiftBits += shiftValue;
+
+            if (LastElementIndex > SignificantBits / (sizeof(byte) * 8))
+            {
+                Debug.Assert(Content[LastElementIndex] == 0);
+
+                Array.Resize(ref Content, Content.Length - 1);
+            }
         }
 
         /// <summary>

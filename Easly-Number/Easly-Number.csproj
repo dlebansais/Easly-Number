@@ -68,7 +68,7 @@
     <Compile Include="Number.cs" />
     <Compile Include="Parser\TextPartition\RadixSuffixTextPartition.cs" />
     <Compile Include="Parser\TextPartition\RadixPrefixTextPartition.cs" />
-    <Compile Include="Parser\TextPartition\OptionalExponent.cs" />
+    <Compile Include="Parser\OptionalExponent.cs" />
     <Compile Include="Parser\OptionalSeparator.cs" />
     <Compile Include="Parser\OptionalSign.cs" />
     <Compile Include="Parser\CustomRadixIntegerTextPartition.cs" />
