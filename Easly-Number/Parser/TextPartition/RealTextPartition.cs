@@ -38,8 +38,6 @@
         /// <param name="index">The position of the character to parse in <see cref="TextPartition.Text"/>.</param>
         public override void Parse(int index)
         {
-            int DigitValue;
-
             char c = Text[index];
 
             switch (State)
@@ -51,175 +49,23 @@
                     break;
 
                 case ParsingState.LeadingWhitespaces:
-                    if (char.IsWhiteSpace(c))
-                    {
-                        LastLeadingSpaceIndex = index;
-                    }
-                    else if (c == '-' || c == '+')
-                    {
-                        SignificandSign = c == '-' ? OptionalSign.Negative : OptionalSign.Positive;
-                        FirstIntegerPartIndex = index + 1;
-                        State = ParsingState.IntegerPart;
-                    }
-                    else if (Number.IsValidDecimalDigit(c, out DigitValue))
-                    {
-                        if (DigitValue == 0)
-                        {
-                            if (index + 1 == Text.Length)
-                            {
-                                FirstIntegerPartIndex = index;
-                                State = ParsingState.IntegerPart;
-                            }
-                            else
-                            {
-                                LastLeadingZeroIndex = index;
-                                State = ParsingState.LeadingZeroes;
-                            }
-                        }
-                        else
-                        {
-                            FirstIntegerPartIndex = index;
-                            State = ParsingState.IntegerPart;
-                        }
-                    }
-                    else if (c == '.' || c == CultureDecimalSeparator)
-                    {
-                        DecimalSeparatorIndex = index;
-                        State = ParsingState.FractionalPart;
-                    }
-                    else
-                    {
-                        FirstInvalidCharacterIndex = index;
-                        State = ParsingState.InvalidPart;
-                    }
+                    ParseLeadingWhitespaces(index, c);
                     break;
 
                 case ParsingState.LeadingZeroes:
-                    if (Number.IsValidDecimalDigit(c, out DigitValue))
-                    {
-                        if (DigitValue == 0)
-                        {
-                            LastLeadingZeroIndex = index;
-                        }
-                        else
-                        {
-                            FirstIntegerPartIndex = index;
-                            State = ParsingState.IntegerPart;
-                        }
-                    }
-                    else if (c == '.' || c == CultureDecimalSeparator)
-                    {
-                        Debug.Assert(LastLeadingZeroIndex >= 0);
-                        FirstIntegerPartIndex = LastLeadingZeroIndex;
-                        LastLeadingZeroIndex--;
-
-                        DecimalSeparatorIndex = index;
-                        LastIntegerPartIndex = index;
-                        State = ParsingState.FractionalPart;
-                    }
-                    else if (c == 'E' || c == 'e')
-                    {
-                        ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
-
-                        Debug.Assert(LastLeadingZeroIndex >= 0);
-                        FirstIntegerPartIndex = LastLeadingZeroIndex;
-                        LastLeadingZeroIndex--;
-                        LastIntegerPartIndex = index;
-                        FirstExponentPartIndex = index + 1;
-                        LastExponentPartIndex = FirstExponentPartIndex;
-
-                        State = ParsingState.ExponentPart;
-                    }
-                    else
-                    {
-                        FirstInvalidCharacterIndex = index;
-                        LastIntegerPartIndex = index;
-                        State = ParsingState.InvalidPart;
-                    }
+                    ParseLeadingZeroes(index, c);
                     break;
 
                 case ParsingState.IntegerPart:
-                    if (Number.IsValidDecimalDigit(c, out DigitValue))
-                    {
-                    }
-                    else if (index == FirstIntegerPartIndex)
-                    {
-                        Debug.Assert(SignificandSign != OptionalSign.None);
-                        Debug.Assert(index > 0);
-                        Debug.Assert(LastLeadingZeroIndex == -1);
-
-                        FirstInvalidCharacterIndex = 0;
-                        LastIntegerPartIndex = FirstIntegerPartIndex;
-                        State = ParsingState.InvalidPart;
-                    }
-                    else if (c == '.' || c == CultureDecimalSeparator)
-                    {
-                        DecimalSeparatorIndex = index;
-                        LastIntegerPartIndex = index;
-                        State = ParsingState.FractionalPart;
-                    }
-                    else if (c == 'E' || c == 'e')
-                    {
-                        ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
-                        ExponentIndex = index;
-                        LastIntegerPartIndex = index;
-                        FirstExponentPartIndex = index + 1;
-                        LastExponentPartIndex = FirstExponentPartIndex;
-                        State = ParsingState.ExponentPart;
-                    }
-                    else
-                    {
-                        FirstInvalidCharacterIndex = index;
-                        LastIntegerPartIndex = index;
-                        State = ParsingState.InvalidPart;
-                    }
+                    ParseIntegerPart(index, c);
                     break;
 
                 case ParsingState.FractionalPart:
-                    if (Number.IsValidDecimalDigit(c, out DigitValue))
-                    {
-                    }
-                    else if (c == 'E' || c == 'e')
-                    {
-                        ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
-                        ExponentIndex = index;
-                        LastFractionalPartIndex = index;
-                        FirstExponentPartIndex = index + 1;
-                        LastExponentPartIndex = FirstExponentPartIndex;
-                        State = ParsingState.ExponentPart;
-                    }
-                    else
-                    {
-                        FirstInvalidCharacterIndex = index;
-                        LastFractionalPartIndex = index;
-                        State = ParsingState.InvalidPart;
-                    }
+                    ParseFractionalPart(index, c);
                     break;
 
                 case ParsingState.ExponentPart:
-                    if (Number.IsValidDecimalDigit(c, out DigitValue))
-                    {
-                        LastExponentPartIndex = index + 1;
-                    }
-                    else if (c == '-' || c == '+')
-                    {
-                        if (index == FirstExponentPartIndex)
-                        {
-                            ExponentSign = c == '-' ? OptionalSign.Negative : OptionalSign.Positive;
-                            FirstExponentPartIndex++;
-                            LastExponentPartIndex = FirstExponentPartIndex;
-                        }
-                        else
-                        {
-                            FirstInvalidCharacterIndex = index;
-                            State = ParsingState.InvalidPart;
-                        }
-                    }
-                    else
-                    {
-                        FirstInvalidCharacterIndex = index;
-                        State = ParsingState.InvalidPart;
-                    }
+                    ParseExponentPart(index, c);
                     break;
             }
 
@@ -231,6 +77,208 @@
                     LastFractionalPartIndex = Text.Length;
                 else if (FirstExponentPartIndex >= 0 && LastExponentPartIndex < 0)
                     LastExponentPartIndex = Text.Length;
+            }
+        }
+
+        /// <summary>
+        /// Runs the parser in the <see cref="ParsingState.LeadingWhitespaces"/> state.
+        /// </summary>
+        /// <param name="index">Index of the parsed character.</param>
+        /// <param name="c">The parsed character.</param>
+        private void ParseLeadingWhitespaces(int index, char c)
+        {
+            if (char.IsWhiteSpace(c))
+            {
+                LastLeadingSpaceIndex = index;
+            }
+            else if (c == '-' || c == '+')
+            {
+                SignificandSign = c == '-' ? OptionalSign.Negative : OptionalSign.Positive;
+                FirstIntegerPartIndex = index + 1;
+                State = ParsingState.IntegerPart;
+            }
+            else if (Number.IsValidDecimalDigit(c, out int DigitValue))
+            {
+                if (DigitValue == 0)
+                {
+                    if (index + 1 == Text.Length)
+                    {
+                        FirstIntegerPartIndex = index;
+                        State = ParsingState.IntegerPart;
+                    }
+                    else
+                    {
+                        LastLeadingZeroIndex = index;
+                        State = ParsingState.LeadingZeroes;
+                    }
+                }
+                else
+                {
+                    FirstIntegerPartIndex = index;
+                    State = ParsingState.IntegerPart;
+                }
+            }
+            else if (c == '.' || c == CultureDecimalSeparator)
+            {
+                DecimalSeparatorIndex = index;
+                State = ParsingState.FractionalPart;
+            }
+            else
+            {
+                FirstInvalidCharacterIndex = index;
+                State = ParsingState.InvalidPart;
+            }
+        }
+
+        /// <summary>
+        /// Runs the parser in the <see cref="ParsingState.LeadingZeroes"/> state.
+        /// </summary>
+        /// <param name="index">Index of the parsed character.</param>
+        /// <param name="c">The parsed character.</param>
+        private void ParseLeadingZeroes(int index, char c)
+        {
+            if (Number.IsValidDecimalDigit(c, out int DigitValue))
+            {
+                if (DigitValue == 0)
+                {
+                    LastLeadingZeroIndex = index;
+                }
+                else
+                {
+                    FirstIntegerPartIndex = index;
+                    State = ParsingState.IntegerPart;
+                }
+            }
+            else if (c == '.' || c == CultureDecimalSeparator)
+            {
+                Debug.Assert(LastLeadingZeroIndex >= 0);
+                FirstIntegerPartIndex = LastLeadingZeroIndex;
+                LastLeadingZeroIndex--;
+
+                DecimalSeparatorIndex = index;
+                LastIntegerPartIndex = index;
+                State = ParsingState.FractionalPart;
+            }
+            else if (c == 'E' || c == 'e')
+            {
+                ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
+
+                Debug.Assert(LastLeadingZeroIndex >= 0);
+                FirstIntegerPartIndex = LastLeadingZeroIndex;
+                LastLeadingZeroIndex--;
+                LastIntegerPartIndex = index;
+                FirstExponentPartIndex = index + 1;
+                LastExponentPartIndex = FirstExponentPartIndex;
+
+                State = ParsingState.ExponentPart;
+            }
+            else
+            {
+                FirstInvalidCharacterIndex = index;
+                LastIntegerPartIndex = index;
+                State = ParsingState.InvalidPart;
+            }
+        }
+
+        /// <summary>
+        /// Runs the parser in the <see cref="ParsingState.IntegerPart"/> state.
+        /// </summary>
+        /// <param name="index">Index of the parsed character.</param>
+        /// <param name="c">The parsed character.</param>
+        private void ParseIntegerPart(int index, char c)
+        {
+            if (Number.IsValidDecimalDigit(c, out int DigitValue))
+            {
+            }
+            else if (index == FirstIntegerPartIndex)
+            {
+                Debug.Assert(SignificandSign != OptionalSign.None);
+                Debug.Assert(index > 0);
+                Debug.Assert(LastLeadingZeroIndex == -1);
+
+                FirstInvalidCharacterIndex = 0;
+                LastIntegerPartIndex = FirstIntegerPartIndex;
+                State = ParsingState.InvalidPart;
+            }
+            else if (c == '.' || c == CultureDecimalSeparator)
+            {
+                DecimalSeparatorIndex = index;
+                LastIntegerPartIndex = index;
+                State = ParsingState.FractionalPart;
+            }
+            else if (c == 'E' || c == 'e')
+            {
+                ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
+                ExponentIndex = index;
+                LastIntegerPartIndex = index;
+                FirstExponentPartIndex = index + 1;
+                LastExponentPartIndex = FirstExponentPartIndex;
+                State = ParsingState.ExponentPart;
+            }
+            else
+            {
+                FirstInvalidCharacterIndex = index;
+                LastIntegerPartIndex = index;
+                State = ParsingState.InvalidPart;
+            }
+        }
+
+        /// <summary>
+        /// Runs the parser in the <see cref="ParsingState.FractionalPart"/> state.
+        /// </summary>
+        /// <param name="index">Index of the parsed character.</param>
+        /// <param name="c">The parsed character.</param>
+        private void ParseFractionalPart(int index, char c)
+        {
+            if (Number.IsValidDecimalDigit(c, out int DigitValue))
+            {
+            }
+            else if (c == 'E' || c == 'e')
+            {
+                ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
+                ExponentIndex = index;
+                LastFractionalPartIndex = index;
+                FirstExponentPartIndex = index + 1;
+                LastExponentPartIndex = FirstExponentPartIndex;
+                State = ParsingState.ExponentPart;
+            }
+            else
+            {
+                FirstInvalidCharacterIndex = index;
+                LastFractionalPartIndex = index;
+                State = ParsingState.InvalidPart;
+            }
+        }
+
+        /// <summary>
+        /// Runs the parser in the <see cref="ParsingState.ExponentPart"/> state.
+        /// </summary>
+        /// <param name="index">Index of the parsed character.</param>
+        /// <param name="c">The parsed character.</param>
+        private void ParseExponentPart(int index, char c)
+        {
+            if (Number.IsValidDecimalDigit(c, out int DigitValue))
+            {
+                LastExponentPartIndex = index + 1;
+            }
+            else if (c == '-' || c == '+')
+            {
+                if (index == FirstExponentPartIndex)
+                {
+                    ExponentSign = c == '-' ? OptionalSign.Negative : OptionalSign.Positive;
+                    FirstExponentPartIndex++;
+                    LastExponentPartIndex = FirstExponentPartIndex;
+                }
+                else
+                {
+                    FirstInvalidCharacterIndex = index;
+                    State = ParsingState.InvalidPart;
+                }
+            }
+            else
+            {
+                FirstInvalidCharacterIndex = index;
+                State = ParsingState.InvalidPart;
             }
         }
 

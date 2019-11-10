@@ -100,8 +100,41 @@
         /// <param name="specialNumber">The special number if NaN or infinity.</param>
         internal static bool Parse(string text, out TextPartition partition, out Number specialNumber)
         {
-            partition = null;
+            if (CheckSpecialNumber(text, out specialNumber))
+            {
+                partition = null;
+                return true;
+            }
 
+            if (ParseRegularNumber(text, out partition))
+            {
+                specialNumber = NaN;
+
+                string integerPart = partition.IntegerPart;
+                string fractionalPart = partition.FractionalPart;
+                OptionalExponent exponentCharacter = partition.ExponentCharacter;
+                OptionalSign exponentSign = partition.ExponentSign;
+                string exponentPart = partition.ExponentPart;
+
+                Debug.Assert(integerPart.Length > 0 || fractionalPart.Length > 0);
+                Debug.Assert(exponentSign == OptionalSign.None || exponentCharacter != OptionalExponent.None);
+                Debug.Assert(exponentPart.Length == 0 || exponentCharacter != OptionalExponent.None);
+
+                return true;
+            }
+
+            partition = null;
+            specialNumber = NaN;
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a string is the text representation of a special number.
+        /// </summary>
+        /// <param name="text">The string to check.</param>
+        /// <param name="specialNumber">The special number upon return if successful.</param>
+        private static bool CheckSpecialNumber(string text, out Number specialNumber)
+        {
             if (text == "0")
             {
                 specialNumber = Zero;
@@ -134,7 +167,16 @@
             }
 
             specialNumber = NaN;
+            return false;
+        }
 
+        /// <summary>
+        /// Parses a string as some, non-special, number.
+        /// </summary>
+        /// <param name="text">The string to check.</param>
+        /// <param name="partition">The text partition of <paramref name="text"/> if parsed successfully.</param>
+        private static bool ParseRegularNumber(string text, out TextPartition partition)
+        {
             TextPartitionCollection PartitionList = new TextPartitionCollection()
             {
                 new RealTextPartition(text),
@@ -149,23 +191,7 @@
                 PartitionList.Parse(Index);
 
             partition = PartitionList.PreferredPartition;
-
-            if (partition != null)
-            {
-                string integerPart = partition.IntegerPart;
-                string fractionalPart = partition.FractionalPart;
-                OptionalExponent exponentCharacter = partition.ExponentCharacter;
-                OptionalSign exponentSign = partition.ExponentSign;
-                string exponentPart = partition.ExponentPart;
-
-                Debug.Assert(integerPart.Length > 0 || fractionalPart.Length > 0);
-                Debug.Assert(exponentSign == OptionalSign.None || exponentCharacter != OptionalExponent.None);
-                Debug.Assert(exponentPart.Length == 0 || exponentCharacter != OptionalExponent.None);
-
-                return true;
-            }
-
-            return false;
+            return partition != null;
         }
 
         /// <summary>

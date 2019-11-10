@@ -28,7 +28,6 @@
         public override void Parse(int index)
         {
             char c = Text[index];
-            int DigitValue;
 
             switch (State)
             {
@@ -39,54 +38,15 @@
                     break;
 
                 case ParsingState.LeadingWhitespaces:
-                    if (char.IsWhiteSpace(c))
-                    {
-                        LastLeadingSpaceIndex = index;
-                        break;
-                    }
-                    else if (ValidityHandler(c, out DigitValue))
-                    {
-                        FirstIntegerPartIndex = index;
-                        State = ParsingState.IntegerPart;
-                    }
-                    else
-                    {
-                        FirstInvalidCharacterIndex = 0;
-                        LastIntegerPartIndex = index;
-                        State = ParsingState.InvalidPart;
-                    }
+                    ParseLeadingWhitespaces(index, c);
                     break;
 
                 case ParsingState.IntegerPart:
-                    if (ValidityHandler(c, out DigitValue))
-                    {
-                    }
-                    else
-                    {
-                        LastIntegerPartIndex = index;
-
-                        if (c == ':' && index + 1 < Text.Length)
-                            State = ParsingState.SuffixPart;
-                        else
-                        {
-                            FirstInvalidCharacterIndex = index;
-                            State = ParsingState.InvalidPart;
-                        }
-                    }
+                    ParseIntegerPart(index, c);
                     break;
 
                 case ParsingState.SuffixPart:
-                    if (c == RadixSuffixCharacter)
-                    {
-                        if (index + 1 > Text.Length)
-                            FirstInvalidCharacterIndex = index + 1;
-
-                        RadixSuffix = index;
-                    }
-                    else
-                        FirstInvalidCharacterIndex = index;
-
-                    State = ParsingState.InvalidPart;
+                    ParseSuffixPart(index, c);
                     break;
             }
 
@@ -98,6 +58,74 @@
                 FirstInvalidCharacterIndex = 0;
                 State = ParsingState.InvalidPart;
             }
+        }
+
+        /// <summary>
+        /// Runs the parser in the <see cref="ParsingState.LeadingWhitespaces"/> state.
+        /// </summary>
+        /// <param name="index">Index of the parsed character.</param>
+        /// <param name="c">The parsed character.</param>
+        private void ParseLeadingWhitespaces(int index, char c)
+        {
+            if (char.IsWhiteSpace(c))
+            {
+                LastLeadingSpaceIndex = index;
+            }
+            else if (ValidityHandler(c, out int DigitValue))
+            {
+                FirstIntegerPartIndex = index;
+                State = ParsingState.IntegerPart;
+            }
+            else
+            {
+                FirstInvalidCharacterIndex = 0;
+                LastIntegerPartIndex = index;
+                State = ParsingState.InvalidPart;
+            }
+        }
+
+        /// <summary>
+        /// Runs the parser in the <see cref="ParsingState.IntegerPart"/> state.
+        /// </summary>
+        /// <param name="index">Index of the parsed character.</param>
+        /// <param name="c">The parsed character.</param>
+        private void ParseIntegerPart(int index, char c)
+        {
+            if (ValidityHandler(c, out int DigitValue))
+            {
+            }
+            else
+            {
+                LastIntegerPartIndex = index;
+
+                if (c == ':' && index + 1 < Text.Length)
+                    State = ParsingState.SuffixPart;
+                else
+                {
+                    FirstInvalidCharacterIndex = index;
+                    State = ParsingState.InvalidPart;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Runs the parser in the <see cref="ParsingState.SuffixPart"/> state.
+        /// </summary>
+        /// <param name="index">Index of the parsed character.</param>
+        /// <param name="c">The parsed character.</param>
+        private void ParseSuffixPart(int index, char c)
+        {
+            if (c == RadixSuffixCharacter)
+            {
+                if (index + 1 > Text.Length)
+                    FirstInvalidCharacterIndex = index + 1;
+
+                RadixSuffix = index;
+            }
+            else
+                FirstInvalidCharacterIndex = index;
+
+            State = ParsingState.InvalidPart;
         }
 
         /// <summary>
