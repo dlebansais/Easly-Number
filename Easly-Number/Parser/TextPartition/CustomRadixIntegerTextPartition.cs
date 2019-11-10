@@ -14,13 +14,11 @@
         /// <param name="radix">The radix to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
         /// <param name="digitHandler">The handler to use to convert to digits.</param>
-        /// <param name="fieldHandler">The handler used to update the data field.</param>
-        public CustomRadixIntegerTextPartition(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, UpdateFieldHandler fieldHandler)
+        public CustomRadixIntegerTextPartition(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler)
             : base(text, radix)
         {
             ValidityHandler = validityHandler;
             DigitHandler = digitHandler;
-            FieldHandler = fieldHandler;
         }
 
         /// <summary>
@@ -44,11 +42,6 @@
         /// <param name="field">The data field to update.</param>
         /// <param name="value">The digit value.</param>
         public delegate void UpdateFieldHandler(BitField field, int value);
-
-        /// <summary>
-        /// The handler used to update the data field.
-        /// </summary>
-        public UpdateFieldHandler FieldHandler { get; }
 
         /// <summary>
         /// Index to use for partition comparison.

@@ -13,9 +13,8 @@
         /// <param name="radixPrefixCharacter">The prefix character to use.</param>
         /// <param name="validityHandler">The handler to use to validate digits.</param>
         /// <param name="digitHandler">The handler to use to convert to digits.</param>
-        /// <param name="fieldHandler">The handler used to update the data field.</param>
-        public RadixPrefixTextPartition(string text, int radix, char radixPrefixCharacter, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler, UpdateFieldHandler fieldHandler)
-            : base(text, radix, validityHandler, digitHandler, fieldHandler)
+        public RadixPrefixTextPartition(string text, int radix, char radixPrefixCharacter, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler)
+            : base(text, radix, validityHandler, digitHandler)
         {
             RadixPrefixCharacter = radixPrefixCharacter;
         }

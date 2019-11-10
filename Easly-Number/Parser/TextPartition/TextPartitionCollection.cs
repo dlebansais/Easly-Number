@@ -8,14 +8,9 @@
     internal class TextPartitionCollection : List<TextPartition>
     {
         /// <summary>
-        /// True if all partitions in the collection are valid.
+        /// True if at least one partition in the collection is valid.
         /// </summary>
-        public bool IsValid { get { return TrueForAll((TextPartition item) => item.IsValid); } }
-
-        /// <summary>
-        /// True if all partitions in the collection are invalid.
-        /// </summary>
-        public bool IsInvalid { get { return TrueForAll((TextPartition item) => !item.IsValid); } }
+        public bool IsValid { get { return Find((TextPartition item) => item.IsValid) != null; } }
 
         /// <summary>
         /// Parses a new character in all partitions of the list.
