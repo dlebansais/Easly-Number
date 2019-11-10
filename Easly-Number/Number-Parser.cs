@@ -168,17 +168,6 @@
             return false;
         }
 
-        private static void UpdatePreferredPartition(ref TextPartition preferredPartition, ref TextPartition candidatePartition)
-        {
-            if (preferredPartition == null)
-            {
-                if (candidatePartition.IsPartiallyValid)
-                    preferredPartition = candidatePartition;
-            }
-            else if (preferredPartition.ComparisonIndex < candidatePartition.ComparisonIndex)
-                preferredPartition = candidatePartition;
-        }
-
         /// <summary>
         /// Checks if a binary digit is valid.
         /// </summary>

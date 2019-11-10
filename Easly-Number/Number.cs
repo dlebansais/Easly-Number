@@ -40,6 +40,29 @@
         /// <exception cref="ArgumentException">The text is not a valid number.</exception>
         public Number(string text)
         {
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
+            Rounding = Arithmetic.Rounding;
+            IsSignificandNegative = false;
+            IsExponentNegative = false;
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
+
+            InitFromText(text);
+        }
+
+        /// <summary>
+        /// Initializes the object from plain text.
+        /// </summary>
+        /// <param name="text">The number in plain text.</param>
+        /// <exception cref="ArgumentException">The text is not a valid number.</exception>
+        private void InitFromText(string text)
+        {
             if (!Parse(text, out TextPartition Partition, out Number SpecialNumber))
                 throw new ArgumentException();
 
@@ -121,15 +144,16 @@
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
             IsZero = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+
+            InitFromText(value.ToString());
         }
 
         /// <summary>
@@ -143,15 +167,16 @@
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
             IsZero = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+
+            InitFromText(value.ToString());
         }
 
         /// <summary>
@@ -165,15 +190,16 @@
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
             IsZero = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+
+            InitFromText(value.ToString());
         }
 
         /// <summary>
@@ -187,15 +213,16 @@
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
             IsZero = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+
+            InitFromText(value.ToString());
         }
 
         /// <summary>
@@ -209,15 +236,16 @@
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
             IsZero = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+
+            InitFromText(value.ToString());
         }
 
         /// <summary>
@@ -231,15 +259,16 @@
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
             IsZero = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+
+            InitFromText(value.ToString());
         }
 
         /// <summary>
@@ -253,15 +282,16 @@
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
             IsZero = false;
-            SignificandPrecision = Arithmetic.SignificandPrecision;
-            ExponentPrecision = Arithmetic.ExponentPrecision;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+
+            InitFromText(value.ToString());
         }
 
         /// <summary>
@@ -354,17 +384,17 @@
         /// <summary>
         /// The binary data corresponding to the integer part.
         /// </summary>
-        internal BitField IntegerField { get; }
+        internal BitField IntegerField { get; private set; }
 
         /// <summary>
         /// The binary data corresponding to the fractional part.
         /// </summary>
-        internal BitField FractionalField { get; }
+        internal BitField FractionalField { get; private set; }
 
         /// <summary>
         /// The binary data corresponding to the exponent part.
         /// </summary>
-        internal BitField ExponentField { get; }
+        internal BitField ExponentField { get; private set; }
         #endregion
 
         #region Basic Operations
