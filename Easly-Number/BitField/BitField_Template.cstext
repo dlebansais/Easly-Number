@@ -4,13 +4,15 @@
 
     internal class BitField_Template
     {
+    internal class BitField_Template
+    {
         public BitField_Template()
         {
-            Content = null;
+            Content = new Template[0];
             SignificantBits = 0;
         }
 
-        public ulong SignificantBits { get; set; }
+        public long SignificantBits { get; set; }
 
         public void SetZero()
         {
@@ -26,7 +28,7 @@
         public void MultiplyBy10AndAdd(int addValue)
         {
             long Carry = 0;
-            long LastElementIndex = (long)(SignificantBits / sizeof(Template));
+            long LastElementIndex = SignificantBits / sizeof(Template);
 
             for (long i = 0; i + 1 < LastElementIndex; i++)
             {
@@ -48,7 +50,7 @@
         public void ShiftLeftAndAdd(int shiftValue, int addValue)
         {
             long Carry = 0;
-            long LastElementIndex = (long)(SignificantBits / sizeof(Template));
+            long LastElementIndex = SignificantBits / sizeof(Template);
 
             for (long i = 0; i + 1 < LastElementIndex; i++)
             {
@@ -67,26 +69,40 @@
             }
         }
 
-        public void SetBit(ulong index, bool value)
+        public void ShiftRight(int shiftValue)
         {
-            long LastElementIndex = (long)(SignificantBits / sizeof(Template));
-            long ElementIndex = (long)(index / sizeof(Template));
+        }
 
-            if (index > SignificantBits)
+        public bool GetBit(long index)
+        {
+            const int Domain = sizeof(Template) * 8;
+            long ElementIndex = index / Domain;
+            int ElementBitIndex = (int)(index % Domain);
+
+            Template Mask = (Template)(1UL << ElementBitIndex);
+            return (Content[ElementIndex] & Mask) != 0;
+        }
+
+        public void SetBit(long index, bool value)
+        {
+            const int Domain = sizeof(Template) * 8;
+            long ElementIndex = index / Domain;
+            int ElementBitIndex = (int)(index % Domain);
+
+            if (index >= SignificantBits)
             {
-                if (ElementIndex > LastElementIndex)
+                if (ElementIndex >= Content.Length)
                 {
-                    Array.Resize(ref Content, Content.Length + 1);
+                    Array.Resize(ref Content, (int)(ElementIndex + 1));
                 }
 
-                SignificantBits = index;
+                SignificantBits = index + 1;
             }
 
             if (value)
             {
-                int ElementBitIndex = (int)(index % sizeof(Template));
                 Template Mask = (Template)(1UL << ElementBitIndex);
-                Content[ElementBitIndex] |= Mask;
+                Content[ElementIndex] |= Mask;
             }
         }
 
