@@ -19,8 +19,6 @@
             : base(text, radix, validityHandler, digitHandler)
         {
             RadixPrefixCharacter = radixPrefixCharacter;
-
-            Debug.Assert(Separator == OptionalSeparator.None);
         }
 
         /// <summary>
@@ -35,7 +33,6 @@
             switch (State)
             {
                 case ParsingState.Init:
-                    InitCultureSeparator();
                     State = ParsingState.LeadingWhitespaces;
                     Parse(index);
                     break;
@@ -91,5 +88,29 @@
         /// The radix character used to prefix the string.
         /// </summary>
         public char RadixPrefixCharacter { get; }
+
+        /// <summary>
+        /// True if the partition includes a suffix part.
+        /// </summary>
+        public bool HasRadixPrefix { get { return RadixPrefix >= 0; } }
+
+        /// <summary>
+        /// Index of the prefix indicating a radix, -1 if not parsed.
+        /// </summary>
+        public int RadixPrefix { get; set; } = -1;
+
+        /// <summary>
+        /// Index to use for partition comparison.
+        /// </summary>
+        public override int ComparisonIndex
+        {
+            get
+            {
+                if (RadixPrefix >= 0)
+                    return FirstInvalidCharacterIndex < 0 ? Text.Length : FirstInvalidCharacterIndex;
+                else
+                    return 0;
+            }
+        }
     }
 }

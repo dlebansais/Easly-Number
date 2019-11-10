@@ -73,7 +73,9 @@
     <Compile Include="Parser\OptionalSign.cs" />
     <Compile Include="Parser\TextPartition\CustomRadixIntegerTextPartition.cs" />
     <Compile Include="Parser\ParsingState.cs" />
+    <Compile Include="Parser\TextPartition\SpecialNumberTextPartition.cs" />
     <Compile Include="Parser\TextPartition\RealTextPartition.cs" />
+    <Compile Include="Parser\TextPartition\NumberTextPartition.cs" />
     <Compile Include="Parser\TextPartition\TextPartitionCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rounding.cs" />

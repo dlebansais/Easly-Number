@@ -11,6 +11,11 @@
     {
         #region Special Values
         /// <summary>
+        /// A psecial value for uninitialized.
+        /// </summary>
+        internal static readonly Number Uninitialized;
+
+        /// <summary>
         /// The special value for not-a-number.
         /// </summary>
         public static readonly Number NaN = new Number(true, false, false);
@@ -63,48 +68,146 @@
         /// <exception cref="ArgumentException">The text is not a valid number.</exception>
         private void InitFromText(string text)
         {
-            if (!Parse(text, out TextPartition Partition, out Number SpecialNumber))
+            if (!Parse(text, out TextPartition Partition))
                 throw new ArgumentException();
 
-            if (Partition == null)
+            InitFromPartition(Partition);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Number"/> struct.
+        /// This contructor creates the number from plain text.
+        /// </summary>
+        /// <param name="partition">The partition to copy values from.</param>
+        /// <exception cref="ArgumentException">The partition does not represent a valid number.</exception>
+        internal Number(TextPartition partition)
+        {
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
+            Rounding = Arithmetic.Rounding;
+            IsSignificandNegative = false;
+            IsExponentNegative = false;
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
+
+            InitFromPartition(partition);
+        }
+
+        /// <summary>
+        /// Initializes the object from a special number value.
+        /// </summary>
+        /// <param name="partition">The partition to copy values from.</param>
+        /// <exception cref="ArgumentException">The partition does not represent a valid number.</exception>
+        private void InitFromPartition(TextPartition partition)
+        {
+            bool IsHandled = false;
+
+            switch (partition)
             {
-                IsNaN = SpecialNumber.IsNaN;
-                IsPositiveInfinity = SpecialNumber.IsPositiveInfinity;
-                IsNegativeInfinity = SpecialNumber.IsNegativeInfinity;
-                IsZero = SpecialNumber.IsZero;
-                SignificandPrecision = SpecialNumber.SignificandPrecision;
-                ExponentPrecision = SpecialNumber.ExponentPrecision;
-                Rounding = SpecialNumber.Rounding;
-                IsSignificandNegative = SpecialNumber.IsSignificandNegative;
-                IsExponentNegative = SpecialNumber.IsExponentNegative;
-                IntegerField = SpecialNumber.IntegerField;
-                FractionalField = SpecialNumber.FractionalField;
-                ExponentField = SpecialNumber.ExponentField;
+                case SpecialNumberTextPartition AsSpecialNumberTextPartition:
+                    InitFromSpecialNumber(AsSpecialNumberTextPartition.Value);
+                    IsHandled = true;
+                    break;
+
+                case CustomRadixIntegerTextPartition AsIntegerTextPartition:
+                    InitFromIntegerNumber(AsIntegerTextPartition);
+                    IsHandled = true;
+                    break;
+
+                case RealTextPartition AsRealTextPartition:
+                    InitFromRealNumber(AsRealTextPartition);
+                    IsHandled = true;
+                    break;
             }
-            else
-            {
-                if (Partition.DiscardedProlog.Length > 0)
-                    throw new ArgumentException();
 
-                if (Partition.InvalidPart.Length > 0)
-                    throw new ArgumentException();
+            Debug.Assert(IsHandled);
+        }
 
-                IsNaN = false;
-                IsPositiveInfinity = false;
-                IsNegativeInfinity = false;
-                IsZero = false;
-                SignificandPrecision = Arithmetic.SignificandPrecision;
-                ExponentPrecision = Arithmetic.ExponentPrecision;
-                Rounding = Arithmetic.Rounding;
-                IsSignificandNegative = false;
-                IsExponentNegative = false;
+        /// <summary>
+        /// Initializes the object from a special number value.
+        /// </summary>
+        /// <param name="value">The special value to copy from.</param>
+        /// <exception cref="ArgumentException">The partition does not represent a valid number.</exception>
+        private void InitFromSpecialNumber(Number value)
+        {
+            IsNaN = value.IsNaN;
+            IsPositiveInfinity = value.IsPositiveInfinity;
+            IsNegativeInfinity = value.IsNegativeInfinity;
+            IsZero = value.IsZero;
+            SignificandPrecision = value.SignificandPrecision;
+            ExponentPrecision = value.ExponentPrecision;
+            Rounding = value.Rounding;
+            IsSignificandNegative = value.IsSignificandNegative;
+            IsExponentNegative = value.IsExponentNegative;
+            IntegerField = value.IntegerField;
+            FractionalField = value.FractionalField;
+            ExponentField = value.ExponentField;
+        }
 
-                Partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField InitIntegerField, out BitField InitFractionalField, out BitField InitExponentField);
+        /// <summary>
+        /// Initializes the object from an integer number value.
+        /// </summary>
+        /// <param name="partition">The partition to copy values from.</param>
+        /// <exception cref="ArgumentException">The source is not a valid number.</exception>
+        private void InitFromIntegerNumber(CustomRadixIntegerTextPartition partition)
+        {
+            if (partition.DiscardedProlog.Length > 0)
+                throw new ArgumentException();
 
-                IntegerField = InitIntegerField;
-                FractionalField = InitFractionalField;
-                ExponentField = InitExponentField;
-            }
+            if (partition.InvalidPart.Length > 0)
+                throw new ArgumentException();
+
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
+            SignificandPrecision = Arithmetic.SignificandPrecision;
+            ExponentPrecision = Arithmetic.ExponentPrecision;
+            Rounding = Arithmetic.Rounding;
+            IsSignificandNegative = false;
+            IsExponentNegative = false;
+
+            partition.ConvertToBitField(SignificandPrecision, out BitField InitIntegerField);
+
+            IntegerField = InitIntegerField;
+            FractionalField = new BitField();
+            ExponentField = new BitField();
+            ExponentField.SetZero();
+        }
+
+        /// <summary>
+        /// Initializes the object from an integer number value.
+        /// </summary>
+        /// <param name="partition">The partition to copy values from.</param>
+        /// <exception cref="ArgumentException">The partition does not represent a valid number.</exception>
+        private void InitFromRealNumber(RealTextPartition partition)
+        {
+            if (partition.DiscardedProlog.Length > 0)
+                throw new ArgumentException();
+
+            if (partition.InvalidPart.Length > 0)
+                throw new ArgumentException();
+
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
+            SignificandPrecision = Arithmetic.SignificandPrecision;
+            ExponentPrecision = Arithmetic.ExponentPrecision;
+            Rounding = Arithmetic.Rounding;
+            IsSignificandNegative = partition.SignificandSign == OptionalSign.Negative;
+            IsExponentNegative = partition.ExponentSign == OptionalSign.Negative;
+
+            partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField InitIntegerField, out BitField InitFractionalField, out BitField InitExponentField);
+
+            IntegerField = InitIntegerField;
+            FractionalField = InitFractionalField;
+            ExponentField = InitExponentField;
         }
 
         /// <summary>
@@ -112,13 +215,13 @@
         /// This contructor creates the number from a parsed integer.
         /// </summary>
         /// <param name="significandPrecision">The precision used to obtain the integer and fractional data fields.</param>
+        /// <param name="exponentPrecision">The precision used to obtain the exponent data fields.</param>
         /// <param name="isSignificandNegative">True if the number is negative.</param>
         /// <param name="integerField">The integer data field.</param>
         /// <param name="fractionalField">The fractional data field.</param>
-        /// <param name="exponentPrecision">The precision used to obtain the exponent data fields.</param>
         /// <param name="isExponentNegative">True if the number exponent is negative.</param>
         /// <param name="exponentField">The exponent data field.</param>
-        internal Number(long significandPrecision, bool isSignificandNegative, BitField integerField, BitField fractionalField, long exponentPrecision, bool isExponentNegative, BitField exponentField)
+        internal Number(long significandPrecision, long exponentPrecision, bool isSignificandNegative, BitField integerField, BitField fractionalField, bool isExponentNegative, BitField exponentField)
         {
             IsNaN = false;
             IsPositiveInfinity = false;
@@ -133,6 +236,31 @@
             IntegerField = integerField;
             FractionalField = fractionalField;
             ExponentField = exponentField;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Number"/> struct.
+        /// This contructor creates the number from a parsed integer.
+        /// </summary>
+        /// <param name="significandPrecision">The precision used to obtain the integer and fractional data fields.</param>
+        /// <param name="exponentPrecision">The precision used to obtain the exponent data fields.</param>
+        /// <param name="isSignificandNegative">True if the number is negative.</param>
+        /// <param name="integerField">The integer data field.</param>
+        internal Number(long significandPrecision, long exponentPrecision, bool isSignificandNegative, BitField integerField)
+        {
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
+            SignificandPrecision = significandPrecision;
+            ExponentPrecision = exponentPrecision;
+            Rounding = Arithmetic.Rounding;
+            IsSignificandNegative = false;
+            IsExponentNegative = false;
+
+            IntegerField = integerField;
+            FractionalField = new BitField();
+            ExponentField = new BitField();
         }
 
         /// <summary>
@@ -459,7 +587,7 @@
                 while (BitIndex <= IntegerField.SignificantBits)
                 {
                     bool Carry = IntegerField.GetBit(IntegerField.SignificantBits - BitIndex);
-                    IntegerString = TextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
+                    IntegerString = NumberTextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
                     BitIndex++;
                 }
 
@@ -480,7 +608,7 @@
                         if (Carry)
                             FractionalString = "1" + FractionalString;
 
-                        FractionalString = TextPartition.DividedByTwo(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, out bool HasDivisionbCarry);
+                        FractionalString = NumberTextPartition.DividedByTwo(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, out bool HasDivisionbCarry);
 
                         if (FractionalString.Length < OldLength)
                             FractionalString = "0" + FractionalString;
@@ -488,7 +616,7 @@
                         BitIndex++;
                     }
 
-                    FractionalString = TextPartition.RoundedToNearest(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, false);
+                    FractionalString = RealTextPartition.RoundedToNearest(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, false);
 
                     string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 

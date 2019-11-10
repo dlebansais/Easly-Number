@@ -14,57 +14,81 @@
         /// <param name="text">The number in plain text.</param>
         public FormattedNumber(string text)
         {
+            Value = Number.Uninitialized;
             DiscardedProlog = string.Empty;
-            Value = Number.NaN;
+            Prefix = string.Empty;
             BeforeExponent = string.Empty;
-            Suffix = string.Empty;
             Exponent = string.Empty;
+            Suffix = string.Empty;
             InvalidPart = string.Empty;
+            DiscardedEpilog = string.Empty;
 
-            if (Number.Parse(text, out TextPartition Partition, out Number SpecialNumber))
+            if (Number.Parse(text, out TextPartition Partition))
             {
-                if (Partition != null)
-                    CreateFromPartition(Partition);
-                else
-                {
-                    Value = SpecialNumber;
-
-                    if (SpecialNumber.IsZero && text.Length >= 2 && text[text.Length - 2] == ':')
-                    {
-                        BeforeExponent = text.Substring(0, text.Length - 2);
-                        Suffix = text.Substring(text.Length - 2);
-                    }
-                    else
-                        BeforeExponent = text;
-                }
+                Debug.Assert(Partition != null);
+                CreateFromPartition(Partition);
             }
             else
+            {
+                Value = Number.NaN;
                 InvalidPart = text;
+            }
         }
 
         private void CreateFromPartition(TextPartition partition)
         {
             DiscardedProlog = partition.DiscardedProlog;
             InvalidPart = partition.InvalidPart;
+            DiscardedEpilog = partition.DiscardedEpilog;
 
-            long SignificandPrecision = Arithmetic.SignificandPrecision;
-            long ExponentPrecision = Arithmetic.ExponentPrecision;
-            partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField IntegerField, out BitField FractionalField, out BitField ExponentField);
-
-            Value = new Number(SignificandPrecision, partition.SignificandSign == OptionalSign.Negative, IntegerField, FractionalField, ExponentPrecision, partition.ExponentSign == OptionalSign.Negative, ExponentField);
-            Debug.Assert(!Value.IsNaN);
-
-            if (partition.Separator != OptionalSeparator.None)
+            bool IsHandled = false;
+            switch (partition)
             {
-                Debug.Assert(partition.Radix == Number.DecimalRadix);
-
-                GetFormattedTextForReal(partition, out string BeforeExponentText, out string ExponentText);
-
-                BeforeExponent = BeforeExponentText;
-                Exponent = ExponentText;
+                case SpecialNumberTextPartition AsSpecialNumberTextPartition:
+                    CreateFromSpecialNumberTextPartition(AsSpecialNumberTextPartition);
+                    IsHandled = true;
+                    break;
+                case RadixPrefixTextPartition AsRadixPrefixTextPartition:
+                    CreateFromRadixPrefixTextPartition(AsRadixPrefixTextPartition);
+                    IsHandled = true;
+                    break;
+                case RadixSuffixTextPartition AsRadixSuffixTextPartition:
+                    CreateFromRadixSuffixTextPartition(AsRadixSuffixTextPartition);
+                    IsHandled = true;
+                    break;
+                case RealTextPartition AsRealTextPartition:
+                    CreateFromRealTextPartition(AsRealTextPartition);
+                    IsHandled = true;
+                    break;
             }
-            else if (partition.HasRadixSuffix)
+
+            Debug.Assert(IsHandled);
+        }
+
+        private void CreateFromSpecialNumberTextPartition(SpecialNumberTextPartition partition)
+        {
+            Value = partition.Value;
+            Prefix = string.Empty;
+            BeforeExponent = partition.SpecialPart;
+            Exponent = string.Empty;
+            Suffix = partition.Suffix;
+        }
+
+        private void CreateFromRadixPrefixTextPartition(RadixPrefixTextPartition partition)
+        {
+            GetIntegerNumberValue(partition);
+
+            if (partition.HasRadixPrefix)
             {
+                Prefix = Number.RadixPrefixText(partition.Radix);
+
+                Debug.Assert(partition.SignificandSign == OptionalSign.None);
+                BeforeExponent = partition.IntegerPart;
+            }
+            else
+            {
+                Prefix = string.Empty;
+
                 switch (partition.SignificandSign)
                 {
                     default:
@@ -78,67 +102,107 @@
                         BeforeExponent = "-" + partition.IntegerPart;
                         break;
                 }
-
-                Suffix = Number.RadixSuffixText(partition.Radix);
             }
-            else
-            {
-                GetFormattedTextForInteger(partition, out string BeforeExponentText, out string ExponentText);
 
-                BeforeExponent = BeforeExponentText;
-                Exponent = ExponentText;
-            }
+            Exponent = string.Empty;
+            Suffix = string.Empty;
         }
 
-        private static void GetFormattedTextForReal(TextPartition partition, out string beforeExponentText, out string exponentText)
+        private void CreateFromRadixSuffixTextPartition(RadixSuffixTextPartition partition)
+        {
+            GetIntegerNumberValue(partition);
+
+            Prefix = string.Empty;
+
+            switch (partition.SignificandSign)
+            {
+                default:
+                case OptionalSign.None:
+                    BeforeExponent = partition.IntegerPart;
+                    break;
+                case OptionalSign.Positive:
+                    BeforeExponent = "+" + partition.IntegerPart;
+                    break;
+                case OptionalSign.Negative:
+                    BeforeExponent = "-" + partition.IntegerPart;
+                    break;
+            }
+
+            Exponent = string.Empty;
+            Suffix = Number.RadixSuffixText(partition.Radix);
+        }
+
+        private void CreateFromRealTextPartition(RealTextPartition partition)
+        {
+            long SignificandPrecision = Arithmetic.SignificandPrecision;
+            long ExponentPrecision = Arithmetic.ExponentPrecision;
+            partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField IntegerField, out BitField FractionalField, out BitField ExponentField);
+
+            Value = new Number(SignificandPrecision, ExponentPrecision, partition.SignificandSign == OptionalSign.Negative, IntegerField, FractionalField, partition.ExponentSign == OptionalSign.Negative, ExponentField);
+            Debug.Assert(!Value.IsSpecial);
+
+            if (partition.Separator != OptionalSeparator.None)
+                CreateFromRealTextPartitionForReal(partition);
+            else
+                CreateFromRealTextPartitionForInteger(partition);
+        }
+
+        private void CreateFromRealTextPartitionForReal(RealTextPartition partition)
         {
             string SignificandSignText = Number.SignText(partition.SignificandSign);
             string SeparatorText = Number.SeparatorText(partition.Separator);
             string ExponentCharacterText = Number.ExponentCharacterText(partition.ExponentCharacter);
-            beforeExponentText = $"{SignificandSignText}{partition.IntegerPart}{SeparatorText}{partition.FractionalPart}{ExponentCharacterText}";
+            BeforeExponent = $"{SignificandSignText}{partition.IntegerPart}{SeparatorText}{partition.FractionalPart}{ExponentCharacterText}";
 
             string ExponentSignText = Number.SignText(partition.ExponentSign);
-            exponentText = $"{ExponentSignText}{partition.ExponentPart}";
+            Exponent = $"{ExponentSignText}{partition.ExponentPart}";
         }
 
-        private static void GetFormattedTextForInteger(TextPartition partition, out string beforeExponentText, out string exponentText)
+        private void CreateFromRealTextPartitionForInteger(RealTextPartition partition)
         {
-            if (partition.HasRadixPrefix)
+            switch (partition.SignificandSign)
             {
-                string RadixPrefixText = Number.RadixPrefixText(partition.Radix);
-                beforeExponentText = $"{RadixPrefixText}{partition.IntegerPart}";
-            }
-            else
-            {
-                switch (partition.SignificandSign)
-                {
-                    default:
-                    case OptionalSign.None:
-                        beforeExponentText = partition.IntegerPart;
-                        break;
-                    case OptionalSign.Positive:
-                        beforeExponentText = "+" + partition.IntegerPart;
-                        break;
-                    case OptionalSign.Negative:
-                        beforeExponentText = "-" + partition.IntegerPart;
-                        break;
-                }
+                default:
+                case OptionalSign.None:
+                    BeforeExponent = partition.IntegerPart;
+                    break;
+                case OptionalSign.Positive:
+                    BeforeExponent = "+" + partition.IntegerPart;
+                    break;
+                case OptionalSign.Negative:
+                    BeforeExponent = "-" + partition.IntegerPart;
+                    break;
             }
 
-            exponentText = string.Empty;
+            Exponent = string.Empty;
+        }
+
+        private void GetIntegerNumberValue(CustomRadixIntegerTextPartition partition)
+        {
+            long SignificandPrecision = Arithmetic.SignificandPrecision;
+            long ExponentPrecision = Arithmetic.ExponentPrecision;
+            partition.ConvertToBitField(SignificandPrecision, out BitField IntegerField);
+
+            Value = new Number(SignificandPrecision, ExponentPrecision, false, IntegerField);
+            Debug.Assert(!Value.IsSpecial);
         }
         #endregion
 
         #region Properties
+        /// <summary>
+        /// The value.
+        /// </summary>
+        public Number Value { get; private set; }
+
         /// <summary>
         /// The discarded prolog before the number.
         /// </summary>
         public string DiscardedProlog { get; private set; }
 
         /// <summary>
-        /// The value.
+        /// The prefix part before the number.
         /// </summary>
-        public Number Value { get; private set; }
+        public string Prefix { get; private set; }
 
         /// <summary>
         /// The text in <see cref="Value"/> before the exponent sign (the exponent character is included).
@@ -159,6 +223,11 @@
         /// The invalid part after the number.
         /// </summary>
         public string InvalidPart { get; private set; }
+
+        /// <summary>
+        /// The discarded epilog after the number.
+        /// </summary>
+        public string DiscardedEpilog { get; private set; }
 
         /// <summary>
         /// True if the number is invalid.

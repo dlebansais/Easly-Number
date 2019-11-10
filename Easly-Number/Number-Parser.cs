@@ -65,27 +65,13 @@
         /// <returns>True if the conversion succeeded; Otherwise, false.</returns>
         public bool TryParse(string text, out Number value)
         {
-            value = NaN;
-
-            if (!Parse(text, out TextPartition Partition, out Number SpecialNumber))
-                return false;
-
-            if (Partition == null)
+            if (!Parse(text, out TextPartition Partition))
             {
-                value = SpecialNumber;
-                return true;
+                value = Uninitialized;
+                return false;
             }
 
-            if (Partition.DiscardedProlog.Length > 0)
-                return false;
-
-            if (Partition.InvalidPart.Length > 0)
-                return false;
-
-            long SignificandPrecision = Arithmetic.SignificandPrecision;
-            long ExponentPrecision = Arithmetic.ExponentPrecision;
-            Partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField IntegerField, out BitField FractionalField, out BitField ExponentField);
-            value = new Number(SignificandPrecision, Partition.SignificandSign == OptionalSign.Negative, IntegerField, FractionalField, ExponentPrecision, Partition.ExponentSign == OptionalSign.Negative, ExponentField);
+            value = new Number(Partition);
 
             return true;
         }
@@ -97,88 +83,11 @@
         /// </summary>
         /// <param name="text">The string to parse.</param>
         /// <param name="partition">The text partition of <paramref name="text"/> if parsed successfully.</param>
-        /// <param name="specialNumber">The special number if NaN or infinity.</param>
-        internal static bool Parse(string text, out TextPartition partition, out Number specialNumber)
-        {
-            if (CheckSpecialNumber(text, out specialNumber))
-            {
-                partition = null;
-                return true;
-            }
-
-            if (ParseRegularNumber(text, out partition))
-            {
-                specialNumber = NaN;
-
-                string integerPart = partition.IntegerPart;
-                string fractionalPart = partition.FractionalPart;
-                OptionalExponent exponentCharacter = partition.ExponentCharacter;
-                OptionalSign exponentSign = partition.ExponentSign;
-                string exponentPart = partition.ExponentPart;
-
-                Debug.Assert(integerPart.Length > 0 || fractionalPart.Length > 0);
-                Debug.Assert(exponentSign == OptionalSign.None || exponentCharacter != OptionalExponent.None);
-                Debug.Assert(exponentPart.Length == 0 || exponentCharacter != OptionalExponent.None);
-
-                return true;
-            }
-
-            partition = null;
-            specialNumber = NaN;
-            return false;
-        }
-
-        /// <summary>
-        /// Checks if a string is the text representation of a special number.
-        /// </summary>
-        /// <param name="text">The string to check.</param>
-        /// <param name="specialNumber">The special number upon return if successful.</param>
-        private static bool CheckSpecialNumber(string text, out Number specialNumber)
-        {
-            if (text == "0")
-            {
-                specialNumber = Zero;
-                return true;
-            }
-            else if (text.Length == 3 && text.Substring(0, 2) == "0:")
-            {
-                char Suffix = text[2];
-
-                if (Suffix == BinarySuffixCharacter || Suffix == OctalSuffixCharacter || Suffix == HexadecimalSuffixCharacter)
-                {
-                    specialNumber = Zero;
-                    return true;
-                }
-            }
-            else if (text == double.NaN.ToString())
-            {
-                specialNumber = NaN;
-                return true;
-            }
-            else if (text == double.PositiveInfinity.ToString())
-            {
-                specialNumber = PositiveInfinity;
-                return true;
-            }
-            else if (text == double.NegativeInfinity.ToString())
-            {
-                specialNumber = NegativeInfinity;
-                return true;
-            }
-
-            specialNumber = NaN;
-            return false;
-        }
-
-        /// <summary>
-        /// Parses a string as some, non-special, number.
-        /// </summary>
-        /// <param name="text">The string to check.</param>
-        /// <param name="partition">The text partition of <paramref name="text"/> if parsed successfully.</param>
-        private static bool ParseRegularNumber(string text, out TextPartition partition)
+        internal static bool Parse(string text, out TextPartition partition)
         {
             TextPartitionCollection PartitionList = new TextPartitionCollection()
             {
+                new SpecialNumberTextPartition(text),
                 new RealTextPartition(text),
                 new RadixPrefixTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, ToBinaryDigit),
                 new RadixPrefixTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit),
@@ -191,7 +100,11 @@
                 PartitionList.Parse(Index);
 
             partition = PartitionList.PreferredPartition;
-            return partition != null;
+
+            if (partition != null)
+                return true;
+            else
+                return false;
         }
 
         /// <summary>

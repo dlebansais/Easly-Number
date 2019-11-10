@@ -41,9 +41,19 @@
         ExponentPart,
 
         /// <summary>
+        /// Parsing the suffix sign at the end.
+        /// </summary>
+        SuffixSign,
+
+        /// <summary>
         /// Parsing the suffix part at the end.
         /// </summary>
         SuffixPart,
+
+        /// <summary>
+        /// Parsing the text of a special number.
+        /// </summary>
+        SpecialPart,
 
         /// <summary>
         /// Parsing the invalid part at the end.

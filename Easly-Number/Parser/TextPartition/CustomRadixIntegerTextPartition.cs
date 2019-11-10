@@ -3,7 +3,7 @@
     /// <summary>
     /// The partition of a string into different components of an integer number.
     /// </summary>
-    internal abstract class CustomRadixIntegerTextPartition : TextPartition
+    internal abstract class CustomRadixIntegerTextPartition : NumberTextPartition
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomRadixIntegerTextPartition"/> class.
@@ -13,16 +13,17 @@
         /// <param name="validityHandler">The handler to use to validate digits.</param>
         /// <param name="digitHandler">The handler to use to convert to digits.</param>
         public CustomRadixIntegerTextPartition(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler)
-            : base(text, radix)
+            : base(text)
         {
+            Radix = radix;
             ValidityHandler = validityHandler;
             DigitHandler = digitHandler;
         }
 
         /// <summary>
-        /// The optional separator. This partition cannot have one.
+        /// The radix for digits.
         /// </summary>
-        public override OptionalSeparator Separator { get { return OptionalSeparator.None; } }
+        public int Radix { get; }
 
         /// <summary>
         /// The handler used to validate digits.
@@ -42,28 +43,11 @@
         public delegate void UpdateFieldHandler(BitField field, int value);
 
         /// <summary>
-        /// Index to use for partition comparison.
-        /// </summary>
-        public override int ComparisonIndex
-        {
-            get
-            {
-                if (RadixPrefix >= 0 || RadixSuffix >= 0)
-                    return FirstInvalidCharacterIndex < 0 ? Text.Length : FirstInvalidCharacterIndex;
-                else
-                    return 0;
-            }
-        }
-
-        /// <summary>
         /// Converts the parsed partition to bit fields.
         /// </summary>
         /// <param name="significandPrecision">The number of bits in the significand.</param>
-        /// <param name="exponentPrecision">The number of bits in the exponent.</param>
         /// <param name="integerField">The bit field of the integer part upon return.</param>
-        /// <param name="fractionalField">The bit field of the fractional part upon return.</param>
-        /// <param name="exponentField">The bit field of the exponent part upon return.</param>
-        public override void ConvertToBitField(long significandPrecision, long exponentPrecision, out BitField integerField, out BitField fractionalField, out BitField exponentField)
+        public virtual void ConvertToBitField(long significandPrecision, out BitField integerField)
         {
             long BitIndex;
 
@@ -83,11 +67,6 @@
                 integerField.SetBit(BitIndex++, HasCarry);
             }
             while (IntegerString != "0");
-
-            fractionalField = new BitField();
-
-            exponentField = new BitField();
-            exponentField.SetBit(0, false);
         }
     }
 }

@@ -19,8 +19,6 @@
             : base(text, radix, validityHandler, digitHandler)
         {
             RadixSuffixCharacter = radixSuffixCharacter;
-
-            Debug.Assert(Separator == OptionalSeparator.None);
         }
 
         /// <summary>
@@ -34,7 +32,6 @@
             switch (State)
             {
                 case ParsingState.Init:
-                    InitCultureSeparator();
                     State = ParsingState.LeadingWhitespaces;
                     Parse(index);
                     break;
@@ -134,5 +131,29 @@
         /// The radix character used as suffix to the string.
         /// </summary>
         public char RadixSuffixCharacter { get; }
+
+        /// <summary>
+        /// True if the partition includes a suffix part.
+        /// </summary>
+        public bool HasRadixSuffix { get { return RadixSuffix >= 0; } }
+
+        /// <summary>
+        /// Index of the suffix indicating a radix, -1 if not parsed.
+        /// </summary>
+        public int RadixSuffix { get; set; } = -1;
+
+        /// <summary>
+        /// Index to use for partition comparison.
+        /// </summary>
+        public override int ComparisonIndex
+        {
+            get
+            {
+                if (RadixSuffix >= 0)
+                    return FirstInvalidCharacterIndex < 0 ? Text.Length : FirstInvalidCharacterIndex;
+                else
+                    return 0;
+            }
+        }
     }
 }
