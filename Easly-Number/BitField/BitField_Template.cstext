@@ -1,4 +1,6 @@
-﻿namespace EaslyNumber
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("Test-Easly-Number")]
+
+namespace EaslyNumber
 {
     using System;
     using System.Diagnostics;
