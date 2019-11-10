@@ -145,6 +145,7 @@
             else if (c == 'E' || c == 'e')
             {
                 ExponentCharacter = c == 'E' ? OptionalExponent.UpperCaseE : OptionalExponent.LowerCaseE;
+                ExponentIndex = index;
 
                 Debug.Assert(LastLeadingZeroIndex >= 0);
                 FirstIntegerPartIndex = LastLeadingZeroIndex;
@@ -246,7 +247,9 @@
             }
             else if (c == '-' || c == '+')
             {
-                if (index == FirstExponentPartIndex)
+                Debug.Assert(ExponentIndex >= 0 && ExponentIndex < index);
+
+                if (index == ExponentIndex + 1)
                 {
                     ExponentSign = c == '-' ? OptionalSign.Negative : OptionalSign.Positive;
                     FirstExponentPartIndex++;
@@ -434,6 +437,8 @@
                 string FractionalString = Text.Substring(FirstFractionalPartIndex, LastFractionalPartIndex - FirstFractionalPartIndex);
                 BitIndex = 0;
                 int StartingLength = FractionalString.Length;
+
+#if IGNORE
                 bool DebugString = false; // FractionalString == "47856";
 
                 if (DebugString)
@@ -441,6 +446,7 @@
                     Debug.Assert(false);
                     Debug.WriteLine(FractionalString);
                 }
+#endif
 
                 do
                 {
@@ -455,8 +461,10 @@
                     if (HasCarry)
                         FractionalString = FractionalString.Substring(1);
 
+#if IGNORE
                     if (DebugString)
                         Debug.WriteLine((HasCarry ? "(1) " : "(0) ") + FractionalString);
+#endif
                 }
                 while (FractionalString != "0");
             }
