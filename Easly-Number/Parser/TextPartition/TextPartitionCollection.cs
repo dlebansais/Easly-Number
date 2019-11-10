@@ -37,7 +37,7 @@
 
                 foreach (TextPartition item in this)
                 {
-                    bool ChooseCandidate = ((Result == null) && item.IsPartiallyValid) || (Result.ComparisonIndex < item.ComparisonIndex);
+                    bool ChooseCandidate = ((Result == null) && item.IsPartiallyValid) || ((Result != null) && (Result.ComparisonIndex < item.ComparisonIndex));
 
                     Result = ChooseCandidate ? item : Result;
                 }
