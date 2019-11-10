@@ -133,11 +133,6 @@
         public char RadixSuffixCharacter { get; }
 
         /// <summary>
-        /// True if the partition includes a suffix part.
-        /// </summary>
-        public bool HasRadixSuffix { get { return RadixSuffix >= 0; } }
-
-        /// <summary>
         /// Index of the suffix indicating a radix, -1 if not parsed.
         /// </summary>
         public int RadixSuffix { get; set; } = -1;

@@ -1,5 +1,7 @@
 ﻿namespace EaslyNumber
 {
+    using System.Diagnostics;
+
     /// <summary>
     /// The partition of a string into different components of an integer number.
     /// </summary>
@@ -49,8 +51,7 @@
         {
             get
             {
-                if (FirstIntegerPartIndex < 0 || LastIntegerPartIndex < FirstIntegerPartIndex + 1)
-                    return false;
+                Debug.Assert(FirstIntegerPartIndex >= 0 && LastIntegerPartIndex >= FirstIntegerPartIndex + 1);
 
                 for (int i = FirstIntegerPartIndex; i < LastIntegerPartIndex; i++)
                     if (Text[i] != '0')

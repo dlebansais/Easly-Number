@@ -348,12 +348,12 @@
         {
             get
             {
-                if (FirstIntegerPartIndex < 0 || LastIntegerPartIndex < FirstIntegerPartIndex + 1)
-                    return false;
-
-                for (int i = FirstIntegerPartIndex; i < LastIntegerPartIndex; i++)
-                    if (Text[i] != '0')
-                        return false;
+                if (FirstIntegerPartIndex >= 0)
+                {
+                    for (int i = FirstIntegerPartIndex; i < LastIntegerPartIndex; i++)
+                        if (Text[i] != '0')
+                            return false;
+                }
 
                 if (HasFractionalPart)
                 {
@@ -402,22 +402,28 @@
         {
             long BitIndex;
 
-            string IntegerString = Text.Substring(FirstIntegerPartIndex, LastIntegerPartIndex - FirstIntegerPartIndex);
             integerField = new BitField();
-            BitIndex = 0;
 
-            do
+            if (FirstIntegerPartIndex >= 0)
             {
-                if (BitIndex >= significandPrecision)
-                {
-                    integerField.ShiftRight();
-                    BitIndex--;
-                }
+                string IntegerString = Text.Substring(FirstIntegerPartIndex, LastIntegerPartIndex - FirstIntegerPartIndex);
+                BitIndex = 0;
 
-                IntegerString = DividedByTwo(IntegerString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
-                integerField.SetBit(BitIndex++, HasCarry);
+                do
+                {
+                    if (BitIndex >= significandPrecision)
+                    {
+                        integerField.ShiftRight();
+                        BitIndex--;
+                    }
+
+                    IntegerString = DividedByTwo(IntegerString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
+                    integerField.SetBit(BitIndex++, HasCarry);
+                }
+                while (IntegerString != "0");
             }
-            while (IntegerString != "0");
+            else
+                integerField.SetZero();
 
             long IntegerBitIndex = integerField.SignificantBits;
 
