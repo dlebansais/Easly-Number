@@ -19,6 +19,8 @@
             : base(text, radix, validityHandler, digitHandler)
         {
             RadixSuffixCharacter = radixSuffixCharacter;
+
+            Debug.Assert(Separator == OptionalSeparator.None);
         }
 
         /// <summary>
@@ -117,7 +119,7 @@
         {
             if (c == RadixSuffixCharacter)
             {
-                if (index + 1 > Text.Length)
+                if (index + 1 < Text.Length)
                     FirstInvalidCharacterIndex = index + 1;
 
                 RadixSuffix = index;

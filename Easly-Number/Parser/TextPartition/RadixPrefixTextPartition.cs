@@ -1,5 +1,7 @@
 ﻿namespace EaslyNumber
 {
+    using System.Diagnostics;
+
     /// <summary>
     /// The partition of a string into different components of an integer number.
     /// </summary>
@@ -17,6 +19,8 @@
             : base(text, radix, validityHandler, digitHandler)
         {
             RadixPrefixCharacter = radixPrefixCharacter;
+
+            Debug.Assert(Separator == OptionalSeparator.None);
         }
 
         /// <summary>

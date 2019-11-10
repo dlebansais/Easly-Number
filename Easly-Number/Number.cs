@@ -389,7 +389,7 @@
         /// <summary>
         /// True if the number is an integer.
         /// </summary>
-        public bool IsInteger { get { return IsZero || FractionalField == null || FractionalField.SignificantBits == 0; } }
+        public bool IsInteger { get { return IsZero || FractionalField == null || FractionalField.SignificantBits == 0 || (FractionalField.SignificantBits == 1 && FractionalField.ShiftBits == 0 && FractionalField.GetBit(0) == false); } }
 
         /// <summary>
         /// The binary data corresponding to the integer part.

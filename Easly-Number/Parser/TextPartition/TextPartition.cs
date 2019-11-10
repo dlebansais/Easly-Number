@@ -157,7 +157,7 @@
         /// <summary>
         /// True if the partition represents a valid number.
         /// </summary>
-        public bool IsValid { get { return Text.Length > 0 && FirstInvalidCharacterIndex < 0; } }
+        public bool IsValid { get { return Text.Length > (LastLeadingSpaceIndex + 1) && FirstInvalidCharacterIndex < 0; } }
 
         /// <summary>
         /// True if the partition represents a valid number, possibly followed by an invalid part.
