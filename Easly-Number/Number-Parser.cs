@@ -229,16 +229,6 @@
         }
 
         /// <summary>
-        /// Updates a data field with a binary digit.
-        /// </summary>
-        /// <param name="field">The data field to update.</param>
-        /// <param name="value">The digit value.</param>
-        internal static void UpdateFieldWithBinary(BitField field, int value)
-        {
-            field.ShiftLeftAndAdd(1, value);
-        }
-
-        /// <summary>
         /// Checks if a string is a number in binary format.
         /// </summary>
         /// <param name="text">The string to check.</param>
@@ -289,16 +279,6 @@
                 return (char)('0' + value);
             else
                 throw new ArgumentOutOfRangeException(nameof(value));
-        }
-
-        /// <summary>
-        /// Updates a data field with an octal digit.
-        /// </summary>
-        /// <param name="field">The data field to update.</param>
-        /// <param name="value">The digit value.</param>
-        internal static void UpdateFieldWithOctal(BitField field, int value)
-        {
-            field.ShiftLeftAndAdd(3, value);
         }
 
         /// <summary>
@@ -409,16 +389,6 @@
         public static char ToUpperCaseHexadecimalDigit(int value)
         {
             return ToHexadecimalDigit(value, false);
-        }
-
-        /// <summary>
-        /// Updates a data field with an hexadecimal digit.
-        /// </summary>
-        /// <param name="field">The data field to update.</param>
-        /// <param name="value">The digit value.</param>
-        internal static void UpdateFieldWithHexadecimal(BitField field, int value)
-        {
-            field.ShiftLeftAndAdd(4, value);
         }
 
         /// <summary>

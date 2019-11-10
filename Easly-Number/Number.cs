@@ -314,9 +314,19 @@
             IsSignificandNegative = false;
             IsExponentNegative = false;
 
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            if (IsZero)
+            {
+                IntegerField = null;
+                FractionalField = null;
+                ExponentField = null;
+            }
+            else
+            {
+                IntegerField = new BitField();
+                IntegerField.SetZero();
+                FractionalField = new BitField();
+                ExponentField = new BitField();
+            }
         }
         #endregion
 

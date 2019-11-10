@@ -42,36 +42,6 @@
         }
 
         /// <summary>
-        /// Shift bits to the left by <paramref name="shiftValue"/>, then add <paramref name="addValue"/>.
-        /// </summary>
-        /// <param name="shiftValue">The number of bits to shift.</param>
-        /// <param name="addValue">The value to add.</param>
-        public void ShiftLeftAndAdd(int shiftValue, int addValue)
-        {
-            Debug.Assert(shiftValue >= 0);
-            Debug.Assert(addValue >= 0 && addValue < (1 << shiftValue));
-
-            long Carry = addValue;
-            long LastElementIndex = SignificantBits / (sizeof(uint) * 8);
-
-            for (long i = 0; i + 1 < LastElementIndex; i++)
-            {
-                long ElementValue = Content[i];
-                ElementValue <<= shiftValue;
-                ElementValue += Carry;
-                Content[i] = (uint)ElementValue;
-
-                Carry = ElementValue >> (sizeof(uint) * 8);
-            }
-
-            if (Carry != 0 && LastElementIndex == Content.LongLength)
-            {
-                Array.Resize(ref Content, Content.Length + 1);
-                Content[LastElementIndex] = (uint)Carry;
-            }
-        }
-
-        /// <summary>
         /// Shift bits to the right.
         /// </summary>
         public void ShiftRight()
