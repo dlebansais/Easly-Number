@@ -71,7 +71,7 @@
             Prefix = string.Empty;
             BeforeExponent = partition.SpecialPart;
             Exponent = string.Empty;
-            Suffix = partition.Suffix;
+            Suffix = string.Empty;
         }
 
         private void CreateFromRadixPrefixTextPartition(RadixPrefixTextPartition partition)
@@ -134,12 +134,17 @@
 
         private void CreateFromRealTextPartition(RealTextPartition partition)
         {
-            long SignificandPrecision = Arithmetic.SignificandPrecision;
-            long ExponentPrecision = Arithmetic.ExponentPrecision;
-            partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField IntegerField, out BitField FractionalField, out BitField ExponentField);
+            if (partition.IsZero)
+                Value = Number.Zero;
+            else
+            {
+                long SignificandPrecision = Arithmetic.SignificandPrecision;
+                long ExponentPrecision = Arithmetic.ExponentPrecision;
+                partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField IntegerField, out BitField FractionalField, out BitField ExponentField);
 
-            Value = new Number(SignificandPrecision, ExponentPrecision, partition.SignificandSign == OptionalSign.Negative, IntegerField, FractionalField, partition.ExponentSign == OptionalSign.Negative, ExponentField);
-            Debug.Assert(!Value.IsSpecial);
+                Value = new Number(SignificandPrecision, ExponentPrecision, partition.SignificandSign == OptionalSign.Negative, IntegerField, FractionalField, partition.ExponentSign == OptionalSign.Negative, ExponentField);
+                Debug.Assert(!Value.IsSpecial);
+            }
 
             if (partition.Separator != OptionalSeparator.None)
                 CreateFromRealTextPartitionForReal(partition);
@@ -179,12 +184,17 @@
 
         private void GetIntegerNumberValue(CustomRadixIntegerTextPartition partition)
         {
-            long SignificandPrecision = Arithmetic.SignificandPrecision;
-            long ExponentPrecision = Arithmetic.ExponentPrecision;
-            partition.ConvertToBitField(SignificandPrecision, out BitField IntegerField);
+            if (partition.IsZero)
+                Value = Number.Zero;
+            else
+            {
+                long SignificandPrecision = Arithmetic.SignificandPrecision;
+                long ExponentPrecision = Arithmetic.ExponentPrecision;
+                partition.ConvertToBitField(SignificandPrecision, out BitField IntegerField);
 
-            Value = new Number(SignificandPrecision, ExponentPrecision, false, IntegerField);
-            Debug.Assert(!Value.IsSpecial);
+                Value = new Number(SignificandPrecision, ExponentPrecision, false, IntegerField);
+                Debug.Assert(!Value.IsSpecial);
+            }
         }
         #endregion
 

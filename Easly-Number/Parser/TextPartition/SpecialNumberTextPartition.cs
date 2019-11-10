@@ -54,14 +54,6 @@
                     ParseSpecialPart(index, c);
                     break;
 
-                case ParsingState.SuffixSign:
-                    ParseSuffixSign(index, c);
-                    break;
-
-                case ParsingState.SuffixPart:
-                    ParseSuffixPart(index, c);
-                    break;
-
                 case ParsingState.InvalidPart:
                     ParseInvalidPart(index, c);
                     break;
@@ -94,76 +86,27 @@
         /// <param name="c">The parsed character.</param>
         private void ParseSpecialPart(int index, char c)
         {
-            if (c == '0' && index == FirstSpecialPartIndex)
+            string Substring = Text.Substring(FirstSpecialPartIndex, index - FirstSpecialPartIndex);
+
+            if (Substring == NaNString)
             {
                 LastSpecialPartIndex = index;
-                Value = Number.Zero;
-                State = ParsingState.SuffixSign;
-            }
-            else
-            {
-                string Substring = Text.Substring(FirstSpecialPartIndex, index - FirstSpecialPartIndex);
-
-                if (Substring == NaNString)
-                {
-                    LastSpecialPartIndex = index;
-                    Value = Number.NaN;
-                    State = ParsingState.InvalidPart;
-                }
-                else if (Substring == PositiveInfinityString)
-                {
-                    LastSpecialPartIndex = index;
-                    Value = Number.PositiveInfinity;
-                    State = ParsingState.InvalidPart;
-                }
-                else if (Substring == NegativeInfinityString)
-                {
-                    LastSpecialPartIndex = index;
-                    Value = Number.NegativeInfinity;
-                    State = ParsingState.InvalidPart;
-                }
-                else if (index + 1 == Text.Length)
-                {
-                    FirstInvalidCharacterIndex = 0;
-                    Value = Number.Uninitialized;
-                    State = ParsingState.InvalidPart;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Runs the parser in the <see cref="ParsingState.SuffixSign"/> state.
-        /// </summary>
-        /// <param name="index">Index of the parsed character.</param>
-        /// <param name="c">The parsed character.</param>
-        private void ParseSuffixSign(int index, char c)
-        {
-            if (c == ':')
-            {
-                State = ParsingState.SuffixPart;
-            }
-            else
-            {
-                FirstInvalidCharacterIndex = 0;
-                Value = Number.Uninitialized;
+                Value = Number.NaN;
                 State = ParsingState.InvalidPart;
             }
-        }
-
-        /// <summary>
-        /// Runs the parser in the <see cref="ParsingState.SuffixPart"/> state.
-        /// </summary>
-        /// <param name="index">Index of the parsed character.</param>
-        /// <param name="c">The parsed character.</param>
-        private void ParseSuffixPart(int index, char c)
-        {
-            if (c == Number.BinarySuffixCharacter || c == Number.OctalSuffixCharacter || c == Number.HexadecimalSuffixCharacter)
+            else if (Substring == PositiveInfinityString)
             {
-                Debug.Assert(index > 1);
-                SuffixCharacterIndex = index;
+                LastSpecialPartIndex = index;
+                Value = Number.PositiveInfinity;
                 State = ParsingState.InvalidPart;
             }
-            else
+            else if (Substring == NegativeInfinityString)
+            {
+                LastSpecialPartIndex = index;
+                Value = Number.NegativeInfinity;
+                State = ParsingState.InvalidPart;
+            }
+            else if (index + 1 == Text.Length)
             {
                 FirstInvalidCharacterIndex = 0;
                 Value = Number.Uninitialized;
@@ -213,11 +156,6 @@
         public int LastSpecialPartIndex { get; set; } = -1;
 
         /// <summary>
-        /// Index of the suffix character, -1 if not parsed.
-        /// </summary>
-        public int SuffixCharacterIndex { get; set; } = -1;
-
-        /// <summary>
         /// The beginning of <see cref="TextPartition.Text"/> that can be ignored.
         /// </summary>
         public string SpecialPart
@@ -226,20 +164,6 @@
             {
                 if (FirstSpecialPartIndex >= 0 && LastSpecialPartIndex >= FirstSpecialPartIndex)
                     return Text.Substring(FirstSpecialPartIndex, LastSpecialPartIndex - FirstSpecialPartIndex + 1);
-                else
-                    return string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// The beginning of <see cref="TextPartition.Text"/> that can be ignored.
-        /// </summary>
-        public string Suffix
-        {
-            get
-            {
-                if (SuffixCharacterIndex > 0)
-                    return Text.Substring(SuffixCharacterIndex - 1, 2);
                 else
                     return string.Empty;
             }

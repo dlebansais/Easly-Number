@@ -43,6 +43,24 @@
         public delegate void UpdateFieldHandler(BitField field, int value);
 
         /// <summary>
+        /// True if the parsed number is zero.
+        /// </summary>
+        public bool IsZero
+        {
+            get
+            {
+                if (FirstIntegerPartIndex < 0 || LastIntegerPartIndex < FirstIntegerPartIndex + 1)
+                    return false;
+
+                for (int i = FirstIntegerPartIndex; i < LastIntegerPartIndex; i++)
+                    if (Text[i] != '0')
+                        return false;
+
+                return true;
+            }
+        }
+
+        /// <summary>
         /// Converts the parsed partition to bit fields.
         /// </summary>
         /// <param name="significandPrecision">The number of bits in the significand.</param>

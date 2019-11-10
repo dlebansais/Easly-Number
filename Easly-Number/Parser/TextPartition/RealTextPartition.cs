@@ -342,6 +342,31 @@
         public string ExponentPart { get { return FirstExponentPartIndex < 0 ? string.Empty : Text.Substring(FirstExponentPartIndex, LastExponentPartIndex - FirstExponentPartIndex); } }
 
         /// <summary>
+        /// True if the parsed number is zero.
+        /// </summary>
+        public bool IsZero
+        {
+            get
+            {
+                if (FirstIntegerPartIndex < 0 || LastIntegerPartIndex < FirstIntegerPartIndex + 1)
+                    return false;
+
+                for (int i = FirstIntegerPartIndex; i < LastIntegerPartIndex; i++)
+                    if (Text[i] != '0')
+                        return false;
+
+                if (HasFractionalPart)
+                {
+                    for (int i = FirstFractionalPartIndex; i < LastFractionalPartIndex; i++)
+                        if (Text[i] != '0')
+                            return false;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
         /// The decimal separator character for the current culture.
         /// </summary>
         protected char CultureDecimalSeparator { get; set; }
