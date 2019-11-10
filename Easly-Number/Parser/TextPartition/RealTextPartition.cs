@@ -546,8 +546,15 @@
             }
 
             if (includeEndingZeroes)
+            {
                 for (int i = DigitIndex + 1; i < text.Length; i++)
                     Result += "0";
+            }
+            else
+            {
+                while (Result.Length > 1 && Result[Result.Length - 1] == '0')
+                    Result = Result.Substring(0, Result.Length - 1);
+            }
 
             return Result;
         }
