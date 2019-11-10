@@ -51,10 +51,10 @@
             long ExponentPrecision = Arithmetic.ExponentPrecision;
             partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField IntegerField, out BitField FractionalField, out BitField ExponentField);
 
-            Value = new Number(SignificandPrecision, ExponentPrecision, IntegerField, FractionalField, ExponentField);
+            Value = new Number(SignificandPrecision, partition.SignificandSign == OptionalSign.Negative, IntegerField, FractionalField, ExponentPrecision, partition.ExponentSign == OptionalSign.Negative, ExponentField);
             Debug.Assert(!Value.IsNaN);
 
-            if (partition.HasFractionalPart)
+            if (partition.Separator != OptionalSeparator.None)
             {
                 Debug.Assert(partition.Radix == Number.DecimalRadix);
 
@@ -65,7 +65,20 @@
             }
             else if (partition.HasRadixSuffix)
             {
-                BeforeExponent = partition.IntegerPart;
+                switch (partition.SignificandSign)
+                {
+                    default:
+                    case OptionalSign.None:
+                        BeforeExponent = partition.IntegerPart;
+                        break;
+                    case OptionalSign.Positive:
+                        BeforeExponent = "+" + partition.IntegerPart;
+                        break;
+                    case OptionalSign.Negative:
+                        BeforeExponent = "-" + partition.IntegerPart;
+                        break;
+                }
+
                 Suffix = Number.RadixSuffixText(partition.Radix);
             }
             else
@@ -90,9 +103,28 @@
 
         private static void GetFormattedTextForInteger(TextPartition partition, out string beforeExponentText, out string exponentText)
         {
-            string RadixPrefixText = partition.HasRadixPrefix ? Number.RadixPrefixText(partition.Radix) : string.Empty;
+            if (partition.HasRadixPrefix)
+            {
+                string RadixPrefixText = Number.RadixPrefixText(partition.Radix);
+                beforeExponentText = $"{RadixPrefixText}{partition.IntegerPart}";
+            }
+            else
+            {
+                switch (partition.SignificandSign)
+                {
+                    default:
+                    case OptionalSign.None:
+                        beforeExponentText = partition.IntegerPart;
+                        break;
+                    case OptionalSign.Positive:
+                        beforeExponentText = "+" + partition.IntegerPart;
+                        break;
+                    case OptionalSign.Negative:
+                        beforeExponentText = "-" + partition.IntegerPart;
+                        break;
+                }
+            }
 
-            beforeExponentText = $"{RadixPrefixText}{partition.IntegerPart}";
             exponentText = string.Empty;
         }
         #endregion

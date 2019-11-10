@@ -112,11 +112,13 @@
         /// This contructor creates the number from a parsed integer.
         /// </summary>
         /// <param name="significandPrecision">The precision used to obtain the integer and fractional data fields.</param>
-        /// <param name="exponentPrecision">The precision used to obtain the exponent data fields.</param>
+        /// <param name="isSignificandNegative">True if the number is negative.</param>
         /// <param name="integerField">The integer data field.</param>
         /// <param name="fractionalField">The fractional data field.</param>
+        /// <param name="exponentPrecision">The precision used to obtain the exponent data fields.</param>
+        /// <param name="isExponentNegative">True if the number exponent is negative.</param>
         /// <param name="exponentField">The exponent data field.</param>
-        internal Number(long significandPrecision, long exponentPrecision, BitField integerField, BitField fractionalField, BitField exponentField)
+        internal Number(long significandPrecision, bool isSignificandNegative, BitField integerField, BitField fractionalField, long exponentPrecision, bool isExponentNegative, BitField exponentField)
         {
             IsNaN = false;
             IsPositiveInfinity = false;

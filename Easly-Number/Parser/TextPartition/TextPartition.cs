@@ -35,14 +35,26 @@
         public int LastLeadingSpaceIndex { get; set; } = -1;
 
         /// <summary>
-        /// The beginning of <see cref="Text"/> that can be ignored.
-        /// </summary>
-        public string DiscardedProlog { get { return LastLeadingSpaceIndex < 0 ? string.Empty : Text.Substring(0, LastLeadingSpaceIndex); } }
-
-        /// <summary>
         /// Index of the last optional zero character, -1 if not parsed.
         /// </summary>
         public int LastLeadingZeroIndex { get; set; } = -1;
+
+        /// <summary>
+        /// The beginning of <see cref="Text"/> that can be ignored.
+        /// </summary>
+        public string DiscardedProlog
+        {
+            get
+            {
+                int LastDiscardedIndex = -1;
+                if (LastDiscardedIndex < LastLeadingSpaceIndex)
+                    LastDiscardedIndex = LastLeadingSpaceIndex;
+                if (LastDiscardedIndex < LastLeadingZeroIndex)
+                    LastDiscardedIndex = LastLeadingZeroIndex;
+
+                return LastDiscardedIndex < 0 ? string.Empty : Text.Substring(0, LastDiscardedIndex + 1);
+            }
+        }
 
         /// <summary>
         /// Sign of the significand, None if not parsed.

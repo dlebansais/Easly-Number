@@ -85,7 +85,7 @@
             long SignificandPrecision = Arithmetic.SignificandPrecision;
             long ExponentPrecision = Arithmetic.ExponentPrecision;
             Partition.ConvertToBitField(SignificandPrecision, ExponentPrecision, out BitField IntegerField, out BitField FractionalField, out BitField ExponentField);
-            value = new Number(SignificandPrecision, ExponentPrecision, IntegerField, FractionalField, ExponentField);
+            value = new Number(SignificandPrecision, Partition.SignificandSign == OptionalSign.Negative, IntegerField, FractionalField, ExponentPrecision, Partition.ExponentSign == OptionalSign.Negative, ExponentField);
 
             return true;
         }
