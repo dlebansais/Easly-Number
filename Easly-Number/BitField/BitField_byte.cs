@@ -124,6 +124,93 @@ namespace EaslyNumber
         }
         #endregion
 
+        #region Comparison Operations
+        /// <summary>
+        /// Checks if two bit fields are equal.
+        /// </summary>
+        /// <param name="other">The other instance.</param>
+        public bool IsEqual(BitField_byte other)
+        {
+            if (SignificantBits != other.SignificantBits || ShiftBits != other.ShiftBits)
+                return false;
+
+            long LastElementIndex = SignificantBits / (sizeof(byte) * 8);
+
+            for (long i = 0; i < LastElementIndex; i++)
+                if (Content[i] != other.Content[i])
+                    return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is lesser than <paramref name="y"/>.
+        /// </summary>
+        /// <param name="x">The first bit field.</param>
+        /// <param name="y">The second bit field.</param>
+        public static bool operator <(BitField_byte x, BitField_byte y)
+        {
+            long PositionX = x.HighestBitSet;
+            long PositionY = y.HighestBitSet;
+
+            if (PositionX >= 0 && PositionY >= 0)
+            {
+                if (PositionX != PositionY)
+                    return PositionX < PositionY;
+
+                //TODO compare content.
+                return false;
+            }
+            else if (PositionX < 0)
+                return true;
+            else if (PositionY < 0)
+                return false;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is greater than <paramref name="y"/>.
+        /// </summary>
+        /// <param name="x">The first bit field.</param>
+        /// <param name="y">The second bit field.</param>
+        public static bool operator >(BitField_byte x, BitField_byte y)
+        {
+            return y < x;
+        }
+
+        /// <summary>
+        /// Return the position of the highest bit set, -1 if none.
+        /// </summary>
+        private long HighestBitSet
+        {
+            get
+            {
+                long LastElementIndex = SignificantBits / (sizeof(byte) * 8);
+
+                for (long i = LastElementIndex; i > 0; i--)
+                {
+                    long ElementValue = Content[i];
+
+                    if (ElementValue != 0)
+                    {
+                        int j = 0;
+                        do
+                        {
+                            ElementValue >>= 1;
+                            j++;
+                        }
+                        while (ElementValue != 0);
+
+                        return (i * sizeof(byte) * 8) + j + ShiftBits;
+                    }
+                }
+
+                return -1;
+            }
+        }
+        #endregion
+
         #region Implementation
         private byte[] Content;
         #endregion
