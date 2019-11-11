@@ -264,24 +264,27 @@ namespace EaslyNumber
         {
             get
             {
-                long LastIndex = LastItemIndex;
-                Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
-
-                for (long i = LastIndex; i >= 0; i--)
+                if (SignificantBits > 0)
                 {
-                    long ElementValue = Content[i];
+                    long LastIndex = LastItemIndex;
+                    Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
 
-                    if (ElementValue != 0)
+                    for (long i = LastIndex; i >= 0; i--)
                     {
-                        int j = 0;
-                        do
-                        {
-                            ElementValue >>= 1;
-                            j++;
-                        }
-                        while (ElementValue != 0);
+                        long ElementValue = Content[i];
 
-                        return (i * sizeof(Template) * 8) + j - 1 + ShiftBits;
+                        if (ElementValue != 0)
+                        {
+                            int j = 0;
+                            do
+                            {
+                                ElementValue >>= 1;
+                                j++;
+                            }
+                            while (ElementValue != 0);
+
+                            return (i * sizeof(Template) * 8) + j - 1 + ShiftBits;
+                        }
                     }
                 }
 
