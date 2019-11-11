@@ -63,7 +63,7 @@
         /// <param name="text">A string containing a number to convert.</param>
         /// <param name="value">The converted number if successful.</param>
         /// <returns>True if the conversion succeeded; Otherwise, false.</returns>
-        public bool TryParse(string text, out Number value)
+        public static bool TryParse(string text, out Number value)
         {
             if (!Parse(text, out TextPartition Partition))
             {
@@ -370,18 +370,21 @@
         /// <param name="radix">The radix.</param>
         internal static string RadixPrefixText(int radix)
         {
-            Debug.Assert(radix == BinaryRadix || radix == OctalRadix || radix == DecimalRadix || radix == HexadecimalRadix);
+            string Result = null;
 
-            string Result = "0";
+            switch (radix)
+            {
+                case BinaryRadix:
+                    Result = "0" + BinaryPrefixCharacter;
+                    break;
+                case HexadecimalRadix:
+                    Result = "0" + HexadecimalPrefixCharacter;
+                    break;
+            }
 
-            if (radix == 2)
-                return Result + BinaryPrefixCharacter;
-            else if (radix == 8)
-                return Result;
-            else if (radix == 16)
-                return Result + HexadecimalPrefixCharacter;
-            else
-                return string.Empty;
+            Debug.Assert(Result != null);
+
+            return Result;
         }
 
         /// <summary>
@@ -390,18 +393,24 @@
         /// <param name="radix">The radix.</param>
         internal static string RadixSuffixText(int radix)
         {
-            Debug.Assert(radix == BinaryRadix || radix == OctalRadix || radix == DecimalRadix || radix == HexadecimalRadix);
+            string Result = null;
 
-            string Result = ":";
+            switch (radix)
+            {
+                case BinaryRadix:
+                    Result = ":" + BinarySuffixCharacter;
+                    break;
+                case OctalRadix:
+                    Result = ":" + OctalSuffixCharacter;
+                    break;
+                case HexadecimalRadix:
+                    Result = ":" + HexadecimalSuffixCharacter;
+                    break;
+            }
 
-            if (radix == 2)
-                return Result + BinarySuffixCharacter;
-            else if (radix == 8)
-                return Result + OctalSuffixCharacter;
-            else if (radix == 16)
-                return Result + HexadecimalSuffixCharacter;
-            else
-                return string.Empty;
+            Debug.Assert(Result != null);
+
+            return Result;
         }
         #endregion
     }

@@ -125,28 +125,10 @@
                 Debug.Assert(!Value.IsSpecial);
             }
 
-            if (partition.Separator != OptionalSeparator.None)
-                CreateFromRealTextPartitionForReal(partition);
-            else
-                CreateFromRealTextPartitionForInteger(partition);
-        }
-
-        private void CreateFromRealTextPartitionForReal(RealTextPartition partition)
-        {
             string SignificandSignText = Number.SignText(partition.SignificandSign);
             string SeparatorText = Number.SeparatorText(partition.Separator);
             string ExponentCharacterText = Number.ExponentCharacterText(partition.ExponentCharacter);
             BeforeExponent = $"{SignificandSignText}{partition.IntegerPart}{SeparatorText}{partition.FractionalPart}{ExponentCharacterText}";
-
-            string ExponentSignText = Number.SignText(partition.ExponentSign);
-            Exponent = $"{ExponentSignText}{partition.ExponentPart}";
-        }
-
-        private void CreateFromRealTextPartitionForInteger(RealTextPartition partition)
-        {
-            string SignificandSignText = Number.SignText(partition.SignificandSign);
-            string ExponentCharacterText = Number.ExponentCharacterText(partition.ExponentCharacter);
-            BeforeExponent = $"{SignificandSignText}{partition.IntegerPart}{ExponentCharacterText}";
 
             string ExponentSignText = Number.SignText(partition.ExponentSign);
             Exponent = $"{ExponentSignText}{partition.ExponentPart}";

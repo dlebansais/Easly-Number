@@ -119,11 +119,6 @@
         public char RadixPrefixCharacter { get; }
 
         /// <summary>
-        /// True if the partition includes a suffix part.
-        /// </summary>
-        public bool HasRadixPrefix { get { return RadixPrefix >= 0; } }
-
-        /// <summary>
         /// Index of the prefix indicating a radix, -1 if not parsed.
         /// </summary>
         public int RadixPrefix { get; set; } = -1;

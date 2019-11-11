@@ -105,6 +105,12 @@
         /// <exception cref="ArgumentException">The partition does not represent a valid number.</exception>
         private void InitFromPartition(TextPartition partition)
         {
+            if (partition.DiscardedProlog.Length > 0)
+                throw new ArgumentException();
+
+            if (partition.InvalidPart.Length > 0)
+                throw new ArgumentException();
+
             bool IsHandled = false;
 
             switch (partition)
@@ -156,12 +162,6 @@
         /// <exception cref="ArgumentException">The source is not a valid number.</exception>
         private void InitFromIntegerNumber(CustomRadixIntegerTextPartition partition)
         {
-            if (partition.DiscardedProlog.Length > 0)
-                throw new ArgumentException();
-
-            if (partition.InvalidPart.Length > 0)
-                throw new ArgumentException();
-
             IsNaN = false;
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
@@ -187,16 +187,10 @@
         /// <exception cref="ArgumentException">The partition does not represent a valid number.</exception>
         private void InitFromRealNumber(RealTextPartition partition)
         {
-            if (partition.DiscardedProlog.Length > 0)
-                throw new ArgumentException();
-
-            if (partition.InvalidPart.Length > 0)
-                throw new ArgumentException();
-
             IsNaN = false;
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
-            IsZero = false;
+            IsZero = partition.IsZero;
             SignificandPrecision = Arithmetic.SignificandPrecision;
             ExponentPrecision = Arithmetic.ExponentPrecision;
             Rounding = Arithmetic.Rounding;
@@ -889,52 +883,84 @@
                 return double.NegativeInfinity.ToString();
             else
             {
-                long BitIndex;
+                string IntegerString = ComposeIntegerString(out long BitIndex);
+                string FractionalString = ComposeFractionalString(BitIndex);
+                string ExponentString = ComposeExponentString();
 
-                string IntegerString = "0";
-                BitIndex = 1;
+                return $"{IntegerString}{FractionalString}{ExponentString}";
+            }
+        }
 
-                while (BitIndex <= IntegerField.SignificantBits + IntegerField.ShiftBits)
+        private string ComposeIntegerString(out long bitIndex)
+        {
+            string IntegerString = "0";
+            bitIndex = 1;
+
+            while (bitIndex <= IntegerField.SignificantBits + IntegerField.ShiftBits)
+            {
+                bool Carry = IntegerField.GetBit(IntegerField.SignificantBits + IntegerField.ShiftBits - bitIndex);
+                IntegerString = NumberTextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
+                bitIndex++;
+            }
+
+            return IntegerString;
+        }
+
+        private string ComposeFractionalString(long bitIndex)
+        {
+            string FractionalString;
+
+            if (!IsInteger)
+            {
+                Debug.Assert(FractionalField != null && FractionalField.SignificantBits > 0);
+
+                FractionalString = "500000000000";
+                bitIndex = 1;
+
+                while (bitIndex <= FractionalField.SignificantBits + FractionalField.ShiftBits)
                 {
-                    bool Carry = IntegerField.GetBit(IntegerField.SignificantBits + IntegerField.ShiftBits - BitIndex);
-                    IntegerString = NumberTextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
+                    bool Carry = FractionalField.GetBit(FractionalField.SignificantBits + FractionalField.ShiftBits - bitIndex);
+                    int OldLength = FractionalString.Length;
+
+                    if (Carry)
+                        FractionalString = "1" + FractionalString;
+
+                    FractionalString = NumberTextPartition.DividedByTwo(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, out bool HasDivisionbCarry);
+
+                    if (FractionalString.Length < OldLength)
+                        FractionalString = "0" + FractionalString;
+
+                    bitIndex++;
+                }
+
+                FractionalString = RealTextPartition.RoundedToNearest(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, false);
+
+                string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+
+                return $"{Separator}{FractionalString}";
+            }
+            else
+                return string.Empty;
+        }
+
+        private string ComposeExponentString()
+        {
+            if (ExponentField != null && ExponentField.SignificantBits > 0 && !ExponentField.IsZero)
+            {
+                string ExponentString = "0";
+                long BitIndex = 1;
+
+                while (BitIndex <= ExponentField.SignificantBits + ExponentField.ShiftBits)
+                {
+                    bool Carry = ExponentField.GetBit(ExponentField.SignificantBits + ExponentField.ShiftBits - BitIndex);
+                    ExponentString = NumberTextPartition.MultipliedByTwo(ExponentString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
                     BitIndex++;
                 }
 
-                string FractionalString;
-
-                if (!IsInteger)
-                {
-                    Debug.Assert(FractionalField != null && FractionalField.SignificantBits > 0);
-
-                    FractionalString = "500000000000";
-                    BitIndex = 1;
-
-                    while (BitIndex <= FractionalField.SignificantBits + FractionalField.ShiftBits)
-                    {
-                        bool Carry = FractionalField.GetBit(FractionalField.SignificantBits + FractionalField.ShiftBits - BitIndex);
-                        int OldLength = FractionalString.Length;
-
-                        if (Carry)
-                            FractionalString = "1" + FractionalString;
-
-                        FractionalString = NumberTextPartition.DividedByTwo(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, out bool HasDivisionbCarry);
-
-                        if (FractionalString.Length < OldLength)
-                            FractionalString = "0" + FractionalString;
-
-                        BitIndex++;
-                    }
-
-                    FractionalString = RealTextPartition.RoundedToNearest(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, false);
-
-                    string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-
-                    return $"{IntegerString}{Separator}{FractionalString}";
-                }
-                else
-                    return $"{IntegerString}";
+                return $"e{ExponentString}";
             }
+            else
+                return string.Empty;
         }
         #endregion
     }
