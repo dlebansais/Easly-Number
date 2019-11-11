@@ -18,7 +18,7 @@
         /// <summary>
         /// The default exponent precision until set by the client.
         /// </summary>
-        public const long DefaultExponentPrecision = 53;
+        public const long DefaultExponentPrecision = 11;
 
         /// <summary>
         /// The default rounding until set by the client.
