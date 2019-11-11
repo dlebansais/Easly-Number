@@ -101,10 +101,7 @@
 
             partition = PartitionList.PreferredPartition;
 
-            if (partition != null)
-                return true;
-            else
-                return false;
+            return partition != null;
         }
 
         /// <summary>
