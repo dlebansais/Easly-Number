@@ -183,14 +183,13 @@
         {
             get
             {
-                if (FirstSpecialPartIndex >= 0 && LastSpecialPartIndex >= FirstSpecialPartIndex)
-                {
-                    string SpecialPartSign = Number.SignText(InfinitySign);
-                    string SpecialPartText = Text.Substring(FirstSpecialPartIndex, LastSpecialPartIndex - FirstSpecialPartIndex + 1);
-                    return $"{SpecialPartSign}{SpecialPartText}";
-                }
-                else
-                    return string.Empty;
+                string SpecialPartSign = Number.SignText(InfinitySign);
+
+                int StartIndex = FirstSpecialPartIndex >= 0 ? FirstSpecialPartIndex : 0;
+                int Length = LastSpecialPartIndex >= FirstSpecialPartIndex ? LastSpecialPartIndex - FirstSpecialPartIndex + 1 : 0;
+                string SpecialPartText = Text.Substring(StartIndex, Length);
+
+                return $"{SpecialPartSign}{SpecialPartText}";
             }
         }
 
