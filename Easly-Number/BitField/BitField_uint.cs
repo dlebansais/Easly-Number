@@ -16,6 +16,8 @@ namespace EaslyNumber
             Content = new uint[0];
             SignificantBits = 0;
             ShiftBits = 0;
+
+            Debug.Assert(LastItemIndex < 0);
         }
         #endregion
 
@@ -23,12 +25,20 @@ namespace EaslyNumber
         /// <summary>
         /// Number of significant bits in the field.
         /// </summary>
-        public long SignificantBits { get; set; }
+        public long SignificantBits { get; protected set; }
 
         /// <summary>
         /// Number of unstored bits to the right of significant bits.
         /// </summary>
-        public long ShiftBits { get; set; }
+        public long ShiftBits { get; protected set; }
+
+        /// <summary>
+        /// True if the bit field represents value zero.
+        /// </summary>
+        public bool IsZero
+        {
+            get { return SignificantBits == 1 && Content[0] == 0; }
+        }
         #endregion
 
         #region Client Interface
@@ -37,24 +47,30 @@ namespace EaslyNumber
         /// </summary>
         public void SetZero()
         {
-            Content = new uint[sizeof(long) / sizeof(uint)];
+            Content = new uint[1];
             Content[0] = 0;
             SignificantBits = 1;
             ShiftBits = 0;
+
+            Debug.Assert(LastItemIndex == 0);
         }
 
         /// <summary>
-        /// Shift bits to the right.
+        /// Decreases the precision of the bit field by shifting bits to the right.
         /// </summary>
-        public void ShiftRight()
+        public void DecreasePrecision()
         {
             int shiftValue = 1;
 
+            Debug.Assert(SignificantBits >= shiftValue);
+
             long Carry = 0;
-            long LastElementIndex = SignificantBits / (sizeof(uint) * 8);
+            long LastIndex = LastItemIndex;
             int CarryShift = (sizeof(uint) * 8) - shiftValue;
 
-            for (long i = LastElementIndex + 1; i > 0; i--)
+            Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
+
+            for (long i = LastIndex + 1; i > 0; i--)
             {
                 long ElementValue = Content[i - 1];
                 long NextCarry = (uint)(ElementValue << CarryShift);
@@ -69,58 +85,80 @@ namespace EaslyNumber
             SignificantBits -= shiftValue;
             ShiftBits += shiftValue;
 
-            if (LastElementIndex > SignificantBits / (sizeof(uint) * 8))
+            // The value of LastItemIndex is recalculated with the updated value of SignificantBits.
+            if (LastIndex > LastItemIndex)
             {
-                Debug.Assert(Content[LastElementIndex] == 0);
+                Debug.Assert(Content[LastIndex] == 0);
 
                 Array.Resize(ref Content, Content.Length - 1);
             }
         }
 
         /// <summary>
-        /// Gets the value of the bit at position <paramref name="index"/>.
+        /// Gets the value of the bit at position <paramref name="position"/>.
         /// </summary>
-        /// <param name="index">Position of the bit to get.</param>
-        public bool GetBit(long index)
+        /// <param name="position">Position of the bit to get.</param>
+        public bool GetBit(long position)
         {
-            Debug.Assert(index >= 0 && index < SignificantBits);
+            Debug.Assert(position >= 0 && position < ShiftBits + SignificantBits);
 
-            const int Domain = sizeof(uint) * 8;
-            long ElementIndex = index / Domain;
-            int ElementBitIndex = (int)(index % Domain);
+            if (position < ShiftBits)
+                return false;
 
-            uint Mask = (uint)(1UL << ElementBitIndex);
-            return (Content[ElementIndex] & Mask) != 0;
+            position -= ShiftBits;
+
+            Debug.Assert(position >= 0 && position < SignificantBits);
+
+            long Index = ItemIndex(position);
+            int Offset = ItemOffset(position);
+
+            uint Mask = (uint)(1UL << Offset);
+            return (Content[Index] & Mask) != 0;
         }
 
         /// <summary>
-        /// Sets the bit at position <paramref name="index"/>.
+        /// Sets the bit at position <paramref name="position"/>.
         /// </summary>
-        /// <param name="index">Position of the bit to get.</param>
+        /// <param name="position">Position of the bit to get.</param>
         /// <param name="value">The new value.</param>
-        public void SetBit(long index, bool value)
+        public void SetBit(long position, bool value)
         {
-            Debug.Assert(index >= 0 && index <= SignificantBits);
+            position -= ShiftBits;
 
-            const int Domain = sizeof(uint) * 8;
-            long ElementIndex = index / Domain;
-            int ElementBitIndex = (int)(index % Domain);
+            Debug.Assert(position >= 0 && position <= SignificantBits);
 
-            if (index >= SignificantBits)
+            long Index = ItemIndex(position);
+            int Offset = ItemOffset(position);
+
+            if (position >= SignificantBits)
             {
-                if (ElementIndex >= Content.Length)
+                if (Index >= Content.Length)
                 {
-                    Array.Resize(ref Content, (int)(ElementIndex + 1));
+                    Array.Resize(ref Content, (int)(Index + 1));
                 }
 
-                SignificantBits = index + 1;
+                SignificantBits = position + 1;
             }
 
             if (value)
             {
-                uint Mask = (uint)(1UL << ElementBitIndex);
-                Content[ElementIndex] |= Mask;
+                uint Mask = (uint)(1UL << Offset);
+                Content[Index] |= Mask;
             }
+        }
+
+        public BitField_uint Clone()
+        {
+            BitField_uint Result = Create();
+
+            uint[] ContentClone = new uint[Content.Length];
+            Array.Copy(Content, ContentClone, Content.Length);
+
+            Result.Content = ContentClone;
+            Result.SignificantBits = SignificantBits;
+            Result.ShiftBits = ShiftBits;
+
+            return Result;
         }
         #endregion
 
@@ -133,10 +171,14 @@ namespace EaslyNumber
         {
             if (SignificantBits != other.SignificantBits || ShiftBits != other.ShiftBits)
                 return false;
+            if (SignificantBits == 0)
+                return true;
 
-            long LastElementIndex = SignificantBits / (sizeof(uint) * 8);
+            Debug.Assert(SignificantBits > 0);
+            long LastIndex = LastItemIndex;
+            Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
 
-            for (long i = 0; i < LastElementIndex; i++)
+            for (long i = 0; i <= LastIndex; i++)
                 if (Content[i] != other.Content[i])
                     return false;
 
@@ -158,15 +200,51 @@ namespace EaslyNumber
                 if (PositionX != PositionY)
                     return PositionX < PositionY;
 
-                //TODO compare content.
-                return false;
+                long Position = PositionX;
+                Debug.Assert(Position == PositionY);
+
+                return IsContentLesser(x, y, Position);
             }
-            else if (PositionX < 0)
+            else if (PositionX < 0 && PositionY >= 0)
                 return true;
-            else if (PositionY < 0)
+            else if (PositionX >= 0 && PositionY < 0)
                 return false;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Checks if the content of <paramref name="x"/> is lesser than the content of <paramref name="y"/>.
+        /// </summary>
+        /// <param name="x">The first bit field.</param>
+        /// <param name="y">The second bit field.</param>
+        /// <param name="position">The bit position where to start comparing.</param>
+        private static bool IsContentLesser(BitField_uint x, BitField_uint y, long position)
+        {
+            Debug.Assert(position >= x.ShiftBits && position < x.ShiftBits + x.SignificantBits && position >= y.ShiftBits && position < y.ShiftBits + y.SignificantBits);
+            Debug.Assert(x.GetBit(position));
+            Debug.Assert(y.GetBit(position));
+
+            long LowestPosition = x.ShiftBits <= y.ShiftBits ? x.ShiftBits : y.ShiftBits;
+
+            bool BitX, BitY;
+            do
+            {
+                position--;
+                BitX = x.GetBit(position);
+                BitY = y.GetBit(position);
+            }
+            while (BitX == BitY && position > LowestPosition);
+
+            if (!BitX && BitY)
+                return true;
+            else if (BitX && !BitY)
+                return false;
+            else
+            {
+                Debug.Assert(position <= LowestPosition);
+                return false;
+            }
         }
 
         /// <summary>
@@ -186,9 +264,10 @@ namespace EaslyNumber
         {
             get
             {
-                long LastElementIndex = SignificantBits / (sizeof(uint) * 8);
+                long LastIndex = LastItemIndex;
+                Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
 
-                for (long i = LastElementIndex; i > 0; i--)
+                for (long i = LastIndex; i >= 0; i--)
                 {
                     long ElementValue = Content[i];
 
@@ -202,7 +281,7 @@ namespace EaslyNumber
                         }
                         while (ElementValue != 0);
 
-                        return (i * sizeof(uint) * 8) + j + ShiftBits;
+                        return (i * sizeof(uint) * 8) + j - 1 + ShiftBits;
                     }
                 }
 
@@ -212,6 +291,46 @@ namespace EaslyNumber
         #endregion
 
         #region Implementation
+        /// <summary>
+        /// Creates a new BitField_uint object.
+        /// </summary>
+        protected virtual BitField_uint Create()
+        {
+            return new BitField_uint();
+        }
+
+        /// <summary>
+        /// Index of the last item in <see cref="Content"/>.
+        /// Returns -1 if no items.
+        /// </summary>
+        private long LastItemIndex
+        {
+            get { return ItemIndex(SignificantBits + (sizeof(uint) * 8) - 1) - 1; }
+        }
+
+        /// <summary>
+        /// Index of an item specified by its bit position.
+        /// </summary>
+        /// <param name="position">The bit position.</param>
+        /// <returns>The corresponding item index in <see cref="Content"/>.</returns>
+        private long ItemIndex(long position)
+        {
+            return position / (sizeof(uint) * 8);
+        }
+
+        /// <summary>
+        /// Offset of a bit in the item specified by its position.
+        /// </summary>
+        /// <param name="position">The bit position.</param>
+        /// <returns>The corresponding offset in the <see cref="Content"/> item.</returns>
+        private int ItemOffset(long position)
+        {
+            return (int)(position % (sizeof(uint) * 8));
+        }
+
+        /// <summary>
+        /// The bit field data.
+        /// </summary>
         private uint[] Content;
         #endregion
     }

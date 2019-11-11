@@ -415,10 +415,7 @@
                 do
                 {
                     if (BitIndex >= significandPrecision)
-                    {
-                        integerField.ShiftRight();
-                        BitIndex--;
-                    }
+                        integerField.DecreasePrecision();
 
                     IntegerString = DividedByTwo(IntegerString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
                     integerField.SetBit(BitIndex++, HasCarry);
@@ -479,10 +476,7 @@
                 do
                 {
                     if (BitIndex >= exponentPrecision)
-                    {
-                        exponentField.ShiftRight();
-                        BitIndex--;
-                    }
+                        exponentField.DecreasePrecision();
 
                     ExponentString = DividedByTwo(ExponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
                     exponentField.SetBit(BitIndex++, HasCarry);

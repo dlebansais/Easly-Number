@@ -519,7 +519,7 @@
         /// <summary>
         /// True if the number is an integer.
         /// </summary>
-        public bool IsInteger { get { return IsZero || FractionalField == null || FractionalField.SignificantBits == 0 || (FractionalField.SignificantBits == 1 && FractionalField.ShiftBits == 0 && FractionalField.GetBit(0) == false); } }
+        public bool IsInteger { get { return IsZero || FractionalField == null || FractionalField.SignificantBits == 0 || FractionalField.IsZero; } }
 
         /// <summary>
         /// The binary data corresponding to the integer part.
@@ -894,9 +894,9 @@
                 string IntegerString = "0";
                 BitIndex = 1;
 
-                while (BitIndex <= IntegerField.SignificantBits)
+                while (BitIndex <= IntegerField.SignificantBits + IntegerField.ShiftBits)
                 {
-                    bool Carry = IntegerField.GetBit(IntegerField.SignificantBits - BitIndex);
+                    bool Carry = IntegerField.GetBit(IntegerField.SignificantBits + IntegerField.ShiftBits - BitIndex);
                     IntegerString = NumberTextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
                     BitIndex++;
                 }
@@ -910,9 +910,9 @@
                     FractionalString = "500000000000";
                     BitIndex = 1;
 
-                    while (BitIndex <= FractionalField.SignificantBits)
+                    while (BitIndex <= FractionalField.SignificantBits + FractionalField.ShiftBits)
                     {
-                        bool Carry = FractionalField.GetBit(FractionalField.SignificantBits - BitIndex);
+                        bool Carry = FractionalField.GetBit(FractionalField.SignificantBits + FractionalField.ShiftBits - BitIndex);
                         int OldLength = FractionalString.Length;
 
                         if (Carry)
