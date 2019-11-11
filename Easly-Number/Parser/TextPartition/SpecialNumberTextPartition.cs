@@ -1,7 +1,5 @@
 ﻿namespace EaslyNumber
 {
-    using System.Diagnostics;
-
     /// <summary>
     /// The partition of a string into different components of a special number.
     /// </summary>
