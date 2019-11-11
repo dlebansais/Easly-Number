@@ -78,31 +78,10 @@
         {
             GetIntegerNumberValue(partition);
 
-            if (partition.HasRadixPrefix)
-            {
-                Prefix = Number.RadixPrefixText(partition.Radix);
+            Prefix = Number.RadixPrefixText(partition.Radix);
 
-                Debug.Assert(partition.SignificandSign == OptionalSign.None);
-                BeforeExponent = partition.IntegerPart;
-            }
-            else
-            {
-                Prefix = string.Empty;
-
-                switch (partition.SignificandSign)
-                {
-                    default:
-                    case OptionalSign.None:
-                        BeforeExponent = partition.IntegerPart;
-                        break;
-                    case OptionalSign.Positive:
-                        BeforeExponent = "+" + partition.IntegerPart;
-                        break;
-                    case OptionalSign.Negative:
-                        BeforeExponent = "-" + partition.IntegerPart;
-                        break;
-                }
-            }
+            Debug.Assert(partition.SignificandSign == OptionalSign.None);
+            BeforeExponent = partition.IntegerPart;
 
             Exponent = string.Empty;
             Suffix = string.Empty;

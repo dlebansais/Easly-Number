@@ -70,6 +70,13 @@
             {
                 LastLeadingSpaceIndex = index;
             }
+            else if (c == '+' || c == '-')
+            {
+                SignificandSign = c == '+' ? OptionalSign.Positive : OptionalSign.Negative;
+
+                FirstIntegerPartIndex = index + 1;
+                State = ParsingState.IntegerPart;
+            }
             else if (ValidityHandler(c, out int DigitValue))
             {
                 FirstIntegerPartIndex = index;
@@ -97,11 +104,11 @@
             {
                 LastIntegerPartIndex = index;
 
-                if (c == ':' && index + 1 < Text.Length)
+                if (LastIntegerPartIndex > FirstIntegerPartIndex && c == ':' && index + 1 < Text.Length)
                     State = ParsingState.SuffixPart;
                 else
                 {
-                    FirstInvalidCharacterIndex = index;
+                    FirstInvalidCharacterIndex = 0;
                     State = ParsingState.InvalidPart;
                 }
             }
