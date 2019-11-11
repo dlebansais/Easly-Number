@@ -14,6 +14,9 @@
         public SpecialNumberTextPartition(string text)
             : base(text)
         {
+            InfinitySign = OptionalSign.None;
+            FirstSpecialPartIndex = -1;
+            LastSpecialPartIndex = -1;
         }
 
         /// <summary>
@@ -71,10 +74,16 @@
             {
                 LastLeadingSpaceIndex = index;
             }
+            else if (c == '+' || c == '-')
+            {
+                InfinitySign = (c == '+') ? OptionalSign.Positive : OptionalSign.Negative;
+                FirstSpecialPartIndex = index + 1;
+                State = ParsingState.SpecialPart;
+            }
             else
             {
-                FirstSpecialPartIndex = index;
                 State = ParsingState.SpecialPart;
+                FirstSpecialPartIndex = index;
                 Parse(index);
             }
         }
@@ -86,24 +95,31 @@
         /// <param name="c">The parsed character.</param>
         private void ParseSpecialPart(int index, char c)
         {
-            string Substring = Text.Substring(FirstSpecialPartIndex, index - FirstSpecialPartIndex);
+            string Substring = Text.Substring(FirstSpecialPartIndex, index - FirstSpecialPartIndex + 1);
 
             if (Substring == NaNString)
             {
-                LastSpecialPartIndex = index;
-                Value = Number.NaN;
-                State = ParsingState.InvalidPart;
+                if (InfinitySign == OptionalSign.None)
+                {
+                    LastSpecialPartIndex = index;
+                    Value = Number.NaN;
+                    State = ParsingState.InvalidPart;
+                }
+                else
+                {
+                    FirstInvalidCharacterIndex = 0;
+                    Value = Number.Uninitialized;
+                    State = ParsingState.InvalidPart;
+                }
             }
             else if (Substring == PositiveInfinityString)
             {
+                if (InfinitySign == OptionalSign.Negative)
+                    Value = Number.NegativeInfinity;
+                else
+                    Value = Number.PositiveInfinity;
+
                 LastSpecialPartIndex = index;
-                Value = Number.PositiveInfinity;
-                State = ParsingState.InvalidPart;
-            }
-            else if (Substring == NegativeInfinityString)
-            {
-                LastSpecialPartIndex = index;
-                Value = Number.NegativeInfinity;
                 State = ParsingState.InvalidPart;
             }
             else if (index + 1 == Text.Length)
@@ -146,14 +162,19 @@
         }
 
         /// <summary>
+        /// Optional sign of infinity.
+        /// </summary>
+        public OptionalSign InfinitySign { get; private set; }
+
+        /// <summary>
         /// Index of the special part, -1 if not parsed.
         /// </summary>
-        public int FirstSpecialPartIndex { get; set; } = -1;
+        public int FirstSpecialPartIndex { get; private set; }
 
         /// <summary>
         /// Index of the first character after the special part, -1 if not parsed.
         /// </summary>
-        public int LastSpecialPartIndex { get; set; } = -1;
+        public int LastSpecialPartIndex { get; private set; }
 
         /// <summary>
         /// The beginning of <see cref="TextPartition.Text"/> that can be ignored.
@@ -163,7 +184,11 @@
             get
             {
                 if (FirstSpecialPartIndex >= 0 && LastSpecialPartIndex >= FirstSpecialPartIndex)
-                    return Text.Substring(FirstSpecialPartIndex, LastSpecialPartIndex - FirstSpecialPartIndex + 1);
+                {
+                    string SpecialPartSign = Number.SignText(InfinitySign);
+                    string SpecialPartText = Text.Substring(FirstSpecialPartIndex, LastSpecialPartIndex - FirstSpecialPartIndex + 1);
+                    return $"{SpecialPartSign}{SpecialPartText}";
+                }
                 else
                     return string.Empty;
             }
