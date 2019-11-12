@@ -164,25 +164,58 @@ namespace EaslyNumber
 
         #region Comparison Operations
         /// <summary>
+        /// Gets a hash code for the current object.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        /// <summary>
         /// Checks if two bit fields are equal.
         /// </summary>
         /// <param name="other">The other instance.</param>
-        public bool IsEqual(BitField_Template other)
+        public override bool Equals(object other)
         {
-            if (SignificantBits != other.SignificantBits || ShiftBits != other.ShiftBits)
+            if (other is BitField_Template AsBitField)
+                return this == AsBitField;
+            else
                 return false;
-            if (SignificantBits == 0)
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is equal to <paramref name="y"/>.
+        /// </summary>
+        /// <param name="x">The first bit field.</param>
+        /// <param name="y">The second bit field.</param>
+        public static bool operator ==(BitField_Template x, BitField_Template y)
+        {
+            if (!(x is BitField_Template) || !(y is BitField_Template))
+                return false;
+            if (x.SignificantBits != y.SignificantBits || x.ShiftBits != y.ShiftBits)
+                return false;
+            if (x.SignificantBits == 0)
                 return true;
 
-            Debug.Assert(SignificantBits > 0);
-            long LastIndex = LastItemIndex;
-            Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
+            Debug.Assert(x.SignificantBits > 0);
+            long LastIndex = x.LastItemIndex;
+            Debug.Assert(LastIndex >= 0 && LastIndex < x.Content.Length);
 
             for (long i = 0; i <= LastIndex; i++)
-                if (Content[i] != other.Content[i])
+                if (x.Content[i] != y.Content[i])
                     return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is different than <paramref name="y"/>.
+        /// </summary>
+        /// <param name="x">The first bit field.</param>
+        /// <param name="y">The second bit field.</param>
+        public static bool operator !=(BitField_Template x, BitField_Template y)
+        {
+            return !(x == y);
         }
 
         /// <summary>

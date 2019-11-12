@@ -426,7 +426,11 @@
         /// <param name="isNegativeInfinity">Value of the special negative infinity flag.</param>
         private Number(bool isNaN, bool isPositiveInfinity, bool isNegativeInfinity)
         {
-            Debug.Assert((!isPositiveInfinity && !isNegativeInfinity) || (!isNaN && !isNegativeInfinity) || (!isNaN && !isPositiveInfinity));
+            bool NotInfinity = !isPositiveInfinity && !isNegativeInfinity;
+            bool PositiveInfinityOnly = !isNaN && !isNegativeInfinity;
+            bool NegativeInfinityOnly = !isNaN && !isPositiveInfinity;
+
+            Debug.Assert(NotInfinity || PositiveInfinityOnly || NegativeInfinityOnly);
 
             IsNaN = isNaN;
             IsPositiveInfinity = isPositiveInfinity;
@@ -533,32 +537,79 @@
 
         #region Comparison
         /// <summary>
+        /// Gets a hash code for the current object.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        /// <summary>
         /// Checks if two numbers are equal.
         /// </summary>
         /// <param name="other">The other instance.</param>
-        public bool IsEqual(Number other)
+        public override bool Equals(object other)
         {
-            if (IsNaN || other.IsNaN)
+            if (other is Number AsNumber)
+            {
+                return IsNaN == AsNumber.IsNaN &&
+                       IsPositiveInfinity == AsNumber.IsPositiveInfinity &&
+                       IsNegativeInfinity == AsNumber.IsNegativeInfinity &&
+                       IsZero == AsNumber.IsZero &&
+                       SignificandPrecision == AsNumber.SignificandPrecision &&
+                       ExponentPrecision == AsNumber.ExponentPrecision &&
+                       Rounding == AsNumber.Rounding &&
+                       IsSignificandNegative == AsNumber.IsSignificandNegative &&
+                       IsExponentNegative == AsNumber.IsExponentNegative &&
+                       IntegerField.Equals(AsNumber.IntegerField) &&
+                       FractionalField.Equals(AsNumber.FractionalField) &&
+                       ExponentField.Equals(AsNumber.ExponentField);
+            }
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is lesser than <paramref name="y"/>.
+        /// </summary>
+        /// <param name="x">The first number.</param>
+        /// <param name="y">The second number.</param>
+        public static bool operator ==(Number x, Number y)
+        {
+            if (x.IsNaN || y.IsNaN)
                 return false;
 
-            if ((IsPositiveInfinity && other.IsPositiveInfinity) || (IsNegativeInfinity && other.IsNegativeInfinity) || (IsZero && other.IsZero))
+            if ((x.IsPositiveInfinity && y.IsPositiveInfinity) || (x.IsNegativeInfinity && y.IsNegativeInfinity) || (x.IsZero && y.IsZero))
                 return true;
 
-            if (IsSpecial || other.IsSpecial)
+            if (x.IsSpecial || y.IsSpecial)
                 return false;
 
-            if (IsSignificandNegative != other.IsSignificandNegative || IsExponentNegative != other.IsExponentNegative)
+            if (x.IsSignificandNegative != y.IsSignificandNegative || x.IsExponentNegative != y.IsExponentNegative)
                 return false;
 
-            Debug.Assert(IntegerField != null);
-            Debug.Assert(FractionalField != null);
-            Debug.Assert(ExponentField != null);
+            Debug.Assert(x.IntegerField != null);
+            Debug.Assert(y.IntegerField != null);
+            Debug.Assert(x.FractionalField != null);
+            Debug.Assert(y.FractionalField != null);
+            Debug.Assert(x.ExponentField != null);
+            Debug.Assert(y.ExponentField != null);
 
-            bool IsSameInteger = IntegerField.IsEqual(other.IntegerField);
-            bool IsSameFractional = FractionalField.IsEqual(other.FractionalField);
-            bool IsSameExponent = ExponentField.IsEqual(other.ExponentField);
+            bool IsSameInteger = x.IntegerField == y.IntegerField;
+            bool IsSameFractional = x.FractionalField == y.FractionalField;
+            bool IsSameExponent = x.ExponentField == y.ExponentField;
 
             return IsSameInteger && IsSameFractional && IsSameExponent;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is lesser than <paramref name="y"/>.
+        /// </summary>
+        /// <param name="x">The first number.</param>
+        /// <param name="y">The second number.</param>
+        public static bool operator !=(Number x, Number y)
+        {
+            return !(x == y);
         }
 
         /// <summary>
@@ -593,9 +644,9 @@
 
             Debug.Assert(x.IsSignificandNegative == y.IsSignificandNegative);
 
-            bool IsSameInteger = x.IntegerField.IsEqual(y.IntegerField);
-            bool IsSameFractional = x.FractionalField.IsEqual(y.FractionalField);
-            bool IsSameExponent = x.ExponentField.IsEqual(y.ExponentField);
+            bool IsSameInteger = x.IntegerField == y.IntegerField;
+            bool IsSameFractional = x.FractionalField == y.FractionalField;
+            bool IsSameExponent = x.ExponentField == y.ExponentField;
 
             if (!IsSameInteger)
             {
