@@ -650,14 +650,14 @@
 
             if (!IsSameInteger)
             {
-                //TODO handle exponent
+                //TODO: handle exponent
                 bool IsSignificandLesser = x.IntegerField < y.IntegerField;
                 return IsSignificandLesser ^ x.IsSignificandNegative;
             }
 
             if (!IsSameFractional)
             {
-                //TODO handle exponent
+                //TODO: handle exponent
                 bool IsSignificandLesser = x.FractionalField < y.FractionalField;
                 return IsSignificandLesser ^ x.IsSignificandNegative;
             }
