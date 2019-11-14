@@ -668,7 +668,7 @@
                 return IsSignificandLesser ^ x.IsSignificandNegative;
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>
