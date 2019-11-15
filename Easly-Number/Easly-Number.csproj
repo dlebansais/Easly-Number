@@ -64,6 +64,7 @@
     <Compile Include="Flags.cs" />
     <Compile Include="FormattedNumber.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Number-Arithmetic.cs" />
     <Compile Include="Number-Parser.cs" />
     <Compile Include="Number.cs" />
     <Compile Include="Parser\TextPartition\RadixSuffixTextPartition.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Parser\OptionalSign.cs" />
     <Compile Include="Parser\TextPartition\CustomRadixIntegerTextPartition.cs" />
     <Compile Include="Parser\ParsingState.cs" />
+    <Compile Include="Parser\TextPartition\RealTextPartition-Parser.cs" />
     <Compile Include="Parser\TextPartition\SpecialNumberTextPartition.cs" />
     <Compile Include="Parser\TextPartition\RealTextPartition.cs" />
     <Compile Include="Parser\TextPartition\NumberTextPartition.cs" />
