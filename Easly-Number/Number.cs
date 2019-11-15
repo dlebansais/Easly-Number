@@ -619,20 +619,10 @@
         /// <param name="y">The second number.</param>
         public static bool operator <(Number x, Number y)
         {
-            if (x.IsNaN || y.IsNaN)
-                return false;
+            bool Result;
 
-            if (x.IsNegativeInfinity || y.IsPositiveInfinity)
-                return true;
-
-            if (x.IsPositiveInfinity || y.IsNegativeInfinity)
-                return false;
-
-            if (x.IsZero)
-                return !y.IsZero && !y.IsSignificandNegative;
-
-            if (y.IsZero)
-                return !x.IsZero && x.IsSignificandNegative;
+            if (ComparedAsSpecialNumber(x, y, out Result))
+                return Result;
 
             Debug.Assert(!x.IsSpecial && !y.IsSpecial);
 
@@ -642,33 +632,7 @@
             if (y.IsSignificandNegative && !x.IsSignificandNegative)
                 return false;
 
-            Debug.Assert(x.IsSignificandNegative == y.IsSignificandNegative);
-
-            bool IsSameInteger = x.IntegerField == y.IntegerField;
-            bool IsSameFractional = x.FractionalField == y.FractionalField;
-            bool IsSameExponent = x.ExponentField == y.ExponentField;
-
-            if (!IsSameInteger)
-            {
-                //TODO: handle exponent
-                bool IsSignificandLesser = x.IntegerField < y.IntegerField;
-                return IsSignificandLesser ^ x.IsSignificandNegative;
-            }
-
-            if (!IsSameFractional)
-            {
-                //TODO: handle exponent
-                bool IsSignificandLesser = x.FractionalField < y.FractionalField;
-                return IsSignificandLesser ^ x.IsSignificandNegative;
-            }
-
-            if (!IsSameExponent)
-            {
-                bool IsSignificandLesser = x.ExponentField < y.ExponentField;
-                return IsSignificandLesser ^ x.IsSignificandNegative;
-            }
-
-            return false;
+            return ComparedSameSign(x, y);
         }
 
         /// <summary>
@@ -679,6 +643,127 @@
         public static bool operator >(Number x, Number y)
         {
             return y < x;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is lesser than <paramref name="y"/> when x or y is a special number.
+        /// </summary>
+        /// <param name="x">The first number.</param>
+        /// <param name="y">The second number.</param>
+        /// <param name="result">The comparison result.</param>
+        /// <returns>True if <paramref name="result"/> contains the result upon return; False if <paramref name="x"/> and <paramref name="y"/> are not special numbers.</returns>
+        private static bool ComparedAsSpecialNumber(Number x, Number y, out bool result)
+        {
+            if (x.IsNaN || y.IsNaN)
+            {
+                result = false;
+                return true;
+            }
+
+            if (x.IsNegativeInfinity || y.IsPositiveInfinity)
+            {
+                result = true;
+                return true;
+            }
+
+            if (x.IsPositiveInfinity || y.IsNegativeInfinity)
+            {
+                result = false;
+                return true;
+            }
+
+            if (x.IsZero)
+            {
+                result = !y.IsZero && !y.IsSignificandNegative;
+                return true;
+            }
+
+            if (y.IsZero)
+            {
+                result = !x.IsZero && x.IsSignificandNegative;
+                return true;
+            }
+
+            result = false;
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is lesser than <paramref name="y"/> when x and y have the same sign.
+        /// </summary>
+        /// <param name="x">The first number.</param>
+        /// <param name="y">The second number.</param>
+        /// <returns>The comparison result.</returns>
+        private static bool ComparedSameSign(Number x, Number y)
+        {
+            Debug.Assert(!x.IsSpecial && !y.IsSpecial);
+            Debug.Assert(x.IsSignificandNegative == y.IsSignificandNegative);
+
+            bool IsSameInteger = x.IntegerField == y.IntegerField;
+            bool IsSameFractional = x.FractionalField == y.FractionalField;
+            bool IsSameExponent = x.ExponentField == y.ExponentField;
+
+            if (!IsSameInteger)
+                return ComparedDifferentIntegerPart(x, y);
+
+            if (!IsSameFractional)
+                ComparedDifferentFractionalPart(x, y);
+
+            if (!IsSameExponent)
+                ComparedDifferentExponentPart(x, y);
+
+            Debug.Assert(IsSameInteger);
+            Debug.Assert(IsSameFractional);
+            Debug.Assert(IsSameExponent);
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is lesser than <paramref name="y"/> when x and y have a different integer part.
+        /// </summary>
+        /// <param name="x">The first number.</param>
+        /// <param name="y">The second number.</param>
+        /// <returns>The comparison result.</returns>
+        private static bool ComparedDifferentIntegerPart(Number x, Number y)
+        {
+            Debug.Assert(x.IntegerField != y.IntegerField);
+
+            //TODO: handle exponent
+            bool IsSignificandLesser = x.IntegerField < y.IntegerField;
+            return IsSignificandLesser ^ x.IsSignificandNegative;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is lesser than <paramref name="y"/> when x and y have the same integer part and a different fractional part.
+        /// </summary>
+        /// <param name="x">The first number.</param>
+        /// <param name="y">The second number.</param>
+        /// <returns>The comparison result.</returns>
+        private static bool ComparedDifferentFractionalPart(Number x, Number y)
+        {
+            Debug.Assert(x.IntegerField == y.IntegerField);
+            Debug.Assert(x.FractionalField != y.FractionalField);
+
+            //TODO: handle exponent
+            bool IsSignificandLesser = x.FractionalField < y.FractionalField;
+            return IsSignificandLesser ^ x.IsSignificandNegative;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="x"/> is lesser than <paramref name="y"/> when x and y have the same integer and fractional parts, but a different exponent part.
+        /// </summary>
+        /// <param name="x">The first number.</param>
+        /// <param name="y">The second number.</param>
+        /// <returns>The comparison result.</returns>
+        private static bool ComparedDifferentExponentPart(Number x, Number y)
+        {
+            Debug.Assert(x.IntegerField == y.IntegerField);
+            Debug.Assert(x.FractionalField == y.FractionalField);
+            Debug.Assert(x.ExponentField != y.ExponentField);
+
+            bool IsSignificandLesser = x.ExponentField < y.ExponentField;
+            return IsSignificandLesser ^ x.IsSignificandNegative;
         }
         #endregion
 

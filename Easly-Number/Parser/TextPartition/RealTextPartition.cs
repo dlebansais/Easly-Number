@@ -403,14 +403,24 @@
         /// <param name="exponentField">The bit field of the exponent part upon return.</param>
         public virtual void ConvertToBitField(long significandPrecision, long exponentPrecision, out BitField integerField, out BitField fractionalField, out BitField exponentField)
         {
-            long BitIndex;
+            ConvertIntegerToBitField(significandPrecision, out integerField);
+            ConvertFractionalToBitField(significandPrecision, integerField.SignificantBits, out fractionalField);
+            ConvertExponentToBitField(exponentPrecision, out exponentField);
+        }
 
+        /// <summary>
+        /// Converts the parsed partition to bit fields.
+        /// </summary>
+        /// <param name="significandPrecision">The number of bits in the significand.</param>
+        /// <param name="integerField">The bit field of the integer part upon return.</param>
+        private void ConvertIntegerToBitField(long significandPrecision, out BitField integerField)
+        {
             integerField = new BitField();
 
             if (FirstIntegerPartIndex >= 0)
             {
                 string IntegerString = Text.Substring(FirstIntegerPartIndex, LastIntegerPartIndex - FirstIntegerPartIndex);
-                BitIndex = 0;
+                long BitIndex = 0;
 
                 do
                 {
@@ -424,15 +434,22 @@
             }
             else
                 integerField.SetZero();
+        }
 
-            long IntegerBitIndex = integerField.SignificantBits;
-
+        /// <summary>
+        /// Converts the parsed partition to bit fields.
+        /// </summary>
+        /// <param name="significandPrecision">The number of bits in the significand.</param>
+        /// <param name="integerBitIndex">The number of significant bits in the integer field part.</param>
+        /// <param name="fractionalField">The bit field of the fractional part upon return.</param>
+        private void ConvertFractionalToBitField(long significandPrecision, long integerBitIndex, out BitField fractionalField)
+        {
             fractionalField = new BitField();
 
             if (HasFractionalPart)
             {
                 string FractionalString = Text.Substring(FirstFractionalPartIndex, LastFractionalPartIndex - FirstFractionalPartIndex);
-                BitIndex = 0;
+                long BitIndex = 0;
                 int StartingLength = FractionalString.Length;
 
 #if IGNORE
@@ -447,7 +464,7 @@
 
                 do
                 {
-                    if (IntegerBitIndex + BitIndex >= significandPrecision)
+                    if (integerBitIndex + BitIndex >= significandPrecision)
                         break;
 
                     FractionalString = MultipliedByTwo(FractionalString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, false);
@@ -465,13 +482,21 @@
                 }
                 while (FractionalString != "0");
             }
+        }
 
+        /// <summary>
+        /// Converts the parsed partition to bit fields.
+        /// </summary>
+        /// <param name="exponentPrecision">The number of bits in the exponent.</param>
+        /// <param name="exponentField">The bit field of the exponent part upon return.</param>
+        private void ConvertExponentToBitField(long exponentPrecision, out BitField exponentField)
+        {
             exponentField = new BitField();
 
             if (HasExponentPart)
             {
                 string ExponentString = Text.Substring(FirstExponentPartIndex, LastExponentPartIndex - FirstExponentPartIndex);
-                BitIndex = 0;
+                long BitIndex = 0;
 
                 do
                 {
