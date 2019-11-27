@@ -164,11 +164,28 @@ namespace EaslyNumber
 
         #region Comparison Operations
         /// <summary>
+        /// Gets a hash code for the object.
+        /// </summary>
+        public static int GetHashCode(BitField_uint item)
+        {
+            return item == null ? 0 : item.GetHashCode();
+        }
+
+        /// <summary>
         /// Gets a hash code for the current object.
         /// </summary>
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            long Result = 0;
+            long LastIndex = LastItemIndex;
+
+            for (long i = 0; i <= LastIndex; i++)
+            {
+                long ElementValue = Content[i];
+                Result ^= ElementValue;
+            }
+
+            return (int)Result;
         }
 
         /// <summary>

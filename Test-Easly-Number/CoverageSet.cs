@@ -672,7 +672,7 @@
             n2 = new Number(1.0F);
             Assert.That(n1 == n2, $"Failed n1 == n2, for n1: {n1}, n2: {n2}");
             Assert.That(n1.Equals(n2), $"Failed n1.Equals(n2), for n1: {n1}, n2: {n2}");
-            Assert.That(n1.GetHashCode() == n2.GetHashCode(), $"Failed n1.GetHashCode() == n2.GetHashCode(), for n1: {n1}, n2: {n2}");
+            Assert.That(n1.GetHashCode() == n2.GetHashCode(), $"Failed n1.GetHashCode() [{n1.GetHashCode()}] == n2.GetHashCode() [{n2.GetHashCode()}], for n1: {n1}, n2: {n2}");
             Assert.That(!n1.Equals(null), $"Failed !n1.Equals(null), for n1: {n1}");
             Assert.That(n1 != Number.PositiveInfinity, $"Failed n1 != Number.PositiveInfinity, for n1: {n1}");
 

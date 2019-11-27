@@ -541,7 +541,23 @@
         /// </summary>
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            int Result = 0;
+
+            Result ^= IsNaN.GetHashCode();
+            Result ^= IsPositiveInfinity.GetHashCode();
+            Result ^= IsNegativeInfinity.GetHashCode();
+            Result ^= IsZero.GetHashCode();
+            Result ^= SignificandPrecision.GetHashCode();
+            Result ^= ExponentPrecision.GetHashCode();
+            Result ^= Rounding.GetHashCode();
+            Result ^= IsSignificandNegative.GetHashCode();
+            Result ^= IsExponentNegative.GetHashCode();
+
+            Result ^= BitField.GetHashCode(IntegerField);
+            Result ^= BitField.GetHashCode(FractionalField);
+            Result ^= BitField.GetHashCode(ExponentField);
+
+            return Result;
         }
 
         /// <summary>
