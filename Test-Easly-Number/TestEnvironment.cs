@@ -29,18 +29,36 @@
                 NumberAssembly = null;
             }
             Assume.That(NumberAssembly != null);
-        }
-        #endregion
 
-        #region Environment
-        [Test, Order(1)]
-        [Category("Coverage")]
-        public void TestCreate()
-        {
-            TestContext.Progress.WriteLine($"NaN = {double.NaN}");
-            TestContext.Progress.WriteLine($"PositiveInfinity = {double.PositiveInfinity}");
-            TestContext.Progress.WriteLine($"NegativeInfinity = {double.NegativeInfinity}");
+            if (TextNaN == null)
+            {
+                TextNaN = double.NaN.ToString();
+                TestContext.Progress.WriteLine($"              NaN = {TextNaN}");
+            }
+
+            if (TextPositiveInfinity == null)
+            {
+                TextPositiveInfinity = double.PositiveInfinity.ToString();
+                TestContext.Progress.WriteLine($"Positive Infinity = {TextPositiveInfinity}");
+            }
+
+            if (TextNegativeInfinity == null)
+            {
+                TextNegativeInfinity = double.NegativeInfinity.ToString();
+                TestContext.Progress.WriteLine($"Negative Infinity = {TextNegativeInfinity}");
+            }
+
+            if (SP == null)
+            {
+                SP = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                TestContext.Progress.WriteLine($"Decimal Separator = {SP}");
+            }
         }
+
+        private static string TextNaN;
+        private static string TextPositiveInfinity;
+        private static string TextNegativeInfinity;
+        private static string SP;
         #endregion
     }
 }

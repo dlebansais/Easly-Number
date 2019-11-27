@@ -16,10 +16,13 @@
         public static void InitTestSession()
         {
             TestEnvironment.InitTestSession();
+
+            NL = Environment.NewLine;
+            SP = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
         }
 
-        static string NL = Environment.NewLine;
-        static string SP = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+        private static string NL;
+        private static string SP;
         #endregion
 
         #region BitField
