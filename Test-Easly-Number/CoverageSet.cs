@@ -630,54 +630,54 @@
 
             n1 = new Number(double.NaN);
             n2 = new Number(double.PositiveInfinity);
-            Assert.That(!n1.Equals(n2));
-            Assert.That(!n2.Equals(n1));
+            Assert.That(!n1.Equals(n2), $"Failed !n1.Equals(n2), for n1: {n1}, n2: {n2}");
+            Assert.That(!n2.Equals(n1), $"Failed !n2.Equals(n1), for n1: {n1}, n2: {n2}");
 
             n1 = new Number(double.NaN);
             n2 = new Number(double.NegativeInfinity);
-            Assert.That(!n1.Equals(n2));
-            Assert.That(!n2.Equals(n1));
+            Assert.That(!n1.Equals(n2), $"Failed !n1.Equals(n2), for n1: {n1}, n2: {n2}");
+            Assert.That(!n2.Equals(n1), $"Failed !n2.Equals(n1), for n1: {n1}, n2: {n2}");
 
             n1 = new Number(double.PositiveInfinity);
             n2 = new Number(double.NegativeInfinity);
-            Assert.That(!n1.Equals(n2));
-            Assert.That(!n2.Equals(n1));
+            Assert.That(!n1.Equals(n2), $"Failed !n1.Equals(n2), for n1: {n1}, n2: {n2}");
+            Assert.That(!n2.Equals(n1), $"Failed !n2.Equals(n1), for n1: {n1}, n2: {n2}");
 
             n1 = new Number(0);
             n2 = new Number(double.NaN);
-            Assert.That(!n1.Equals(n2));
-            Assert.That(!n2.Equals(n1));
+            Assert.That(!n1.Equals(n2), $"Failed !n1.Equals(n2), for n1: {n1}, n2: {n2}");
+            Assert.That(!n2.Equals(n1), $"Failed !n2.Equals(n1), for n1: {n1}, n2: {n2}");
 
             n1 = new Number(0);
             n2 = new Number(double.PositiveInfinity);
-            Assert.That(!n1.Equals(n2));
-            Assert.That(!n2.Equals(n1));
+            Assert.That(!n1.Equals(n2), $"Failed !n1.Equals(n2), for n1: {n1}, n2: {n2}");
+            Assert.That(!n2.Equals(n1), $"Failed !n2.Equals(n1), for n1: {n1}, n2: {n2}");
 
             n1 = new Number(0);
             n2 = new Number(double.NegativeInfinity);
-            Assert.That(!n1.Equals(n2));
-            Assert.That(!n2.Equals(n1));
+            Assert.That(!n1.Equals(n2), $"Failed !n1.Equals(n2), for n1: {n1}, n2: {n2}");
+            Assert.That(!n2.Equals(n1), $"Failed !n2.Equals(n1), for n1: {n1}, n2: {n2}");
 
             n1 = new Number(0);
             n2 = new Number(1);
-            Assert.That(!n1.Equals(n2));
-            Assert.That(!n2.Equals(n1));
+            Assert.That(!n1.Equals(n2), $"Failed !n1.Equals(n2), for n1: {n1}, n2: {n2}");
+            Assert.That(!n2.Equals(n1), $"Failed !n2.Equals(n1), for n1: {n1}, n2: {n2}");
 
             n1 = new Number(1);
             n2 = new Number(1);
-            Assert.That(n1.Equals(n2));
-            Assert.That(n2.Equals(n1));
+            Assert.That(n1.Equals(n2), $"Failed n1.Equals(n2), for n1: {n1}, n2: {n2}");
+            Assert.That(n2.Equals(n1), $"Failed n2.Equals(n1), for n1: {n1}, n2: {n2}");
 
             n1 = new Number(1.0F);
             n2 = new Number(1.0F);
-            Assert.That(n1 == n2);
-            Assert.That(n1.Equals(n2));
-            Assert.That(n1.GetHashCode() == n2.GetHashCode());
-            Assert.That(!n1.Equals(null));
-            Assert.That(n1 != Number.PositiveInfinity);
+            Assert.That(n1 == n2, $"Failed n1 == n2, for n1: {n1}, n2: {n2}");
+            Assert.That(n1.Equals(n2), $"Failed n1.Equals(n2), for n1: {n1}, n2: {n2}");
+            Assert.That(n1.GetHashCode() == n2.GetHashCode(), $"Failed n1.GetHashCode() == n2.GetHashCode(), for n1: {n1}, n2: {n2}");
+            Assert.That(!n1.Equals(null), $"Failed !n1.Equals(null), for n1: {n1}");
+            Assert.That(n1 != Number.PositiveInfinity, $"Failed n1 != Number.PositiveInfinity, for n1: {n1}");
 
             n2 = new Number(-1.0F);
-            Assert.That(n1 != n2);
+            Assert.That(n1 != n2, $"Failed n1 != n2, for n1: {n1}, n2: {n2}");
         }
 
         private void CheckSameEqual(double d)
@@ -694,16 +694,16 @@
             bool IdenticalDouble = d1 == d1;
 #pragma warning restore CS1718
 
-            Assert.That(EqualsNumber == EqualsDouble);
-            Assert.That(IdenticalNumber == IdenticalDouble);
+            Assert.That(EqualsNumber == EqualsDouble, $"Failed #1 EqualsNumber == EqualsDouble, for d: {d}");
+            Assert.That(IdenticalNumber == IdenticalDouble, $"Failed #2 IdenticalNumber == IdenticalDouble, for d: {d}");
 
             EqualsNumber = n1.Equals(n2);
             EqualsDouble = d1.Equals(d2);
             IdenticalNumber = n1 == n2;
             IdenticalDouble = d1 == d2;
 
-            Assert.That(EqualsNumber == EqualsDouble);
-            Assert.That(IdenticalNumber == IdenticalDouble);
+            Assert.That(EqualsNumber == EqualsDouble, $"Failed #3 EqualsNumber == EqualsDouble, for d: {d}");
+            Assert.That(IdenticalNumber == IdenticalDouble, $"Failed #4 IdenticalNumber == IdenticalDouble, for d: {d}");
         }
 
         [Test]
