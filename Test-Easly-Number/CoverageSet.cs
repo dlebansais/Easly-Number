@@ -530,66 +530,113 @@
         {
             //Debug.Assert(false);
             Exception ex;
-
             Number n1;
+
+            string TextNaN = double.NaN.ToString();
+            string TextPositiveInfinity = double.PositiveInfinity.ToString();
+            string TextNegativeInfinity = double.NegativeInfinity.ToString();
+
+            TestContext.Out.WriteLine("TestCreate1");
+
+            TestContext.Out.WriteLine($"NaN = {TextNaN}");
+            TestContext.Out.WriteLine($"PositiveInfinity = {TextPositiveInfinity}");
+            TestContext.Out.WriteLine($"NegativeInfinity = {TextNegativeInfinity}");
 
             ex = Assert.Throws<ArgumentException>(() => n1 = new Number(""));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
 
+            TestContext.Out.WriteLine("TestCreate2");
+
             Number n2 = new Number("0");
             Assert.That(n2.IsZero && n2.ToString() == "0", $"Result: {n2}, expected: 0");
+
+            TestContext.Out.WriteLine("TestCreate3");
 
             Number n3 = new Number("1");
             Assert.That(!n3.IsZero && n3.ToString() == "1", $"Result: {n3}, expected: 1");
 
-            Number n4 = new Number("NaN");
-            Assert.That(n4.IsNaN && n4.ToString() == "NaN", $"Result: {n4}, expected: NaN");
+            TestContext.Out.WriteLine("TestCreate4");
 
-            Number n5 = new Number("∞");
-            Assert.That(n5.IsPositiveInfinity && n5.ToString() == "∞", $"Result: {n5}, expected: ∞");
+            Number n4 = new Number(TextNaN);
+            Assert.That(n4.IsNaN && n4.ToString() == TextNaN, $"Result: {n4}, expected: {TextNaN}");
 
-            Number n6 = new Number("+∞");
-            Assert.That(n6.IsPositiveInfinity && n6.ToString() == "∞", $"Result: {n6}, expected: ∞");
+            TestContext.Out.WriteLine("TestCreate5");
 
-            Number n7 = new Number("-∞");
-            Assert.That(n7.IsNegativeInfinity && n7.ToString() == "-∞", $"Result: {n7}, expected: -∞");
+            Number n5 = new Number(TextPositiveInfinity);
+            Assert.That(n5.IsPositiveInfinity && n5.ToString() == TextPositiveInfinity, $"Result: {n5}, expected: {TextPositiveInfinity}");
 
-            ex = Assert.Throws<ArgumentException>(() => n4 = new Number(" NaN"));
+            TestContext.Out.WriteLine("TestCreate6");
+
+            Number n6 = new Number($"+{TextPositiveInfinity}");
+            Assert.That(n6.IsPositiveInfinity && n6.ToString() == TextPositiveInfinity, $"Result: {n6}, expected: {TextPositiveInfinity}");
+
+            TestContext.Out.WriteLine("TestCreate7");
+
+            Number n7 = new Number(TextNegativeInfinity);
+            Assert.That(n7.IsNegativeInfinity && n7.ToString() == TextNegativeInfinity, $"Result: {n7}, expected: {TextNegativeInfinity}");
+
+            TestContext.Out.WriteLine("TestCreate8");
+
+            ex = Assert.Throws<ArgumentException>(() => n4 = new Number($" {TextNaN}"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
 
-            ex = Assert.Throws<ArgumentException>(() => n4 = new Number("NaNx"));
+            TestContext.Out.WriteLine("TestCreate9");
+
+            ex = Assert.Throws<ArgumentException>(() => n4 = new Number($"{TextNaN}x"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+
+            TestContext.Out.WriteLine("TestCreate10");
 
             Number n8 = new Number("0xFF");
             Assert.That(!n8.IsZero && n8.ToString() == "255", $"Result: {n8}, expected: 255");
 
+            TestContext.Out.WriteLine("TestCreate11");
+
             ex = Assert.Throws<ArgumentException>(() => n8 = new Number(" 0xFF"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+
+            TestContext.Out.WriteLine("TestCreate12");
 
             ex = Assert.Throws<ArgumentException>(() => n8 = new Number("0xFFx"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
 
+            TestContext.Out.WriteLine("TestCreate13");
+
             Number n9 = new Number("FF:H");
             Assert.That(!n9.IsZero && n9.ToString() == "255", $"Result: {n9}, expected: 255");
+
+            TestContext.Out.WriteLine("TestCreate14");
 
             ex = Assert.Throws<ArgumentException>(() => n9 = new Number(" FF:H"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
 
+            TestContext.Out.WriteLine("TestCreate15");
+
             ex = Assert.Throws<ArgumentException>(() => n9 = new Number("FF:Hx"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+
+            TestContext.Out.WriteLine("TestCreate16");
 
             //Debug.Assert(false);
             Number n10 = new Number("1.2e3");
             Assert.That(n10.ToString() == $"1{SP}2e3", $"Result: {n10}, expected: 1{SP}2e3");
 
+            TestContext.Out.WriteLine("TestCreate17");
+
             n10 = new Number("1.2E3");
             Assert.That(n10.ToString() == $"1{SP}2e3", $"Result: {n10}, expected: 1{SP}2e3");
+
+            TestContext.Out.WriteLine("TestCreate18");
 
             ex = Assert.Throws<ArgumentException>(() => n10 = new Number(" 1.2e3"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
 
+            TestContext.Out.WriteLine("TestCreate19");
+
             ex = Assert.Throws<ArgumentException>(() => n10 = new Number("1.2e3x"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+
+            TestContext.Out.WriteLine("TestCreate20");
         }
 
         [Test]
