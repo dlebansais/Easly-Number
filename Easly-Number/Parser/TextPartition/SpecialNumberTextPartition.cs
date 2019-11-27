@@ -72,9 +72,9 @@
             {
                 LastLeadingSpaceIndex = index;
             }
-            else if (c == '+' || c == '-')
+            else if (c == '+' && PositiveInfinityString[0] != '+')
             {
-                InfinitySign = (c == '+') ? OptionalSign.Positive : OptionalSign.Negative;
+                InfinitySign = OptionalSign.Positive;
                 FirstSpecialPartIndex = index + 1;
                 State = ParsingState.SpecialPart;
             }
@@ -112,10 +112,14 @@
             }
             else if (Substring == PositiveInfinityString)
             {
-                if (InfinitySign == OptionalSign.Negative)
-                    Value = Number.NegativeInfinity;
-                else
-                    Value = Number.PositiveInfinity;
+                Value = Number.PositiveInfinity;
+
+                LastSpecialPartIndex = index;
+                State = ParsingState.InvalidPart;
+            }
+            else if (Substring == NegativeInfinityString)
+            {
+                Value = Number.NegativeInfinity;
 
                 LastSpecialPartIndex = index;
                 State = ParsingState.InvalidPart;
