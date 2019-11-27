@@ -1,4 +1,4 @@
-﻿namespace Test
+﻿namespace TestEaslyNumber
 {
     using EaslyNumber;
     using NUnit.Framework;
@@ -15,23 +15,7 @@
         [OneTimeSetUp]
         public static void InitTestSession()
         {
-            CultureInfo frFR = CultureInfo.CreateSpecificCulture("fr-FR");
-            CultureInfo.DefaultThreadCurrentCulture = frFR;
-            CultureInfo.DefaultThreadCurrentUICulture = frFR;
-            Thread.CurrentThread.CurrentCulture = frFR;
-            Thread.CurrentThread.CurrentUICulture = frFR;
-
-            Assembly NumberAssembly;
-
-            try
-            {
-                NumberAssembly = Assembly.Load("Easly-Number");
-            }
-            catch
-            {
-                NumberAssembly = null;
-            }
-            Assume.That(NumberAssembly != null);
+            TestEnvironment.InitTestSession();
         }
 
         static bool SkipFullParse = true;
@@ -283,6 +267,10 @@
         [Category("Coverage")]
         public static void SimpleRealParse()
         {
+            string TextNaN = double.NaN.ToString();
+            string TextPositiveInfinity = double.PositiveInfinity.ToString();
+            string TextNegativeInfinity = double.NegativeInfinity.ToString();
+
             FormattedNumber FormattedNumber;
 
             FormattedNumber = new FormattedNumber("1");
@@ -360,29 +348,35 @@
             Assert.That(FormattedNumber.IsValid && !FormattedNumber.Value.IsInteger && FormattedNumber.BeforeExponent == "0.123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && !FormattedNumber.Value.IsZero, $"Result: {FormattedNumber}");
             FormattedNumber = new FormattedNumber("1e23456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
             Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsInteger && FormattedNumber.BeforeExponent == "1e" && FormattedNumber.Exponent == "23456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" && FormattedNumber.Suffix.Length == 0 && !FormattedNumber.Value.IsZero, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber(double.NaN.ToString());
+            FormattedNumber = new FormattedNumber(TextNaN);
             Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.BeforeExponent == "NaN" && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsNaN, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber($" {double.NaN}");
+            FormattedNumber = new FormattedNumber($" {TextNaN}");
             Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.DiscardedProlog == " " && FormattedNumber.BeforeExponent == "NaN" && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsNaN, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber($"{double.NaN}x");
+            FormattedNumber = new FormattedNumber($"{TextNaN}x");
             Assert.That(!FormattedNumber.IsValid, $"Result: {FormattedNumber}");
             //Debug.Assert(false);
-            FormattedNumber = new FormattedNumber($"+{double.NaN}");
+            FormattedNumber = new FormattedNumber($"+{TextNaN}");
             Assert.That(!FormattedNumber.IsValid, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber($"-{double.NaN}");
+            FormattedNumber = new FormattedNumber($"-{TextNaN}");
             Assert.That(!FormattedNumber.IsValid, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber(double.PositiveInfinity.ToString());
-            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.BeforeExponent == double.PositiveInfinity.ToString() && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsPositiveInfinity, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber($" {double.PositiveInfinity}");
-            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.DiscardedProlog == " " && FormattedNumber.BeforeExponent == double.PositiveInfinity.ToString() && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsPositiveInfinity, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber($"+{double.PositiveInfinity}");
-            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.BeforeExponent == $"+{double.PositiveInfinity}" && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsPositiveInfinity, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber($" +{double.PositiveInfinity}");
-            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.DiscardedProlog == " " && FormattedNumber.BeforeExponent == $"+{double.PositiveInfinity}" && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsPositiveInfinity, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber(double.NegativeInfinity.ToString());
-            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.BeforeExponent == double.NegativeInfinity.ToString() && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsNegativeInfinity, $"Result: {FormattedNumber}");
-            FormattedNumber = new FormattedNumber($" {double.NegativeInfinity}");
-            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.DiscardedProlog == " " && FormattedNumber.BeforeExponent == double.NegativeInfinity.ToString() && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsNegativeInfinity, $"Result: {FormattedNumber}");
+            FormattedNumber = new FormattedNumber(TextPositiveInfinity);
+            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.BeforeExponent == TextPositiveInfinity && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsPositiveInfinity, $"Result: {FormattedNumber}");
+            FormattedNumber = new FormattedNumber($" {TextPositiveInfinity}");
+            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.DiscardedProlog == " " && FormattedNumber.BeforeExponent == TextPositiveInfinity && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsPositiveInfinity, $"Result: {FormattedNumber}");
+
+            if (TextPositiveInfinity[0] != '+')
+            {
+                FormattedNumber = new FormattedNumber($"+{TextPositiveInfinity}");
+                Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.BeforeExponent == $"+{TextPositiveInfinity}" && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsPositiveInfinity, $"Result: {FormattedNumber}");
+
+                FormattedNumber = new FormattedNumber($" +{TextPositiveInfinity}");
+                Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.DiscardedProlog == " " && FormattedNumber.BeforeExponent == $"+{TextPositiveInfinity}" && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsPositiveInfinity, $"Result: {FormattedNumber}");
+            }
+
+            FormattedNumber = new FormattedNumber(TextNegativeInfinity);
+            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.BeforeExponent == TextNegativeInfinity && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsNegativeInfinity, $"Result: {FormattedNumber}");
+            FormattedNumber = new FormattedNumber($" {TextNegativeInfinity}");
+            Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.DiscardedProlog == " " && FormattedNumber.BeforeExponent == TextNegativeInfinity && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsNegativeInfinity, $"Result: {FormattedNumber}");
         }
 
         [Test]
