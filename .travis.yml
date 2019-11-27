@@ -13,6 +13,7 @@ install:
 
 script:
 # TODO: remove the rm below for NUNIT version > 3.12
+- rm ./testrunner/packages/NUnit.3.12.0/CHANGES.md
 - rm ./testrunner/NUnit.3.12.0/CHANGES.md
 - ./link-verifier > link-verifier-output.txt
 - cat link-verifier-output.txt
