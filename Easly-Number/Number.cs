@@ -774,19 +774,27 @@
         /// <returns>The default text representation of the number.</returns>
         public override string ToString()
         {
-            if (IsNaN)
-                return double.NaN.ToString();
-            else if (IsPositiveInfinity)
-                return double.PositiveInfinity.ToString();
-            else if (IsNegativeInfinity)
-                return double.NegativeInfinity.ToString();
-            else
+            try
             {
-                string IntegerString = ComposeIntegerString(out long BitIndex);
-                string FractionalString = ComposeFractionalString(BitIndex);
-                string ExponentString = ComposeExponentString();
+                if (IsNaN)
+                    return double.NaN.ToString();
+                else if (IsPositiveInfinity)
+                    return double.PositiveInfinity.ToString();
+                else if (IsNegativeInfinity)
+                    return double.NegativeInfinity.ToString();
+                else
+                {
+                    string IntegerString = ComposeIntegerString(out long BitIndex);
+                    string FractionalString = ComposeFractionalString(BitIndex);
+                    string ExponentString = ComposeExponentString();
 
-                return $"{IntegerString}{FractionalString}{ExponentString}";
+                    return $"{IntegerString}{FractionalString}{ExponentString}";
+                }
+            }
+            //TODO fix this
+            catch (Exception e)
+            {
+                return e.Message;
             }
         }
 
