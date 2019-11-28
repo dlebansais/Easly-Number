@@ -832,11 +832,14 @@
             string IntegerString = "0";
             bitIndex = 1;
 
-            while (bitIndex <= IntegerField.SignificantBits + IntegerField.ShiftBits)
+            if (IntegerField != null)
             {
-                bool Carry = IntegerField.GetBit(IntegerField.SignificantBits + IntegerField.ShiftBits - bitIndex);
-                IntegerString = NumberTextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
-                bitIndex++;
+                while (bitIndex <= IntegerField.SignificantBits + IntegerField.ShiftBits)
+                {
+                    bool Carry = IntegerField.GetBit(IntegerField.SignificantBits + IntegerField.ShiftBits - bitIndex);
+                    IntegerString = NumberTextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
+                    bitIndex++;
+                }
             }
 
             return IntegerString;
