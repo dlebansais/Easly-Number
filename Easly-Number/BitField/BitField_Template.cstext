@@ -168,7 +168,10 @@ namespace EaslyNumber
         /// </summary>
         public static int GetHashCode(BitField_Template item)
         {
-            return item == null ? 0 : item.GetHashCode();
+            if (item is BitField_Template AsBitField)
+                return AsBitField.GetHashCode();
+            else
+                return 0;
         }
 
         /// <summary>
