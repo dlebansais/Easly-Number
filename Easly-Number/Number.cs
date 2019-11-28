@@ -790,8 +790,11 @@
         /// <returns>The default text representation of the number.</returns>
         public override string ToString()
         {
+            int Step = 0;
             try
             {
+                Step++;
+
                 if (IsNaN)
                     return double.NaN.ToString();
                 else if (IsPositiveInfinity)
@@ -800,17 +803,27 @@
                     return double.NegativeInfinity.ToString();
                 else
                 {
-                    string IntegerString = ComposeIntegerString(out long BitIndex);
-                    string FractionalString = ComposeFractionalString(BitIndex);
-                    string ExponentString = ComposeExponentString();
+                    Step++;
 
-                    return $"{IntegerString}{FractionalString}{ExponentString}";
+                    string IntegerString = ComposeIntegerString(out long BitIndex);
+                    Step++;
+
+                    string FractionalString = ComposeFractionalString(BitIndex);
+                    Step++;
+
+                    string ExponentString = ComposeExponentString();
+                    Step++;
+
+                    string Result = $"{IntegerString}{FractionalString}{ExponentString}";
+                    Step++;
+
+                    return Result;
                 }
             }
             //TODO fix this
             catch (Exception e)
             {
-                return e.Message;
+                return e.Message + " (" + Step.ToString() + ")";
             }
         }
 
