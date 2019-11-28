@@ -168,7 +168,11 @@ namespace EaslyNumber
         /// </summary>
         public static int GetHashCode(BitField_uint item)
         {
-            return item == null ? 0 : item.GetHashCode();
+            //TODO: restore hash code
+            //if (item is BitField_uint AsBitField)
+            //    return AsBitField.GetHashCode();
+            //else
+            return 0;
         }
 
         /// <summary>
@@ -176,7 +180,9 @@ namespace EaslyNumber
         /// </summary>
         public override int GetHashCode()
         {
+            //TODO: restore hash code
             long Result = 0;
+            /*
             long LastIndex = LastItemIndex;
 
             for (long i = 0; i <= LastIndex; i++)
@@ -184,6 +190,7 @@ namespace EaslyNumber
                 long ElementValue = Content[i];
                 Result ^= ElementValue;
             }
+            */
 
             return (int)Result;
         }
