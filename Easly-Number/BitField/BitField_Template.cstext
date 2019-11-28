@@ -194,6 +194,26 @@ namespace EaslyNumber
         /// <summary>
         /// Checks if two bit fields are equal.
         /// </summary>
+        /// <param name="x">The first bit field.</param>
+        /// <param name="y">The second bit field.</param>
+        public static bool Equals(BitField_Template x, BitField_Template y)
+        {
+            if (!(x is BitField_Template) && !(y is BitField_Template))
+                return true;
+            else if (x is BitField_Template AsBitField1)
+            {
+                if (y is BitField_Template AsBitField2)
+                    return AsBitField1.Equals(AsBitField2);
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Checks if two bit fields are equal.
+        /// </summary>
         /// <param name="other">The other instance.</param>
         public override bool Equals(object other)
         {

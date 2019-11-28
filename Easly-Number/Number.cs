@@ -577,9 +577,9 @@
                        Rounding == AsNumber.Rounding &&
                        IsSignificandNegative == AsNumber.IsSignificandNegative &&
                        IsExponentNegative == AsNumber.IsExponentNegative &&
-                       IntegerField.Equals(AsNumber.IntegerField) &&
-                       FractionalField.Equals(AsNumber.FractionalField) &&
-                       ExponentField.Equals(AsNumber.ExponentField);
+                       Equals(IntegerField, AsNumber.IntegerField) &&
+                       Equals(FractionalField, AsNumber.FractionalField) &&
+                       Equals(ExponentField, AsNumber.ExponentField);
             }
             else
                 return false;
