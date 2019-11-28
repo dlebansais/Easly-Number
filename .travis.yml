@@ -20,6 +20,9 @@ script:
 - grep -B 1 FAILED link-verifier-output.txt
 - msbuild Easly-Number.sln /p:Configuration=Travis
 - mono ./testrunner/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe --trace=Debug --labels=All ./Test-Easly-Number/bin/x64/Travis/Test-Easly-Number.dll
+- ls -l ./Easly-Number/bin/x64/Travis
+- rm ./Easly-Number/bin/x64/Travis/[Nn][Uu][Nn][Ii][Tt]*
+- ls -l ./Easly-Number/bin/x64/Travis
 
 deploy:
   provider: pages
