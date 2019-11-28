@@ -230,22 +230,32 @@ namespace EaslyNumber
         /// <param name="y">The second bit field.</param>
         public static bool operator ==(BitField_Template x, BitField_Template y)
         {
-            if (!(x is BitField_Template) || !(y is BitField_Template))
-                return false;
-            if (x.SignificantBits != y.SignificantBits || x.ShiftBits != y.ShiftBits)
-                return false;
-            if (x.SignificantBits == 0)
+            if (!(x is BitField_Template) && !(y is BitField_Template))
                 return true;
+            else if (x is BitField_Template AsBitFieldX)
+            {
+                if (y is BitField_Template AsBitFieldY)
+                {
+                    if (x.SignificantBits != y.SignificantBits || x.ShiftBits != y.ShiftBits)
+                        return false;
+                    if (x.SignificantBits == 0)
+                        return true;
 
-            Debug.Assert(x.SignificantBits > 0);
-            long LastIndex = x.LastItemIndex;
-            Debug.Assert(LastIndex >= 0 && LastIndex < x.Content.Length);
+                    Debug.Assert(x.SignificantBits > 0);
+                    long LastIndex = x.LastItemIndex;
+                    Debug.Assert(LastIndex >= 0 && LastIndex < x.Content.Length);
 
-            for (long i = 0; i <= LastIndex; i++)
-                if (x.Content[i] != y.Content[i])
+                    for (long i = 0; i <= LastIndex; i++)
+                        if (x.Content[i] != y.Content[i])
+                            return false;
+
+                    return true;
+                }
+                else
                     return false;
-
-            return true;
+            }
+            else
+                return false;
         }
 
         /// <summary>
