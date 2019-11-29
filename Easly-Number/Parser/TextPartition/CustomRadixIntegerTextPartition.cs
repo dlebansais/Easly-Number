@@ -51,7 +51,8 @@
         {
             get
             {
-                Debug.Assert(FirstIntegerPartIndex >= 0 && LastIntegerPartIndex >= FirstIntegerPartIndex + 1);
+                Debug.Assert(FirstIntegerPartIndex >= 0);
+                Debug.Assert(LastIntegerPartIndex >= FirstIntegerPartIndex + 1);
 
                 for (int i = FirstIntegerPartIndex; i < LastIntegerPartIndex; i++)
                     if (Text[i] != '0')

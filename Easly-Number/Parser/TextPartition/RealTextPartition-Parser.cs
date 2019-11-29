@@ -238,7 +238,8 @@
             }
             else if (c == '-' || c == '+')
             {
-                Debug.Assert(ExponentIndex >= 0 && ExponentIndex < index);
+                Debug.Assert(ExponentIndex >= 0);
+                Debug.Assert(ExponentIndex < index);
 
                 if (index == ExponentIndex + 1)
                 {

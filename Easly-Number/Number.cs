@@ -640,7 +640,7 @@
             if (ComparedAsSpecialNumber(x, y, out Result))
                 return Result;
 
-            Debug.Assert(!x.IsSpecial && !y.IsSpecial);
+            Debug.Assert(!(x.IsSpecial || y.IsSpecial));
 
             if (x.IsSignificandNegative && !y.IsSignificandNegative)
                 return true;
@@ -712,7 +712,7 @@
         /// <returns>The comparison result.</returns>
         private static bool ComparedSameSign(Number x, Number y)
         {
-            Debug.Assert(!x.IsSpecial && !y.IsSpecial);
+            Debug.Assert(!(x.IsSpecial || y.IsSpecial));
             Debug.Assert(x.IsSignificandNegative == y.IsSignificandNegative);
 
             bool IsSameInteger = x.IntegerField == y.IntegerField;
@@ -832,7 +832,8 @@
 
             if (!IsInteger)
             {
-                Debug.Assert(FractionalField != null && FractionalField.SignificantBits > 0);
+                Debug.Assert(FractionalField != null);
+                Debug.Assert(FractionalField.SignificantBits > 0);
 
                 FractionalString = "500000000000";
                 bitIndex = 1;

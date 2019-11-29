@@ -21,7 +21,6 @@ script:
 - sed 's/Template/byte/g' ./Easly-Number/BitField/BitField_Template.cstext > ./Easly-Number/BitField/BitField_byte.cs
 - msbuild Easly-Number.sln /p:Configuration=Travis
 - mono ./testrunner/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe --trace=Debug --labels=All ./Test-Easly-Number/bin/x64/Travis/Test-Easly-Number.dll
-- rm ./Easly-Number/bin/x64/Travis/[Nn][Uu][Nn][Ii][Tt]*
 
 deploy:
   provider: pages
