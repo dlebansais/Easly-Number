@@ -5,15 +5,15 @@ namespace EaslyNumber
     using System;
     using System.Diagnostics;
 
-    internal class BitField_Template
+    internal class BitField_uint
     {
         #region Init
         /// <summary>
-        /// Initializes a new instance of the <see cref="BitField_Template"/> class.
+        /// Initializes a new instance of the <see cref="BitField_uint"/> class.
         /// </summary>
-        public BitField_Template()
+        public BitField_uint()
         {
-            Content = new Template[0];
+            Content = new uint[0];
             SignificantBits = 0;
             ShiftBits = 0;
 
@@ -47,7 +47,7 @@ namespace EaslyNumber
         /// </summary>
         public void SetZero()
         {
-            Content = new Template[1];
+            Content = new uint[1];
             Content[0] = 0;
             SignificantBits = 1;
             ShiftBits = 0;
@@ -66,7 +66,7 @@ namespace EaslyNumber
 
             long Carry = 0;
             long LastIndex = LastItemIndex;
-            int CarryShift = (sizeof(Template) * 8) - shiftValue;
+            int CarryShift = (sizeof(uint) * 8) - shiftValue;
 
             Debug.Assert(LastIndex >= 0);
             Debug.Assert(LastIndex < Content.Length);
@@ -74,11 +74,11 @@ namespace EaslyNumber
             for (long i = LastIndex + 1; i > 0; i--)
             {
                 long ElementValue = Content[i - 1];
-                long NextCarry = (Template)(ElementValue << CarryShift);
+                long NextCarry = (uint)(ElementValue << CarryShift);
 
                 ElementValue >>= shiftValue;
                 ElementValue += Carry;
-                Content[i - 1] = (Template)ElementValue;
+                Content[i - 1] = (uint)ElementValue;
 
                 Carry = NextCarry;
             }
@@ -115,7 +115,7 @@ namespace EaslyNumber
             long Index = ItemIndex(position);
             int Offset = ItemOffset(position);
 
-            Template Mask = (Template)(1UL << Offset);
+            uint Mask = (uint)(1UL << Offset);
             return (Content[Index] & Mask) != 0;
         }
 
@@ -146,16 +146,16 @@ namespace EaslyNumber
 
             if (value)
             {
-                Template Mask = (Template)(1UL << Offset);
+                uint Mask = (uint)(1UL << Offset);
                 Content[Index] |= Mask;
             }
         }
 
-        public BitField_Template Clone()
+        public BitField_uint Clone()
         {
-            BitField_Template Result = Create();
+            BitField_uint Result = Create();
 
-            Template[] ContentClone = new Template[Content.Length];
+            uint[] ContentClone = new uint[Content.Length];
             Array.Copy(Content, ContentClone, Content.Length);
 
             Result.Content = ContentClone;
@@ -170,9 +170,9 @@ namespace EaslyNumber
         /// <summary>
         /// Gets a hash code for the object.
         /// </summary>
-        public static int GetHashCode(BitField_Template item)
+        public static int GetHashCode(BitField_uint item)
         {
-            if (item is BitField_Template AsBitField)
+            if (item is BitField_uint AsBitField)
                 return AsBitField.GetHashCode();
             else
                 return 0;
@@ -200,13 +200,13 @@ namespace EaslyNumber
         /// </summary>
         /// <param name="x">The first bit field.</param>
         /// <param name="y">The second bit field.</param>
-        public static bool Equals(BitField_Template x, BitField_Template y)
+        public static bool Equals(BitField_uint x, BitField_uint y)
         {
-            if (!(x is BitField_Template) && !(y is BitField_Template))
+            if (!(x is BitField_uint) && !(y is BitField_uint))
                 return true;
-            else if (x is BitField_Template AsBitField1)
+            else if (x is BitField_uint AsBitField1)
             {
-                if (y is BitField_Template AsBitField2)
+                if (y is BitField_uint AsBitField2)
                     return AsBitField1.Equals(AsBitField2);
                 else
                     return false;
@@ -221,7 +221,7 @@ namespace EaslyNumber
         /// <param name="other">The other instance.</param>
         public override bool Equals(object other)
         {
-            if (other is BitField_Template AsBitField)
+            if (other is BitField_uint AsBitField)
                 return this == AsBitField;
             else
                 return false;
@@ -232,13 +232,13 @@ namespace EaslyNumber
         /// </summary>
         /// <param name="x">The first bit field.</param>
         /// <param name="y">The second bit field.</param>
-        public static bool operator ==(BitField_Template x, BitField_Template y)
+        public static bool operator ==(BitField_uint x, BitField_uint y)
         {
-            if (!(x is BitField_Template) && !(y is BitField_Template))
+            if (!(x is BitField_uint) && !(y is BitField_uint))
                 return true;
-            else if (x is BitField_Template AsBitFieldX)
+            else if (x is BitField_uint AsBitFieldX)
             {
-                if (y is BitField_Template AsBitFieldY)
+                if (y is BitField_uint AsBitFieldY)
                 {
                     if (x.SignificantBits != y.SignificantBits || x.ShiftBits != y.ShiftBits)
                         return false;
@@ -269,7 +269,7 @@ namespace EaslyNumber
         /// </summary>
         /// <param name="x">The first bit field.</param>
         /// <param name="y">The second bit field.</param>
-        public static bool operator !=(BitField_Template x, BitField_Template y)
+        public static bool operator !=(BitField_uint x, BitField_uint y)
         {
             return !(x == y);
         }
@@ -279,7 +279,7 @@ namespace EaslyNumber
         /// </summary>
         /// <param name="x">The first bit field.</param>
         /// <param name="y">The second bit field.</param>
-        public static bool operator <(BitField_Template x, BitField_Template y)
+        public static bool operator <(BitField_uint x, BitField_uint y)
         {
             long PositionX = x.HighestBitSet;
             long PositionY = y.HighestBitSet;
@@ -308,7 +308,7 @@ namespace EaslyNumber
         /// <param name="x">The first bit field.</param>
         /// <param name="y">The second bit field.</param>
         /// <param name="position">The bit position where to start comparing.</param>
-        private static bool IsContentLesser(BitField_Template x, BitField_Template y, long position)
+        private static bool IsContentLesser(BitField_uint x, BitField_uint y, long position)
         {
             Debug.Assert(position >= x.ShiftBits);
             Debug.Assert(position < x.ShiftBits + x.SignificantBits);
@@ -344,7 +344,7 @@ namespace EaslyNumber
         /// </summary>
         /// <param name="x">The first bit field.</param>
         /// <param name="y">The second bit field.</param>
-        public static bool operator >(BitField_Template x, BitField_Template y)
+        public static bool operator >(BitField_uint x, BitField_uint y)
         {
             return y < x;
         }
@@ -377,7 +377,7 @@ namespace EaslyNumber
                             }
                             while (ElementValue != 0);
 
-                            return (i * sizeof(Template) * 8) + j - 1 + ShiftBits;
+                            return (i * sizeof(uint) * 8) + j - 1 + ShiftBits;
                         }
                     }
                 }
@@ -389,11 +389,11 @@ namespace EaslyNumber
 
         #region Implementation
         /// <summary>
-        /// Creates a new BitField_Template object.
+        /// Creates a new BitField_uint object.
         /// </summary>
-        protected virtual BitField_Template Create()
+        protected virtual BitField_uint Create()
         {
-            return new BitField_Template();
+            return new BitField_uint();
         }
 
         /// <summary>
@@ -402,7 +402,7 @@ namespace EaslyNumber
         /// </summary>
         private long LastItemIndex
         {
-            get { return ItemIndex(SignificantBits + (sizeof(Template) * 8) - 1) - 1; }
+            get { return ItemIndex(SignificantBits + (sizeof(uint) * 8) - 1) - 1; }
         }
 
         /// <summary>
@@ -412,7 +412,7 @@ namespace EaslyNumber
         /// <returns>The corresponding item index in <see cref="Content"/>.</returns>
         private long ItemIndex(long position)
         {
-            return position / (sizeof(Template) * 8);
+            return position / (sizeof(uint) * 8);
         }
 
         /// <summary>
@@ -422,13 +422,13 @@ namespace EaslyNumber
         /// <returns>The corresponding offset in the <see cref="Content"/> item.</returns>
         private int ItemOffset(long position)
         {
-            return (int)(position % (sizeof(Template) * 8));
+            return (int)(position % (sizeof(uint) * 8));
         }
 
         /// <summary>
         /// The bit field data.
         /// </summary>
-        private Template[] Content;
+        private uint[] Content;
         #endregion
     }
 }

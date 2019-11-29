@@ -141,6 +141,10 @@
             IntegerField = CreateBitField_byteFromString("123456789012345678901234567890", out long BitIndex);
 
             Assert.That(IntegerField.Equals(IntegerField));
+            Assert.That(BitField_byte.Equals(IntegerField, IntegerField));
+            Assert.That(BitField_byte.Equals(null, null));
+            Assert.That(!BitField_byte.Equals(IntegerField, null));
+            Assert.That(!BitField_byte.Equals(null, IntegerField));
 
             BitField_byte OtherField = new BitField_byte();
             Assert.That(OtherField.Equals(OtherField));
@@ -153,6 +157,12 @@
             Assert.That(!(IntegerField == null));
             Assert.That(IntegerField != null);
 
+            BitField_byte NullField1 = null;
+            BitField_byte NullField2 = null;
+            Assert.That(NullField1 == NullField2);
+            Assert.That(NullField1 != IntegerField);
+            Assert.That(IntegerField != NullField1);
+
             bool OldBit = OtherField.GetBit(0);
             Assert.That(OldBit == false);
 
@@ -162,6 +172,13 @@
             int HashCode1 = IntegerField.GetHashCode();
             int HashCode2 = OtherField.GetHashCode();
             Assert.That(HashCode1 != HashCode2);
+
+            HashCode1 = BitField_byte.GetHashCode(IntegerField);
+            HashCode2 = BitField_byte.GetHashCode(OtherField);
+            Assert.That(HashCode1 != HashCode2);
+
+            int HashCodeNull = BitField_byte.GetHashCode(null);
+            Assert.That(HashCodeNull == 0);
 
             Assert.That(IntegerField < OtherField);
             Assert.That(OtherField > IntegerField);
@@ -248,6 +265,10 @@
             IntegerField = CreateBitField_uintFromString("123456789012345678901234567890", out long BitIndex);
 
             Assert.That(IntegerField.Equals(IntegerField));
+            Assert.That(BitField_uint.Equals(IntegerField, IntegerField));
+            Assert.That(BitField_byte.Equals(null, null));
+            Assert.That(!BitField_uint.Equals(IntegerField, null));
+            Assert.That(!BitField_uint.Equals(null, IntegerField));
 
             BitField_uint OtherField = new BitField_uint();
             Assert.That(OtherField.Equals(OtherField));
@@ -260,6 +281,12 @@
             Assert.That(!(IntegerField == null));
             Assert.That(IntegerField != null);
 
+            BitField_uint NullField1 = null;
+            BitField_uint NullField2 = null;
+            Assert.That(NullField1 == NullField2);
+            Assert.That(NullField1 != IntegerField);
+            Assert.That(IntegerField != NullField1);
+
             bool OldBit = OtherField.GetBit(0);
             Assert.That(OldBit == false);
 
@@ -269,6 +296,13 @@
             int HashCode1 = IntegerField.GetHashCode();
             int HashCode2 = OtherField.GetHashCode();
             Assert.That(HashCode1 != HashCode2);
+
+            HashCode1 = BitField_uint.GetHashCode(IntegerField);
+            HashCode2 = BitField_uint.GetHashCode(OtherField);
+            Assert.That(HashCode1 != HashCode2);
+
+            int HashCodeNull = BitField_uint.GetHashCode(null);
+            Assert.That(HashCodeNull == 0);
 
             Assert.That(IntegerField < OtherField);
             Assert.That(OtherField > IntegerField);
