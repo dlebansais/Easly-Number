@@ -14,7 +14,6 @@ if exist .\Test-Easly-Number\obj\x64\Release\Coverage-Easly-Number-Release_cover
 ".\packages\OpenCover.4.7.922\tools\OpenCover.Console.exe" -register:user -target:".\packages\NUnit.ConsoleRunner.3.10.0\tools\nunit3-console.exe" -targetargs:".\Test-Easly-Number\bin\x64\Release\Test-Easly-Number.dll --trace=Debug --labels=All --where=cat==Coverage" -filter:"+[Easly-Number*]* -[Test-Easly-Number*]*" -output:".\Test-Easly-Number\obj\x64\Release\Coverage-Easly-Number-Release_coverage.xml"
 
 :upload
-copy .\Test-Easly-Number\obj\x64\Debug\Coverage-Easly-Number-Debug_coverage.xml .\Coverage-Easly-Number-Debug_coverage.xml
 if exist .\Test-Easly-Number\obj\x64\Debug\Coverage-Easly-Number-Debug_coverage.xml .\packages\Codecov.1.9.0\tools\codecov -v -f ".\Test-Easly-Number\obj\x64\Debug\Coverage-Easly-Number-Debug_coverage.xml" -t "8ac8c077-35e0-4ccd-b327-08936fd9f0fe"
 ECHO Waiting 30 seconds
 PING -n 30 -w 1000 127.1 > NUL
