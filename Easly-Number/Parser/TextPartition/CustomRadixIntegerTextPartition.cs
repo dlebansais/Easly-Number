@@ -51,14 +51,19 @@
         {
             get
             {
+                bool Result = true;
+
                 Debug.Assert(FirstIntegerPartIndex >= 0);
                 Debug.Assert(LastIntegerPartIndex >= FirstIntegerPartIndex + 1);
 
                 for (int i = FirstIntegerPartIndex; i < LastIntegerPartIndex; i++)
                     if (Text[i] != '0')
-                        return false;
+                    {
+                        Result = false;
+                        break;
+                    }
 
-                return true;
+                return Result;
             }
         }
 

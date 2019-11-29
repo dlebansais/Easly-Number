@@ -238,8 +238,8 @@
             }
             else if (c == '-' || c == '+')
             {
-                Debug.Assert(ExponentIndex >= 0);
-                Debug.Assert(ExponentIndex < index);
+                bool IsExponentIndexRangeValid = ExponentIndex >= 0 && ExponentIndex < index;
+                Debug.Assert(IsExponentIndexRangeValid);
 
                 if (index == ExponentIndex + 1)
                 {

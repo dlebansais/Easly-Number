@@ -20,6 +20,7 @@ script:
 - sed 's/Template/uint/g' ./Easly-Number/BitField/BitField_Template.cstext > ./Easly-Number/BitField/BitField_uint.cs
 - sed 's/Template/byte/g' ./Easly-Number/BitField/BitField_Template.cstext > ./Easly-Number/BitField/BitField_byte.cs
 - msbuild Easly-Number.sln /p:Configuration=Travis
+- cat codecov.yml | curl --data-binary @- https://codecov.io/validate
 - mono ./testrunner/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe --trace=Debug --labels=All ./Test-Easly-Number/bin/x64/Travis/Test-Easly-Number.dll
 
 deploy:

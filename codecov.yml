@@ -26,4 +26,5 @@ comment:
   require_changes: no
 
 fixes:
-  - "BitField/BitField_byte.cs::BitField/BitField_Template.cstext"
+  - "./BitField/BitField_byte.cs::./BitField/BitField_Template.cstext"
+  - "./BitField/BitField_uint.cs::./BitField/BitField_Template.cstext"
