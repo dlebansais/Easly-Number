@@ -181,6 +181,7 @@ namespace EaslyNumber
         {
             long Result = 0;
             long LastIndex = LastItemIndex;
+            Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
 
             for (long i = 0; i < LastIndex; i++)
             {
