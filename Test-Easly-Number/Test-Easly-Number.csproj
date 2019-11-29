@@ -9,7 +9,7 @@
     <ProjectGuid>{72C090BE-A66A-4CB0-98A4-41C70D26FD2A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Test</RootNamespace>
+    <RootNamespace>TestEaslyNumber</RootNamespace>
     <AssemblyName>Test-Easly-Number</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

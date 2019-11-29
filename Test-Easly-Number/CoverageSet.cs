@@ -3,10 +3,7 @@
     using EaslyNumber;
     using NUnit.Framework;
     using System;
-    using System.Diagnostics;
     using System.Globalization;
-    using System.Reflection;
-    using System.Threading;
 
     [TestFixture]
     public class CoverageSet
