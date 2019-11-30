@@ -248,7 +248,8 @@ namespace EaslyNumber
 
                     long LastIndex = x.LastItemIndex;
 
-                    Debug.Assert(LastIndex >= 0 && LastIndex < x.Content.Length);
+                    Debug.Assert(LastIndex >= 0);
+                    Debug.Assert(LastIndex < x.Content.Length);
 
                     for (long i = 0; i <= LastIndex; i++)
                         if (x.Content[i] != y.Content[i])

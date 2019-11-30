@@ -266,7 +266,7 @@
 
             Assert.That(IntegerField.Equals(IntegerField));
             Assert.That(BitField_uint.Equals(IntegerField, IntegerField));
-            Assert.That(BitField_byte.Equals(null, null));
+            Assert.That(BitField_uint.Equals(null, null));
             Assert.That(!BitField_uint.Equals(IntegerField, null));
             Assert.That(!BitField_uint.Equals(null, IntegerField));
 
