@@ -103,7 +103,8 @@ namespace EaslyNumber
         {
             position -= ShiftBits;
 
-            Debug.Assert(position >= -ShiftBits && position < SignificantBits);
+            Debug.Assert(position >= -ShiftBits);
+            Debug.Assert(position < SignificantBits);
 
             if (position < 0)
                 return false;
@@ -126,7 +127,8 @@ namespace EaslyNumber
         {
             position -= ShiftBits;
 
-            Debug.Assert(position >= 0 && position <= SignificantBits);
+            Debug.Assert(position >= 0);
+            Debug.Assert(position <= SignificantBits);
 
             long Index = ItemIndex(position);
             int Offset = ItemOffset(position);
@@ -358,7 +360,8 @@ namespace EaslyNumber
                 {
                     long LastIndex = LastItemIndex;
 
-                    Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
+                    Debug.Assert(LastIndex >= 0);
+                    Debug.Assert(LastIndex < Content.Length);
 
                     for (long i = LastIndex; i >= 0; i--)
                     {
