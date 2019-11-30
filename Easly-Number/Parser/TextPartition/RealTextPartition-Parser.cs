@@ -232,15 +232,13 @@
         /// <param name="c">The parsed character.</param>
         private void ParseExponentPart(int index, char c)
         {
-            bool IsExponentIndexRangeValid = ExponentIndex >= 0 & ExponentIndex < index;
-
             if (Number.IsValidDecimalDigit(c, out int DigitValue))
             {
                 LastExponentPartIndex = index + 1;
             }
             else if (c == '-' || c == '+')
             {
-                Debug.Assert(IsExponentIndexRangeValid);
+                Debug.Assert(ExponentIndex >= 0 & ExponentIndex < index);
 
                 if (index == ExponentIndex + 1)
                 {
