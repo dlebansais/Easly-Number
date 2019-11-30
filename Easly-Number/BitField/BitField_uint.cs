@@ -101,16 +101,15 @@ namespace EaslyNumber
         /// <param name="position">Position of the bit to get.</param>
         public bool GetBit(long position)
         {
-            Debug.Assert(position >= 0);
-            Debug.Assert(position < ShiftBits + SignificantBits);
-
-            if (position < ShiftBits)
-                return false;
-
             position -= ShiftBits;
 
-            Debug.Assert(position >= 0);
+            Debug.Assert(position >= -ShiftBits);
             Debug.Assert(position < SignificantBits);
+
+            if (position < 0)
+                return false;
+
+            Debug.Assert(position >= 0);
 
             long Index = ItemIndex(position);
             int Offset = ItemOffset(position);
@@ -248,6 +247,7 @@ namespace EaslyNumber
                     Debug.Assert(x.SignificantBits > 0);
 
                     long LastIndex = x.LastItemIndex;
+
                     Debug.Assert(LastIndex >= 0);
                     Debug.Assert(LastIndex < x.Content.Length);
 
@@ -290,6 +290,7 @@ namespace EaslyNumber
                     return PositionX < PositionY;
 
                 long Position = PositionX;
+
                 Debug.Assert(Position == PositionY);
 
                 return IsContentLesser(x, y, Position);
@@ -310,6 +311,8 @@ namespace EaslyNumber
         /// <param name="position">The bit position where to start comparing.</param>
         private static bool IsContentLesser(BitField_uint x, BitField_uint y, long position)
         {
+            bool BitX, BitY;
+
             Debug.Assert(position >= x.ShiftBits);
             Debug.Assert(position < x.ShiftBits + x.SignificantBits);
             Debug.Assert(position >= y.ShiftBits);
@@ -319,7 +322,6 @@ namespace EaslyNumber
 
             long LowestPosition = x.ShiftBits <= y.ShiftBits ? x.ShiftBits : y.ShiftBits;
 
-            bool BitX, BitY;
             do
             {
                 position--;
