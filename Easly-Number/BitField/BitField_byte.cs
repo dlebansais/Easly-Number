@@ -68,8 +68,7 @@ namespace EaslyNumber
             long LastIndex = LastItemIndex;
             int CarryShift = (sizeof(byte) * 8) - shiftValue;
 
-            Debug.Assert(LastIndex >= 0);
-            Debug.Assert(LastIndex < Content.Length);
+            Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
 
             for (long i = LastIndex + 1; i > 0; i--)
             {
@@ -103,8 +102,7 @@ namespace EaslyNumber
         {
             position -= ShiftBits;
 
-            bool ValidPosition = (position >= -ShiftBits) && (position < SignificantBits);
-            Debug.Assert(ValidPosition);
+            Debug.Assert(position >= -ShiftBits && position < SignificantBits);
 
             if (position < 0)
                 return false;
@@ -127,8 +125,7 @@ namespace EaslyNumber
         {
             position -= ShiftBits;
 
-            Debug.Assert(position >= 0);
-            Debug.Assert(position <= SignificantBits);
+            Debug.Assert(position >= 0 && position <= SignificantBits);
 
             long Index = ItemIndex(position);
             int Offset = ItemOffset(position);
@@ -248,8 +245,7 @@ namespace EaslyNumber
 
                     long LastIndex = x.LastItemIndex;
 
-                    Debug.Assert(LastIndex >= 0);
-                    Debug.Assert(LastIndex < x.Content.Length);
+                    Debug.Assert(LastIndex >= 0 && LastIndex < x.Content.Length);
 
                     for (long i = 0; i <= LastIndex; i++)
                         if (x.Content[i] != y.Content[i])
@@ -311,8 +307,6 @@ namespace EaslyNumber
         /// <param name="position">The bit position where to start comparing.</param>
         private static bool IsContentLesser(BitField_byte x, BitField_byte y, long position)
         {
-            bool BitX, BitY;
-
             Debug.Assert(position >= x.ShiftBits);
             Debug.Assert(position < x.ShiftBits + x.SignificantBits);
             Debug.Assert(position >= y.ShiftBits);
@@ -322,6 +316,7 @@ namespace EaslyNumber
 
             long LowestPosition = x.ShiftBits <= y.ShiftBits ? x.ShiftBits : y.ShiftBits;
 
+            bool BitX, BitY;
             do
             {
                 position--;
@@ -362,8 +357,7 @@ namespace EaslyNumber
                 {
                     long LastIndex = LastItemIndex;
 
-                    Debug.Assert(LastIndex >= 0);
-                    Debug.Assert(LastIndex < Content.Length);
+                    Debug.Assert(LastIndex >= 0 && LastIndex < Content.Length);
 
                     for (long i = LastIndex; i >= 0; i--)
                     {
