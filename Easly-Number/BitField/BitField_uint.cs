@@ -68,8 +68,9 @@ namespace EaslyNumber
             long LastIndex = LastItemIndex;
             int CarryShift = (sizeof(uint) * 8) - shiftValue;
 
-            Debug.Assert(LastIndex >= 0);
-            Debug.Assert(LastIndex < Content.Length);
+            bool ValidIndex = (LastIndex >= 0) && (LastIndex < Content.Length);
+
+            Debug.Assert(ValidIndex);
 
             for (long i = LastIndex + 1; i > 0; i--)
             {
