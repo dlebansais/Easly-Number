@@ -103,8 +103,8 @@ namespace EaslyNumber
         {
             position -= ShiftBits;
 
-            Debug.Assert(position >= -ShiftBits);
-            Debug.Assert(position < SignificantBits);
+            bool ValidPosition = (position >= -ShiftBits) && (position < SignificantBits);
+            Debug.Assert(ValidPosition);
 
             if (position < 0)
                 return false;
