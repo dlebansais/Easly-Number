@@ -443,6 +443,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -478,6 +480,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -513,6 +517,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -548,6 +554,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -579,6 +587,7 @@
             FormattedNumber FormattedNumber1 = new FormattedNumber(Text1);
 
             Number Value1 = FormattedNumber1.Value;
+            Assert.That(Value1.Cheat == d1);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
 
             Number Result = -FormattedNumber1.Value;
@@ -609,6 +618,7 @@
             FormattedNumber FormattedNumber1 = new FormattedNumber(Text1);
 
             Number Value1 = FormattedNumber1.Value;
+            Assert.That(Value1.Cheat == d1);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
 
             Number Result = FormattedNumber1.Value.Abs();
@@ -639,6 +649,7 @@
             FormattedNumber FormattedNumber1 = new FormattedNumber(Text1);
 
             Number Value1 = FormattedNumber1.Value;
+            Assert.That(Value1.Cheat == d1);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
 
             Number Result = FormattedNumber1.Value.Exp();
@@ -669,6 +680,7 @@
             FormattedNumber FormattedNumber1 = new FormattedNumber(Text1);
 
             Number Value1 = FormattedNumber1.Value;
+            Assert.That(Value1.Cheat == d1);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
 
             Number Result = FormattedNumber1.Value.Log();
@@ -699,6 +711,7 @@
             FormattedNumber FormattedNumber1 = new FormattedNumber(Text1);
 
             Number Value1 = FormattedNumber1.Value;
+            Assert.That(Value1.Cheat == d1);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
 
             Number Result = FormattedNumber1.Value.Log10();
@@ -733,6 +746,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -764,6 +779,7 @@
             FormattedNumber FormattedNumber1 = new FormattedNumber(Text1);
 
             Number Value1 = FormattedNumber1.Value;
+            Assert.That(Value1.Cheat == d1);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
 
             Number Result = FormattedNumber1.Value.Sqrt();
@@ -798,6 +814,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -833,6 +851,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -868,6 +888,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -903,6 +925,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -938,6 +962,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -973,6 +999,8 @@
 
             Number Value1 = FormattedNumber1.Value;
             Number Value2 = FormattedNumber2.Value;
+            Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
             Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
@@ -1004,6 +1032,7 @@
             FormattedNumber FormattedNumber1 = new FormattedNumber(Text1);
 
             Number Value1 = FormattedNumber1.Value;
+            Assert.That(Value1.Cheat == d1);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
 
             FormattedNumber1.Value.TryParseInt(out int Result);

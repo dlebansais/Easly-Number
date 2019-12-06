@@ -57,6 +57,7 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+            Cheat = double.NaN;
 
             InitFromText(text);
         }
@@ -76,7 +77,7 @@
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Number"/> struct.
-        /// This contructor creates the number from plain text.
+        /// This contructor creates the number from a text partition.
         /// </summary>
         /// <param name="partition">The partition to copy values from.</param>
         /// <exception cref="ArgumentException">The partition does not represent a valid number.</exception>
@@ -94,12 +95,13 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+            Cheat = double.NaN;
 
             InitFromPartition(partition);
         }
 
         /// <summary>
-        /// Initializes the object from a special number value.
+        /// Initializes the object from a text partition.
         /// </summary>
         /// <param name="partition">The partition to copy values from.</param>
         /// <exception cref="ArgumentException">The partition does not represent a valid number.</exception>
@@ -153,6 +155,8 @@
             IntegerField = value.IntegerField;
             FractionalField = value.FractionalField;
             ExponentField = value.ExponentField;
+
+            SetCheatFromSpecialNumber();
         }
 
         /// <summary>
@@ -178,10 +182,12 @@
             FractionalField = new BitField();
             ExponentField = new BitField();
             ExponentField.SetZero();
+
+            SetCheatFromText();
         }
 
         /// <summary>
-        /// Initializes the object from an integer number value.
+        /// Initializes the object from a real number value.
         /// </summary>
         /// <param name="partition">The partition to copy values from.</param>
         /// <exception cref="ArgumentException">The partition does not represent a valid number.</exception>
@@ -202,11 +208,13 @@
             IntegerField = InitIntegerField;
             FractionalField = InitFractionalField;
             ExponentField = InitExponentField;
+
+            SetCheatFromText();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Number"/> struct.
-        /// This contructor creates the number from a parsed integer.
+        /// This contructor creates the number from a parsed real text.
         /// </summary>
         /// <param name="significandPrecision">The precision used to obtain the integer and fractional data fields.</param>
         /// <param name="exponentPrecision">The precision used to obtain the exponent data fields.</param>
@@ -226,15 +234,18 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+            Cheat = double.NaN;
 
             IntegerField = integerField;
             FractionalField = fractionalField;
             ExponentField = exponentField;
+
+            SetCheatFromText();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Number"/> struct.
-        /// This contructor creates the number from a parsed integer.
+        /// This contructor creates the number from a parsed integer text.
         /// </summary>
         /// <param name="significandPrecision">The precision used to obtain the integer and fractional data fields.</param>
         /// <param name="exponentPrecision">The precision used to obtain the exponent data fields.</param>
@@ -251,10 +262,13 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+            Cheat = double.NaN;
 
             IntegerField = integerField;
             FractionalField = new BitField();
             ExponentField = new BitField();
+
+            SetCheatFromText();
         }
 
         /// <summary>
@@ -276,6 +290,7 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+            Cheat = (double)value;
 
             InitFromText(value.ToString());
         }
@@ -299,6 +314,7 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+            Cheat = value;
 
             InitFromText(value.ToString());
         }
@@ -322,6 +338,7 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+            Cheat = (double)value;
 
             InitFromText(value.ToString());
         }
@@ -345,6 +362,7 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+            Cheat = (double)value;
 
             InitFromText(value.ToString());
         }
@@ -368,6 +386,7 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+            Cheat = (double)value;
 
             InitFromText(value.ToString());
         }
@@ -391,6 +410,7 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+            Cheat = (double)value;
 
             InitFromText(value.ToString());
         }
@@ -414,6 +434,7 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
+            Cheat = (double)value;
 
             InitFromText(value.ToString());
         }
@@ -441,6 +462,7 @@
             Rounding = Rounding.ToNearest;
             IsSignificandNegative = false;
             IsExponentNegative = false;
+            Cheat = double.NaN;
 
             if (IsZero)
             {
@@ -455,6 +477,8 @@
                 FractionalField = new BitField();
                 ExponentField = new BitField();
             }
+
+            SetCheatFromSpecialNumber();
         }
         #endregion
 
@@ -825,6 +849,9 @@
                 }
             }
 
+            if (IsSignificandNegative)
+                IntegerString = $"-{IntegerString}";
+
             return IntegerString;
         }
 
@@ -880,11 +907,42 @@
                     BitIndex++;
                 }
 
+                if (IsExponentNegative)
+                    ExponentString = $"-{ExponentString}";
+
                 return $"e{ExponentString}";
             }
             else
                 return string.Empty;
         }
+        #endregion
+
+        #region Cheat
+        private void SetCheatFromSpecialNumber()
+        {
+            if (IsNaN)
+                Cheat = double.NaN;
+            else if (IsPositiveInfinity)
+                Cheat = double.PositiveInfinity;
+            else if (IsNegativeInfinity)
+                Cheat = double.NegativeInfinity;
+            else
+                Cheat = 0;
+        }
+
+        private void SetCheatFromText()
+        {
+            string AsText = ToString();
+            double AsDouble;
+
+            if (double.TryParse(AsText, out AsDouble))
+                Cheat = AsDouble;
+        }
+
+        /// <summary>
+        /// The cheat value.
+        /// </summary>
+        public double Cheat { get; private set; }
         #endregion
     }
 }
