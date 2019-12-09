@@ -461,7 +461,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -498,7 +498,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -535,7 +535,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -572,7 +572,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -603,7 +603,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -634,7 +634,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -658,14 +658,11 @@
 
             string ExpectedText = d.ToString();
 
-            if (ExpectedText.Length > 4)
-                ExpectedText = ExpectedText.Substring(0, ExpectedText.Length - 1);
-
             string ResultText = Result.ToString();
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -696,7 +693,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -727,7 +724,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -764,7 +761,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -795,7 +792,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -832,7 +829,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -869,7 +866,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -906,7 +903,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -943,7 +940,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -969,7 +966,7 @@
 
             Number Result = FormattedNumber1.Value.BitwiseOr(FormattedNumber2.Value);
 
-            double d = (int)d1 & (int)d2;
+            double d = (int)d1 | (int)d2;
 
             string ExpectedText = d.ToString();
 
@@ -980,7 +977,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -1017,7 +1014,7 @@
             if (ResultText.Length > ExpectedText.Length)
                 ResultText = ResultText.Substring(0, ExpectedText.Length);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
         [Test]
@@ -1025,19 +1022,27 @@
         public static void TryParseInt0()
         {
             double d1 = 125478;
+            double d2 = 5.478231405e-3;
 
             string Text1 = d1.ToString();
+            string Text2 = d2.ToString();
 
             //Debug.Assert(false);
             FormattedNumber FormattedNumber1 = new FormattedNumber(Text1);
+            FormattedNumber FormattedNumber2 = new FormattedNumber(Text2);
 
             Number Value1 = FormattedNumber1.Value;
+            Number Value2 = FormattedNumber2.Value;
             Assert.That(Value1.Cheat == d1);
+            Assert.That(Value2.Cheat == d2);
             Assert.That(Value1.ToString() == d1.ToString(), $"Result={Value1}, Expected={d1}");
+            Assert.That(Value2.ToString() == d2.ToString(), $"Result={Value2}, Expected={d2}");
 
-            FormattedNumber1.Value.TryParseInt(out int Result);
+            bool IsParsed1 = Value1.TryParseInt(out int Result1);
+            bool IsParsed2 = Value2.TryParseInt(out int Result2);
 
-            //Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
+            Assert.That(IsParsed1 && Result1 == (int)d1);
+            Assert.That(!IsParsed1);
         }
         #endregion
     }

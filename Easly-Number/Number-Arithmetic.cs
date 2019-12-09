@@ -1,4 +1,6 @@
-﻿namespace EaslyNumber
+﻿using System;
+
+namespace EaslyNumber
 {
     /// <summary>
     /// Describes and manipulates real numbers with arbitrary precision.
@@ -28,7 +30,7 @@
         /// <returns>The arithmetic sum of <paramref name="x"/> and <paramref name="y"/>.</returns>
         public static Number Add(Number x, Number y, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
-            return NaN;
+            return new Number(x.Cheat + y.Cheat);
         }
 
         /// <summary>
@@ -52,7 +54,7 @@
         /// <returns>The arithmetic difference of <paramref name="x"/> and <paramref name="y"/>.</returns>
         public static Number Subtract(Number x, Number y, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
-            return NaN;
+            return new Number(x.Cheat - y.Cheat);
         }
 
         /// <summary>
@@ -76,7 +78,7 @@
         /// <returns>The arithmetic product of <paramref name="x"/> and <paramref name="y"/>.</returns>
         public static Number Multiply(Number x, Number y, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
-            return NaN;
+            return new Number(x.Cheat * y.Cheat);
         }
 
         /// <summary>
@@ -100,7 +102,7 @@
         /// <returns>The arithmetic ratio of <paramref name="x"/> and <paramref name="y"/>.</returns>
         public static Number Divide(Number x, Number y, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
-            return NaN;
+            return new Number(x.Cheat / y.Cheat);
         }
 
         /// <summary>
@@ -122,7 +124,7 @@
         /// <returns>The arithmetic negation of <paramref name="x"/>.</returns>
         public static Number Negate(Number x, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
-            return NaN;
+            return new Number(-x.Cheat);
         }
 
         /// <summary>
@@ -130,7 +132,7 @@
         /// </summary>
         public Number Abs()
         {
-            return NaN;
+            return new Number(Math.Abs(Cheat));
         }
 
         /// <summary>
@@ -138,7 +140,7 @@
         /// </summary>
         public Number Exp()
         {
-            return NaN;
+            return new Number(Math.Exp(Cheat));
         }
 
         /// <summary>
@@ -146,7 +148,7 @@
         /// </summary>
         public Number Log()
         {
-            return NaN;
+            return new Number(Math.Log(Cheat));
         }
 
         /// <summary>
@@ -154,7 +156,7 @@
         /// </summary>
         public Number Log10()
         {
-            return NaN;
+            return new Number(Math.Log10(Cheat));
         }
 
         /// <summary>
@@ -163,7 +165,7 @@
         /// <param name="x">The number.</param>
         public Number Pow(Number x)
         {
-            return NaN;
+            return new Number(Math.Pow(Cheat, x.Cheat));
         }
 
         /// <summary>
@@ -171,7 +173,7 @@
         /// </summary>
         public Number Sqrt()
         {
-            return NaN;
+            return new Number(Math.Sqrt(Cheat));
         }
 
         /// <summary>
@@ -180,7 +182,7 @@
         /// <param name="other">The other number.</param>
         public Number ShiftLeft(Number other)
         {
-            return NaN;
+            return new Number(((long)Cheat) << ((int)other.Cheat));
         }
 
         /// <summary>
@@ -189,16 +191,16 @@
         /// <param name="other">The other number.</param>
         public Number ShiftRight(Number other)
         {
-            return NaN;
+            return new Number(((long)Cheat) >> ((int)other.Cheat));
         }
 
         /// <summary>
-        /// Returns the remainder when this object's value is divided by another.
+        /// Returns the remainder when this object's value is divided by x.
         /// </summary>
-        /// <param name="other">The other number.</param>
-        public Number Remainder(Number other)
+        /// <param name="x">The number.</param>
+        public Number Remainder(Number x)
         {
-            return NaN;
+            return new Number(Math.IEEERemainder(Cheat, x.Cheat));
         }
 
         /// <summary>
@@ -207,7 +209,7 @@
         /// <param name="other">The other number.</param>
         public Number BitwiseAnd(Number other)
         {
-            return NaN;
+            return new Number(((long)Cheat) & ((long)other.Cheat));
         }
 
         /// <summary>
@@ -216,7 +218,7 @@
         /// <param name="other">The other number.</param>
         public Number BitwiseOr(Number other)
         {
-            return NaN;
+            return new Number(((long)Cheat) | ((long)other.Cheat));
         }
 
         /// <summary>
@@ -225,7 +227,7 @@
         /// <param name="other">The other number.</param>
         public Number BitwiseXor(Number other)
         {
-            return NaN;
+            return new Number(((long)Cheat) ^ ((long)other.Cheat));
         }
 
         #endregion
@@ -237,8 +239,12 @@
         /// <param name="value">The value upon return.</param>
         public bool TryParseInt(out int value)
         {
-            value = 0;
-            return false;
+            value = (int)Cheat;
+
+            if (value == Cheat)
+                return true;
+            else
+                return false;
         }
         #endregion
     }

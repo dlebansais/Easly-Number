@@ -290,9 +290,11 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
-            Cheat = (double)value;
+            Cheat = double.NaN;
 
             InitFromText(value.ToString());
+
+            Cheat = (double)value;
         }
 
         /// <summary>
@@ -314,9 +316,11 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
-            Cheat = value;
+            Cheat = double.NaN;
 
             InitFromText(value.ToString());
+
+            Cheat = value;
         }
 
         /// <summary>
@@ -338,9 +342,11 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
-            Cheat = (double)value;
+            Cheat = double.NaN;
 
             InitFromText(value.ToString());
+
+            Cheat = (double)value;
         }
 
         /// <summary>
@@ -362,9 +368,11 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
-            Cheat = (double)value;
+            Cheat = double.NaN;
 
             InitFromText(value.ToString());
+
+            Cheat = (double)value;
         }
 
         /// <summary>
@@ -386,9 +394,11 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
-            Cheat = (double)value;
+            Cheat = double.NaN;
 
             InitFromText(value.ToString());
+
+            Cheat = (double)value;
         }
 
         /// <summary>
@@ -410,9 +420,11 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
-            Cheat = (double)value;
+            Cheat = double.NaN;
 
             InitFromText(value.ToString());
+
+            Cheat = (double)value;
         }
 
         /// <summary>
@@ -434,9 +446,11 @@
             IntegerField = null;
             FractionalField = null;
             ExponentField = null;
-            Cheat = (double)value;
+            Cheat = double.NaN;
 
             InitFromText(value.ToString());
+
+            Cheat = (double)value;
         }
 
         /// <summary>
