@@ -13,7 +13,7 @@
         /// <summary>
         /// The default significand precision until set by the client.
         /// </summary>
-        public const long DefaultSignificandPrecision = 53;
+        public const long DefaultSignificandPrecision = 57;
 
         /// <summary>
         /// The default exponent precision until set by the client.

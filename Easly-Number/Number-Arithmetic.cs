@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace EaslyNumber
+﻿namespace EaslyNumber
 {
+    using System;
+
     /// <summary>
     /// Describes and manipulates real numbers with arbitrary precision.
     /// </summary>

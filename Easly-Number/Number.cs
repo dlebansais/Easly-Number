@@ -7,7 +7,7 @@
     /// <summary>
     /// Describes and manipulates real numbers with arbitrary precision.
     /// </summary>
-    public partial struct Number
+    public partial struct Number : IFormattable
     {
         #region Special Values
         /// <summary>
@@ -308,19 +308,39 @@
             IsPositiveInfinity = false;
             IsNegativeInfinity = false;
             IsZero = false;
-            SignificandPrecision = 0;
-            ExponentPrecision = 0;
-            Rounding = Arithmetic.Rounding;
-            IsSignificandNegative = false;
-            IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
-            Cheat = double.NaN;
 
-            InitFromText(value.ToString());
+            bool ValueIsNaN = double.IsNaN(value);
+            bool ValueIsPositiveInfinity = double.IsPositiveInfinity(value);
+            bool ValueIsNegativeInfinity = double.IsNegativeInfinity(value);
+            bool ValueIsZero = value == 0;
 
-            Cheat = value;
+            if (ValueIsNaN || ValueIsPositiveInfinity || ValueIsNegativeInfinity || ValueIsZero)
+            {
+                SignificandPrecision = 0;
+                ExponentPrecision = 0;
+                Rounding = Arithmetic.Rounding;
+                IsSignificandNegative = false;
+                IsExponentNegative = false;
+                IntegerField = null;
+                FractionalField = null;
+                ExponentField = null;
+                Cheat = double.NaN;
+
+                InitAsSpecial(ValueIsNaN, ValueIsPositiveInfinity, ValueIsNegativeInfinity);
+            }
+            else
+            {
+                SignificandPrecision = 0;
+                ExponentPrecision = 0;
+                Rounding = Arithmetic.Rounding;
+                IsSignificandNegative = value < 0;
+                IsExponentNegative = value < 1;
+                IntegerField = new BitField();
+                IntegerField.SetOne();
+                FractionalField = BitField.CreateFractionBitField(value);
+                ExponentField = BitField.CreateExponentBitField(value);
+                Cheat = value;
+            }
         }
 
         /// <summary>
@@ -460,6 +480,31 @@
         /// <param name="isPositiveInfinity">Value of the special positive infinity flag.</param>
         /// <param name="isNegativeInfinity">Value of the special negative infinity flag.</param>
         private Number(bool isNaN, bool isPositiveInfinity, bool isNegativeInfinity)
+        {
+            IsNaN = false;
+            IsPositiveInfinity = false;
+            IsNegativeInfinity = false;
+            IsZero = false;
+            SignificandPrecision = 0;
+            ExponentPrecision = 0;
+            Rounding = Arithmetic.Rounding;
+            IsSignificandNegative = false;
+            IsExponentNegative = false;
+            IntegerField = null;
+            FractionalField = null;
+            ExponentField = null;
+            Cheat = double.NaN;
+
+            InitAsSpecial(isNaN, isPositiveInfinity, isNegativeInfinity);
+        }
+
+        /// <summary>
+        /// Initializes a special number.
+        /// </summary>
+        /// <param name="isNaN">Value of the special NaN flag.</param>
+        /// <param name="isPositiveInfinity">Value of the special positive infinity flag.</param>
+        /// <param name="isNegativeInfinity">Value of the special negative infinity flag.</param>
+        private void InitAsSpecial(bool isNaN, bool isPositiveInfinity, bool isNegativeInfinity)
         {
             bool NotInfinity = !isPositiveInfinity && !isNegativeInfinity;
             bool PositiveInfinityOnly = !isNaN && !isNegativeInfinity;
@@ -825,10 +870,122 @@
 
         #region Text representation
         /// <summary>
-        /// Returns the default text representation of the number.
+        /// Converts the numeric value of this instance to its equivalent string representation.
         /// </summary>
-        /// <returns>The default text representation of the number.</returns>
+        /// <returns>The string representation of the value of this instance.</returns>
         public override string ToString()
+        {
+            return ToString("G", CultureInfo.CurrentCulture);
+        }
+
+        /// <summary>
+        /// Converts the numeric value of this instance to its equivalent string representation using the specified culture-specific format information.
+        /// </summary>
+        /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+        /// <returns>The string representation of the value of this instance as specified by provider.</returns>
+        public string ToString(IFormatProvider provider)
+        {
+            return ToString("G", provider);
+        }
+
+        /// <summary>
+        /// Converts the numeric value of this instance to its equivalent string representation, using the specified format.
+        /// </summary>
+        /// <param name="format">A numeric format string.</param>
+        /// <returns>The string representation of the value of this instance as specified by format.</returns>
+        public string ToString(string format)
+        {
+            return ToString(format, CultureInfo.CurrentCulture);
+        }
+
+        /// <summary>
+        /// Converts the numeric value of this instance to its equivalent string representation using the specified format and culture-specific format information.
+        /// </summary>
+        /// <param name="format">A numeric format string.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+        /// <returns>The string representation of the value of this instance as specified by format and provider.</returns>
+        public string ToString(string format, IFormatProvider provider)
+        {
+            if (!ParseNumericFormat(format, provider, out NumericFormat NumericFormat, out int PrecisionSpecifier))
+                throw new FormatException("Parameter format is invalid");
+
+            string Result = null;
+
+            switch (NumericFormat)
+            {
+                case NumericFormat.Default:
+                    Result = ToStringDefaultFormat(PrecisionSpecifier, provider);
+                    break;
+                case NumericFormat.Exponential:
+                    Result = ToStringExponentialFormat(PrecisionSpecifier, provider);
+                    break;
+                case NumericFormat.FixedPoint:
+                    Result = ToStringFixedPointFormat(PrecisionSpecifier, provider);
+                    break;
+            }
+
+            Debug.Assert(Result != null);
+
+            return Result;
+        }
+
+        private bool ParseNumericFormat(string format, IFormatProvider provider, out NumericFormat numericFormat, out int precisionSpecifier)
+        {
+            numericFormat = NumericFormat.Default;
+            precisionSpecifier = 15;
+
+            if (string.IsNullOrEmpty(format))
+                return false;
+
+            switch (format[0])
+            {
+                case 'G':
+                    numericFormat = NumericFormat.Default;
+                    precisionSpecifier = 15;
+                    break;
+
+                case 'E':
+                    numericFormat = NumericFormat.Exponential;
+                    precisionSpecifier = 6;
+                    break;
+
+                case 'F':
+                    numericFormat = NumericFormat.FixedPoint;
+
+                    NumberFormatInfo NumberFormatInfo = provider.GetFormat(typeof(NumberFormatInfo)) as NumberFormatInfo;
+                    Debug.Assert(NumberFormatInfo != null);
+                    precisionSpecifier = NumberFormatInfo.NumberDecimalDigits;
+                    break;
+
+                default:
+                    return false;
+            }
+
+            if (format.Length > 1)
+            {
+                if (!int.TryParse(format.Substring(1), out precisionSpecifier))
+                    return false;
+
+                if (precisionSpecifier < 0 || precisionSpecifier > 99)
+                    return false;
+            }
+
+            Debug.Assert(numericFormat == NumericFormat.Default || numericFormat == NumericFormat.Exponential || numericFormat == NumericFormat.FixedPoint);
+            Debug.Assert(precisionSpecifier >= 0 && precisionSpecifier <= 99);
+            return true;
+        }
+
+        private string ToStringExponentialFormat(int precisionSpecifier, IFormatProvider provider)
+        {
+            return ToStringDefaultFormat(precisionSpecifier, provider);
+        }
+
+        private string ToStringFixedPointFormat(int precisionSpecifier, IFormatProvider provider)
+        {
+            return ToStringDefaultFormat(precisionSpecifier, provider);
+        }
+
+        private string ToStringDefaultFormat(int precisionSpecifier, IFormatProvider provider)
         {
             if (IsNaN)
                 return double.NaN.ToString();
@@ -836,6 +993,15 @@
                 return double.PositiveInfinity.ToString();
             else if (IsNegativeInfinity)
                 return double.NegativeInfinity.ToString();
+            else if (IsInteger)
+            {
+                string IntegerString = ComposeIntegerString(out long BitIndex);
+                string ExponentString = ComposeExponentString();
+
+                string Result = $"{IntegerString}{ExponentString}";
+
+                return Result;
+            }
             else
             {
                 string IntegerString = ComposeIntegerString(out long BitIndex);
@@ -878,7 +1044,7 @@
                 Debug.Assert(FractionalField is BitField);
                 Debug.Assert(FractionalField.SignificantBits > 0);
 
-                FractionalString = "500000000000";
+                FractionalString = "5000000000000000";
                 bitIndex = 1;
 
                 while (bitIndex <= FractionalField.SignificantBits + FractionalField.ShiftBits)

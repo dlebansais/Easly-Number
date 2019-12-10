@@ -68,6 +68,7 @@
     <Compile Include="Number-Arithmetic.cs" />
     <Compile Include="Number-Parser.cs" />
     <Compile Include="Number.cs" />
+    <Compile Include="NumericFormat.cs" />
     <Compile Include="Parser\TextPartition\RadixSuffixTextPartition.cs" />
     <Compile Include="Parser\TextPartition\RadixPrefixTextPartition.cs" />
     <Compile Include="Parser\OptionalExponent.cs" />

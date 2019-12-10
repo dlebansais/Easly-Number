@@ -423,12 +423,12 @@
             for (int i = 0; i < TestArray.Length; i++)
             {
                 double d = TestArray[i];
-                string Text = d.ToString();
+                string Text = TestEnvironment.DoubleString(d);
 
                 FormattedNumber FormattedNumber = new FormattedNumber(Text);
 
                 Number Value = FormattedNumber.Value;
-                Assert.That(Value.ToString() == d.ToString(), $"Result #{i}={Value}, Expected={d}");
+                Assert.That(Value.ToString() == Text, $"Result #{i}={Value}, Expected={Text}");
                 Assert.That(Value.Cheat == d);
             }
         }
@@ -500,12 +500,12 @@
             for (int i = 0; i < TestArray.Length; i++)
             {
                 double d = TestArray[i];
-                string Text = d.ToString();
+                string Text = TestEnvironment.DoubleString(d);
 
                 FormattedNumber FormattedNumber = new FormattedNumber(Text);
 
                 Number Value = FormattedNumber.Value;
-                Assert.That(Value.ToString() == d.ToString(), $"Result #{i}={Value}, Expected={d}");
+                Assert.That(Value.ToString() == Text, $"Result #{i}={Value}, Expected={Text}");
                 Assert.That(Value.Cheat == d);
             }
 

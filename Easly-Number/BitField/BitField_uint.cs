@@ -19,6 +19,41 @@ namespace EaslyNumber
 
             Debug.Assert(LastItemIndex < 0);
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitField_uint"/> class.
+        /// </summary>
+        /// <param name="source">The source bits.</param>
+        /// <param name="offset">The offset in <paramref name="source"/>.</param>
+        /// <param name="length">The number of bits in <paramref name="source"/>.</param>
+        protected BitField_uint(uint[] source, int offset, int length)
+        {
+            Content = new uint[(length + (sizeof(uint) * 8) - 1) / (sizeof(uint) * 8)];
+
+            int ElementOffset = offset / (sizeof(uint) * 8);
+            int BitOffset = offset - (ElementOffset * sizeof(uint) * 8);
+
+            long Carry = 0;
+            long CarryMask = (1L << BitOffset) - 1;
+
+            for (int i = 0; i < Content.Length; i++)
+            {
+                long ElementValue = source[ElementOffset + i];
+                long NextElementValue = ElementValue & CarryMask;
+
+                ElementValue >>= BitOffset;
+                ElementValue |= Carry;
+
+                Content[i] = (uint)ElementValue;
+
+                Carry = (uint)(NextElementValue << BitOffset);
+            }
+
+            SignificantBits = length;
+            ShiftBits = 0;
+
+            Debug.Assert(LastItemIndex >= 0);
+        }
         #endregion
 
         #region Properties
@@ -49,6 +84,19 @@ namespace EaslyNumber
         {
             Content = new uint[1];
             Content[0] = 0;
+            SignificantBits = 1;
+            ShiftBits = 0;
+
+            Debug.Assert(LastItemIndex == 0);
+        }
+
+        /// <summary>
+        /// Sets the object to represent 1.
+        /// </summary>
+        public void SetOne()
+        {
+            Content = new uint[1];
+            Content[0] = 1;
             SignificantBits = 1;
             ShiftBits = 0;
 

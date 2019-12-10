@@ -60,5 +60,12 @@
         private static string TextNegativeInfinity;
         private static string SP;
         #endregion
+
+        #region Tools
+        public static string DoubleString(double d)
+        {
+            return d.ToString("E16");
+        }
+        #endregion
     }
 }
