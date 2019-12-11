@@ -911,17 +911,26 @@
 
             string Result = null;
 
-            switch (NumericFormat)
+            if (IsNaN)
+                Result = double.NaN.ToString();
+            else if (IsPositiveInfinity)
+                Result = double.PositiveInfinity.ToString();
+            else if (IsNegativeInfinity)
+                Result = double.NegativeInfinity.ToString();
+            else
             {
-                case NumericFormat.Default:
-                    Result = ToStringDefaultFormat(PrecisionSpecifier, provider);
-                    break;
-                case NumericFormat.Exponential:
-                    Result = ToStringExponentialFormat(PrecisionSpecifier, provider);
-                    break;
-                case NumericFormat.FixedPoint:
-                    Result = ToStringFixedPointFormat(PrecisionSpecifier, provider);
-                    break;
+                switch (NumericFormat)
+                {
+                    case NumericFormat.Default:
+                        Result = ToStringDefaultFormat(PrecisionSpecifier, provider);
+                        break;
+                    case NumericFormat.Exponential:
+                        Result = ToStringExponentialFormat(PrecisionSpecifier, provider);
+                        break;
+                    case NumericFormat.FixedPoint:
+                        Result = ToStringFixedPointFormat(PrecisionSpecifier, provider);
+                        break;
+                }
             }
 
             Debug.Assert(Result != null);
@@ -977,23 +986,94 @@
 
         private string ToStringExponentialFormat(int precisionSpecifier, IFormatProvider provider)
         {
-            return ToStringDefaultFormat(precisionSpecifier, provider);
+            if (IsInteger)
+            {
+                string IntegerString = ComposeIntegerString(out long BitIndex);
+
+                string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                string FractionalString = string.Empty;
+                for (int i = 0; i < precisionSpecifier; i++)
+                    FractionalString += "0";
+
+                if (precisionSpecifier > 0)
+                    FractionalString = $"{Separator}{FractionalString}";
+
+                string ExponentString;
+
+                if (ExponentField != null && ExponentField.SignificantBits > 0 && !ExponentField.IsZero)
+                {
+                    ExponentString = "0";
+                    BitIndex = 1;
+
+                    while (BitIndex <= ExponentField.SignificantBits + ExponentField.ShiftBits)
+                    {
+                        bool Carry = ExponentField.GetBit(ExponentField.SignificantBits + ExponentField.ShiftBits - BitIndex);
+                        ExponentString = NumberTextPartition.MultipliedByTwo(ExponentString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
+                        BitIndex++;
+                    }
+
+                    ExponentString = ExponentString.Substring(0, 3);
+
+                    if (IsExponentNegative)
+                        ExponentString = $"-{ExponentString}";
+                    else
+                        ExponentString = $"+{ExponentString}";
+
+                    ExponentString = $"E{ExponentString}";
+                }
+                else
+                    ExponentString = "E+000";
+
+                string Result = $"{IntegerString}{FractionalString}{ExponentString}";
+
+                return Result;
+            }
+            else
+            {
+                string IntegerString = ComposeIntegerString(out long BitIndex);
+                string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
+                string ExponentString = ComposeExponentString();
+
+                string Result = $"{IntegerString}{FractionalString}{ExponentString}";
+
+                return Result;
+            }
         }
 
         private string ToStringFixedPointFormat(int precisionSpecifier, IFormatProvider provider)
         {
-            return ToStringDefaultFormat(precisionSpecifier, provider);
+            string Result;
+
+            if (IsInteger)
+            {
+                string IntegerString = ComposeIntegerString(out long BitIndex);
+
+                string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                string FractionalString = string.Empty;
+
+                for (int i = 0; i < precisionSpecifier; i++)
+                    FractionalString += "0";
+
+                if (precisionSpecifier > 0)
+                    FractionalString = $"{Separator}{FractionalString}";
+
+                Result = $"{IntegerString}{FractionalString}";
+            }
+            else
+            {
+                string IntegerString = ComposeIntegerString(out long BitIndex);
+                string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
+                string ExponentString = ComposeExponentString();
+
+                Result = $"{IntegerString}{FractionalString}{ExponentString}";
+            }
+
+            return Result;
         }
 
         private string ToStringDefaultFormat(int precisionSpecifier, IFormatProvider provider)
         {
-            if (IsNaN)
-                return double.NaN.ToString();
-            else if (IsPositiveInfinity)
-                return double.PositiveInfinity.ToString();
-            else if (IsNegativeInfinity)
-                return double.NegativeInfinity.ToString();
-            else if (IsInteger)
+            if (IsInteger)
             {
                 string IntegerString = ComposeIntegerString(out long BitIndex);
                 string ExponentString = ComposeExponentString();
@@ -1005,7 +1085,7 @@
             else
             {
                 string IntegerString = ComposeIntegerString(out long BitIndex);
-                string FractionalString = ComposeFractionalString(BitIndex);
+                string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
                 string ExponentString = ComposeExponentString();
 
                 string Result = $"{IntegerString}{FractionalString}{ExponentString}";
@@ -1035,42 +1115,43 @@
             return IntegerString;
         }
 
-        private string ComposeFractionalString(long bitIndex)
+        private string ComposeFractionalString(int precisionSpecifier, long bitIndex)
         {
             string FractionalString;
 
-            if (!IsInteger)
+            Debug.Assert(FractionalField is BitField);
+            Debug.Assert(FractionalField.SignificantBits > 0);
+
+            FractionalString = "5000000000000000";
+            bitIndex = 1;
+
+            while (bitIndex <= FractionalField.SignificantBits + FractionalField.ShiftBits)
             {
-                Debug.Assert(FractionalField is BitField);
-                Debug.Assert(FractionalField.SignificantBits > 0);
+                bool Carry = FractionalField.GetBit(FractionalField.SignificantBits + FractionalField.ShiftBits - bitIndex);
+                int OldLength = FractionalString.Length;
 
-                FractionalString = "5000000000000000";
-                bitIndex = 1;
+                if (Carry)
+                    FractionalString = "1" + FractionalString;
 
-                while (bitIndex <= FractionalField.SignificantBits + FractionalField.ShiftBits)
-                {
-                    bool Carry = FractionalField.GetBit(FractionalField.SignificantBits + FractionalField.ShiftBits - bitIndex);
-                    int OldLength = FractionalString.Length;
+                FractionalString = NumberTextPartition.DividedByTwo(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, out bool HasDivisionbCarry);
 
-                    if (Carry)
-                        FractionalString = "1" + FractionalString;
+                if (FractionalString.Length < OldLength)
+                    FractionalString = "0" + FractionalString;
 
-                    FractionalString = NumberTextPartition.DividedByTwo(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, out bool HasDivisionbCarry);
-
-                    if (FractionalString.Length < OldLength)
-                        FractionalString = "0" + FractionalString;
-
-                    bitIndex++;
-                }
-
-                FractionalString = RealTextPartition.RoundedToNearest(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, false);
-
-                string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-
-                return $"{Separator}{FractionalString}";
+                bitIndex++;
             }
-            else
-                return string.Empty;
+
+            if (precisionSpecifier + 1 < FractionalString.Length)
+                FractionalString = FractionalString.Substring(0, precisionSpecifier + 1);
+
+            FractionalString = RealTextPartition.RoundedToNearest(FractionalString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, false);
+
+            if (precisionSpecifier < FractionalString.Length)
+                FractionalString = FractionalString.Substring(0, precisionSpecifier);
+
+            string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+
+            return $"{Separator}{FractionalString}";
         }
 
         private string ComposeExponentString()

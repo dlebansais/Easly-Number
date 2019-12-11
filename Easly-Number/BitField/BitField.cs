@@ -58,7 +58,10 @@
             int Exponent = (SourceBits[6] >> 4) + ((SourceBits[7] & 0x7F) * 16);
             Exponent -= 1023;
 
-            byte[] Source = new byte[] { (byte)(Exponent & 0xFF), (byte)(Exponent >> 8) };
+            if (Exponent < 0)
+                Exponent = -Exponent;
+
+            byte[] Source = BitConverter.GetBytes((ushort)Exponent);
             return new BitField(Source, 0, 11);
         }
         #endregion

@@ -431,39 +431,45 @@
         [Category("Coverage")]
         public static void TestToString()
         {
-            for (int ExponentIndex = 0; ExponentIndex <= 8; ExponentIndex++)
+            double PositiveNaN = double.NaN;
+            double NegativeNaN = double.NaN;
+            TestToString(PositiveNaN, NegativeNaN);
+
+            double PositiveInfinity = double.PositiveInfinity;
+            double NegativeInfinity = double.NegativeInfinity;
+            TestToString(PositiveInfinity, NegativeInfinity);
+
+            double PositiveZero = 0;
+            double NegativeZero = -PositiveZero;
+            TestToString(PositiveZero, NegativeZero);
+
+            for (int ExponentIndex = 0; ExponentIndex <= 6; ExponentIndex++)
             {
-                int ExponentChoice;
+                uint ExponentChoice;
 
                 switch (ExponentIndex)
                 {
                     default:
                     case 0:
-                        ExponentChoice = 0;
-                        break;
-                    case 1:
                         ExponentChoice = 1;
                         break;
-                    case 2:
+                    case 1:
                         ExponentChoice = 2;
                         break;
-                    case 3:
+                    case 2:
                         ExponentChoice = 1022;
                         break;
-                    case 4:
+                    case 3:
                         ExponentChoice = 1023;
                         break;
-                    case 5:
+                    case 4:
                         ExponentChoice = 1024;
                         break;
-                    case 6:
+                    case 5:
                         ExponentChoice = 2045;
                         break;
-                    case 7:
+                    case 6:
                         ExponentChoice = 2046;
-                        break;
-                    case 8:
-                        ExponentChoice = 2047;
                         break;
                 }
 
@@ -471,7 +477,7 @@
             }
         }
 
-        public static void TestToString(int exponentChoice)
+        public static void TestToString(uint exponentChoice)
         {
             for (int SignificandIndex = 0; SignificandIndex <= 11; SignificandIndex++)
             {
@@ -522,28 +528,27 @@
             }
         }
 
-        public static void TestToString(int exponentChoice, ulong significandChoice)
+        public static void TestToString(uint exponentChoice, ulong significandChoice)
         {
             byte[] Content = new byte[8];
 
-            exponentChoice *= 16;
-            byte[] ExponentBytes = BitConverter.GetBytes(exponentChoice);
+            byte[] ExponentBytes = BitConverter.GetBytes(exponentChoice << 4);
 
-            Content[0] = ExponentBytes[0];
-            Content[1] = ExponentBytes[1];
+            Content[7] = ExponentBytes[1];
+            Content[6] = ExponentBytes[0];
 
             byte[] SignificandBytes = BitConverter.GetBytes(significandChoice);
 
-            Content[1] |= SignificandBytes[0];
-            Content[2] = SignificandBytes[1];
-            Content[3] = SignificandBytes[2];
-            Content[4] = SignificandBytes[3];
-            Content[5] = SignificandBytes[4];
-            Content[6] = SignificandBytes[5];
-            Content[7] = SignificandBytes[6];
+            Content[6] |= SignificandBytes[6];
+            Content[5] = SignificandBytes[5];
+            Content[4] = SignificandBytes[4];
+            Content[3] = SignificandBytes[3];
+            Content[2] = SignificandBytes[2];
+            Content[1] = SignificandBytes[1];
+            Content[0] = SignificandBytes[0];
 
             double PositiveDouble = BitConverter.ToDouble(Content, 0);
-            Content[0] |= 0x80;
+            Content[7] |= 0x80;
             double NegativeDouble = BitConverter.ToDouble(Content, 0);
 
             TestToString(PositiveDouble, NegativeDouble);
@@ -554,8 +559,7 @@
             Number PositiveDoubleNumber = new Number(positiveDouble);
             Number NegativeDoubleNumber = new Number(negativeDouble);
 
-            Assert.That(positiveDouble.ToString() == PositiveDoubleNumber.ToString());
-            Assert.That(negativeDouble.ToString() == NegativeDoubleNumber.ToString());
+            TestToString(positiveDouble, PositiveDoubleNumber, negativeDouble, NegativeDoubleNumber);
 
             TestToString(positiveDouble, PositiveDoubleNumber, negativeDouble, NegativeDoubleNumber, "E");
             TestToString(positiveDouble, PositiveDoubleNumber, negativeDouble, NegativeDoubleNumber, "F");
@@ -569,10 +573,24 @@
             }
         }
 
+        public static void TestToString(double positiveDouble, Number positiveDoubleNumber, double negativeDouble, Number negativeDoubleNumber)
+        {
+            string DSP = positiveDouble.ToString();
+            string NSP = positiveDoubleNumber.ToString();
+            string DSN = negativeDouble.ToString();
+            string NSN = negativeDoubleNumber.ToString();
+            Assert.That(DSP == NSP, $"Expected: {DSP}, got: {NSP}");
+            Assert.That(DSN == NSN, $"Expected: {DSN}, got: {NSN}");
+        }
+
         public static void TestToString(double positiveDouble, Number positiveDoubleNumber, double negativeDouble, Number negativeDoubleNumber, string format)
         {
-            Assert.That(positiveDouble.ToString(format) == positiveDoubleNumber.ToString(format));
-            Assert.That(negativeDouble.ToString(format) == negativeDoubleNumber.ToString(format));
+            string DSP = positiveDouble.ToString(format);
+            string NSP = positiveDoubleNumber.ToString(format);
+            string DSN = negativeDouble.ToString(format);
+            string NSN = negativeDoubleNumber.ToString(format);
+            Assert.That(DSP == NSP, $"Expected: {DSP}, got: {NSP}");
+            Assert.That(DSN == NSN, $"Expected: {DSN}, got: {NSN}");
         }
 
         [Test]
