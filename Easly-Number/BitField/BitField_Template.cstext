@@ -23,6 +23,18 @@ namespace EaslyNumber
         /// <summary>
         /// Initializes a new instance of the <see cref="BitField_Template"/> class.
         /// </summary>
+        public BitField_Template(ulong value)
+        {
+            Content = BitField.LongToArray_Template(value);
+            SignificantBits = Content.Length * sizeof(Template) * 8;
+            ShiftBits = 0;
+
+            Debug.Assert(LastItemIndex >= 0);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitField_Template"/> class.
+        /// </summary>
         /// <param name="source">The source bits.</param>
         /// <param name="offset">The offset in <paramref name="source"/>.</param>
         /// <param name="length">The number of bits in <paramref name="source"/>.</param>

@@ -1,5 +1,6 @@
 ﻿namespace EaslyNumber
 {
+    using System;
     using System.Diagnostics;
     using System.Globalization;
 
@@ -46,6 +47,11 @@
                     return OptionalSeparator.CultureSpecific;
             }
         }
+
+        /// <summary>
+        /// True if the partition includes an integer part.
+        /// </summary>
+        public bool HasIntegerPart { get { return FirstIntegerPartIndex >= 0 && FirstIntegerPartIndex < LastIntegerPartIndex; } }
 
         /// <summary>
         /// Index of the decimal separator, -1 if not parsed.
@@ -157,111 +163,265 @@
         /// <param name="exponentField">The bit field of the exponent part upon return.</param>
         public virtual void ConvertToBitField(long significandPrecision, long exponentPrecision, out BitField integerField, out BitField fractionalField, out BitField exponentField)
         {
-            ConvertIntegerToBitField(significandPrecision, out integerField);
-            ConvertFractionalToBitField(significandPrecision, integerField.SignificantBits, out fractionalField);
-            ConvertExponentToBitField(exponentPrecision, out exponentField);
-        }
+            string IntegerString;
+            string FractionalString;
+            string ExponentString;
 
-        /// <summary>
-        /// Converts the parsed partition to bit fields.
-        /// </summary>
-        /// <param name="significandPrecision">The number of bits in the significand.</param>
-        /// <param name="integerField">The bit field of the integer part upon return.</param>
-        private void ConvertIntegerToBitField(long significandPrecision, out BitField integerField)
-        {
+            if (HasIntegerPart)
+                IntegerString = Text.Substring(FirstIntegerPartIndex, LastIntegerPartIndex - FirstIntegerPartIndex);
+            else
+                IntegerString = "0";
+
+            if (HasFractionalPart)
+                FractionalString = Text.Substring(FirstFractionalPartIndex, LastFractionalPartIndex - FirstFractionalPartIndex);
+            else
+                FractionalString = "0";
+
+            if (HasExponentPart)
+                ExponentString = Text.Substring(FirstExponentPartIndex, LastExponentPartIndex - FirstExponentPartIndex);
+            else
+                ExponentString = "0";
+
+            Normalize(ref IntegerString, ref FractionalString, ref ExponentString, ExponentSign == OptionalSign.Negative);
+            FindBestPowerOfTwo(IntegerString, FractionalString, ExponentString, ExponentSign == OptionalSign.Negative, out ExponentString);
+
+            exponentField = new BitField();
+
+            if (ExponentString != "0")
+                ConvertExponentToBitField(ExponentString, exponentPrecision, ref exponentField);
+            else
+                exponentField.SetZero();
+
             integerField = new BitField();
+            fractionalField = new BitField();
 
-            if (FirstIntegerPartIndex >= 0)
-            {
-                string IntegerString = Text.Substring(FirstIntegerPartIndex, LastIntegerPartIndex - FirstIntegerPartIndex);
-                long BitIndex = 0;
-
-                do
-                {
-                    if (BitIndex >= significandPrecision)
-                        integerField.DecreasePrecision();
-
-                    IntegerString = DividedByTwo(IntegerString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
-                    integerField.SetBit(BitIndex++, HasCarry);
-                }
-                while (IntegerString != "0");
-            }
+            if (IntegerString != "0")
+                ConvertIntegerToBitField(IntegerString, significandPrecision, ref integerField);
             else
                 integerField.SetZero();
+
+            if (FractionalString != "0")
+                ConvertFractionalToBitField(FractionalString, significandPrecision, integerField.SignificantBits, ref fractionalField);
+            else
+                fractionalField.SetZero();
+        }
+
+        /// <summary>
+        /// Changes the string representation of a number to ensure the integer part is zero and the fractional part does not start with a zero.
+        /// </summary>
+        /// <param name="integerString">The integer part of the significand.</param>
+        /// <param name="fractionalString">The fractional part of the significand.</param>
+        /// <param name="exponentString">The exponent part of the significand.</param>
+        /// <param name="isExponentNegative">True if the exponent is negative.</param>
+        private void Normalize(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        {
+            if (integerString.Length > 1 || (integerString.Length == 1 && integerString[0] != '0'))
+                NormalizeIncreaseExponent(ref integerString, ref fractionalString, ref exponentString, isExponentNegative);
+            else if (fractionalString[0] == '0')
+                NormalizeDecreaseExponent(ref fractionalString, ref exponentString, isExponentNegative);
+        }
+
+        /// <summary>
+        /// Changes the string representation of a number to ensure the integer part is zero by moving digits from the integer part to the fractional part.
+        /// </summary>
+        /// <param name="integerString">The integer part of the significand.</param>
+        /// <param name="fractionalString">The fractional part of the significand.</param>
+        /// <param name="exponentString">The exponent part of the significand.</param>
+        /// <param name="isExponentNegative">True if the exponent is negative.</param>
+        private void NormalizeIncreaseExponent(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        {
+            while (integerString.Length > 1)
+                IncreaseExponents(ref integerString, ref fractionalString, ref exponentString, isExponentNegative);
+
+            Debug.Assert(integerString.Length == 1);
+
+            if (integerString != "0")
+            {
+                IncreaseExponents(ref integerString, ref fractionalString, ref exponentString, isExponentNegative);
+                Debug.Assert(integerString.Length == 0);
+
+                integerString = "0";
+            }
+        }
+
+        /// <summary>
+        /// Changes the string representation of a number to move one digit to the fractional, increasing the exponent.
+        /// </summary>
+        /// <param name="integerString">The integer part of the significand.</param>
+        /// <param name="fractionalString">The fractional part of the significand.</param>
+        /// <param name="exponentString">The exponent part of the significand.</param>
+        /// <param name="isExponentNegative">True if the exponent is negative.</param>
+        private void IncreaseExponents(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        {
+            char LastDigit = integerString[integerString.Length - 1];
+            integerString = integerString.Substring(0, integerString.Length - 1);
+            fractionalString = $"{LastDigit}{fractionalString}";
+
+            if (isExponentNegative)
+            {
+                if (exponentString == "0")
+                {
+                    exponentString = "1";
+                    isExponentNegative = false;
+                }
+                else
+                    exponentString = Decremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
+            }
+            else
+                exponentString = Incremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
+        }
+
+        /// <summary>
+        /// Changes the string representation of a number to ensure the fractional part does not start with zero by removing digits from the fractional part.
+        /// </summary>
+        /// <param name="fractionalString">The fractional part of the significand.</param>
+        /// <param name="exponentString">The exponent part of the significand.</param>
+        /// <param name="isExponentNegative">True if the exponent is negative.</param>
+        private void NormalizeDecreaseExponent(ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        {
+            while (fractionalString.Length > 1 && fractionalString[0] == '0')
+                DecreaseExponents(ref fractionalString, ref exponentString, isExponentNegative);
+
+            Debug.Assert(fractionalString.Length >= 1);
+            Debug.Assert(fractionalString[0] != '0');
+        }
+
+        /// <summary>
+        /// Changes the string representation of a number to remove the first digit of the fractional part, decreasing the exponent.
+        /// </summary>
+        /// <param name="fractionalString">The fractional part of the significand.</param>
+        /// <param name="exponentString">The exponent part of the significand.</param>
+        /// <param name="isExponentNegative">True if the exponent is negative.</param>
+        private void DecreaseExponents(ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        {
+            Debug.Assert(fractionalString.Length > 1 && fractionalString[0] == '0');
+
+            fractionalString = fractionalString.Substring(1);
+
+            if (isExponentNegative)
+                exponentString = Incremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
+            else
+            {
+                if (exponentString == "0")
+                {
+                    exponentString = "1";
+                    isExponentNegative = true;
+                }
+                else
+                    exponentString = Decremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
+            }
+        }
+
+        private void FindBestPowerOfTwo(string integerString, string fractionalString, string exponentString, bool isExponentNegative, out string powerOfTwo)
+        {
+            if (exponentString.Length < 15)
+            {
+                if (double.TryParse(exponentString, out double ExponentValue))
+                {
+                    ExponentValue *= Math.Log(10) / Math.Log(2);
+                    powerOfTwo = ((ulong)ExponentValue).ToString();
+                    return;
+                }
+            }
+
+            //TODO: multiply by Log(10) / Log(2).
+            powerOfTwo = string.Empty;
+        }
+
+        private bool PowerOfTwoIsGreater(ulong powerOfTwo, string exponentString)
+        {
+            string PowerString = PowerOfTwoToString(powerOfTwo);
+
+            return (PowerString.Length > exponentString.Length) || (PowerString.Length == exponentString.Length && string.Compare(PowerString, exponentString) > 0);
+        }
+
+        private bool PowerOfTwoIsLower(ulong powerOfTwo, string exponentString)
+        {
+            string PowerString = PowerOfTwoToString(powerOfTwo);
+
+            return (PowerString.Length < exponentString.Length) || (PowerString.Length == exponentString.Length && string.Compare(PowerString, exponentString) < 0);
+        }
+
+        private string PowerOfTwoToString(ulong powerOfTwo)
+        {
+            string Result = "1";
+
+            while (powerOfTwo > 0)
+            {
+                Result = MultipliedByTwo(Result, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, false);
+                powerOfTwo--;
+            }
+
+            return Result;
         }
 
         /// <summary>
         /// Converts the parsed partition to bit fields.
         /// </summary>
+        /// <param name="integerString">The string representing the integer part of the significand.</param>
+        /// <param name="significandPrecision">The number of bits in the significand.</param>
+        /// <param name="integerField">The bit field of the integer part upon return.</param>
+        private void ConvertIntegerToBitField(string integerString, long significandPrecision, ref BitField integerField)
+        {
+            long BitIndex = 0;
+
+            do
+            {
+                if (BitIndex >= significandPrecision)
+                    integerField.DecreasePrecision();
+
+                integerString = DividedByTwo(integerString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
+                integerField.SetBit(BitIndex++, HasCarry);
+            }
+            while (integerString != "0");
+        }
+
+        /// <summary>
+        /// Converts the parsed partition to bit fields.
+        /// </summary>
+        /// <param name="fractionalString">The string representing the fractional part of the significand.</param>
         /// <param name="significandPrecision">The number of bits in the significand.</param>
         /// <param name="integerBitIndex">The number of significant bits in the integer field part.</param>
         /// <param name="fractionalField">The bit field of the fractional part upon return.</param>
-        private void ConvertFractionalToBitField(long significandPrecision, long integerBitIndex, out BitField fractionalField)
+        private void ConvertFractionalToBitField(string fractionalString, long significandPrecision, long integerBitIndex, ref BitField fractionalField)
         {
-            fractionalField = new BitField();
-
-            if (HasFractionalPart)
+            long BitIndex = 0;
+            int StartingLength = fractionalString.Length;
+            do
             {
-                string FractionalString = Text.Substring(FirstFractionalPartIndex, LastFractionalPartIndex - FirstFractionalPartIndex);
-                long BitIndex = 0;
-                int StartingLength = FractionalString.Length;
+                if (integerBitIndex + BitIndex >= significandPrecision)
+                    break;
 
-#if IGNORE
-                bool DebugString = false; // FractionalString == "47856";
+                fractionalString = MultipliedByTwo(fractionalString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, false);
 
-                if (DebugString)
-                {
-                    Debug.Assert(false);
-                    Debug.WriteLine(FractionalString);
-                }
-#endif
+                bool HasCarry = fractionalString.Length > StartingLength;
+                fractionalField.SetBit(BitIndex++, HasCarry);
 
-                do
-                {
-                    if (integerBitIndex + BitIndex >= significandPrecision)
-                        break;
-
-                    FractionalString = MultipliedByTwo(FractionalString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, false);
-
-                    bool HasCarry = FractionalString.Length > StartingLength;
-                    fractionalField.SetBit(BitIndex++, HasCarry);
-
-                    if (HasCarry)
-                        FractionalString = FractionalString.Substring(1);
-
-#if IGNORE
-                    if (DebugString)
-                        Debug.WriteLine((HasCarry ? "(1) " : "(0) ") + FractionalString);
-#endif
-                }
-                while (FractionalString != "0");
+                if (HasCarry)
+                    fractionalString = fractionalString.Substring(1);
             }
+            while (fractionalString != "0");
         }
 
         /// <summary>
         /// Converts the parsed partition to bit fields.
         /// </summary>
+        /// <param name="exponentString">The string representing the exponent part.</param>
         /// <param name="exponentPrecision">The number of bits in the exponent.</param>
         /// <param name="exponentField">The bit field of the exponent part upon return.</param>
-        private void ConvertExponentToBitField(long exponentPrecision, out BitField exponentField)
+        private void ConvertExponentToBitField(string exponentString, long exponentPrecision, ref BitField exponentField)
         {
-            exponentField = new BitField();
+            long BitIndex = 0;
 
-            if (HasExponentPart)
+            do
             {
-                string ExponentString = Text.Substring(FirstExponentPartIndex, LastExponentPartIndex - FirstExponentPartIndex);
-                long BitIndex = 0;
+                if (BitIndex >= exponentPrecision)
+                    exponentField.DecreasePrecision();
 
-                do
-                {
-                    if (BitIndex >= exponentPrecision)
-                        exponentField.DecreasePrecision();
-
-                    ExponentString = DividedByTwo(ExponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
-                    exponentField.SetBit(BitIndex++, HasCarry);
-                }
-                while (ExponentString != "0");
+                exponentString = DividedByTwo(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out bool HasCarry);
+                exponentField.SetBit(BitIndex++, HasCarry);
             }
+            while (exponentString != "0");
         }
 
         /// <summary>

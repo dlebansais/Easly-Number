@@ -141,5 +141,87 @@
 
             return Result;
         }
+
+        /// <summary>
+        /// Returns the input number incremented by one.
+        /// </summary>
+        /// <param name="text">The number to increment.</param>
+        /// <param name="radix">The radix to use.</param>
+        /// <param name="validityHandler">The handler to use to validate digits.</param>
+        /// <param name="digitHandler">The handler to use to convert to digits.</param>
+        internal static string Incremented(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler)
+        {
+            string Result = string.Empty;
+            bool Carry = false;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                bool IsValid = validityHandler(text[text.Length - 1 - i], out int Value);
+                Debug.Assert(IsValid);
+                Debug.Assert(Value >= 0 && Value < radix);
+
+                Value++;
+                Carry = Value >= radix;
+
+                if (Carry)
+                    text = text.Substring(0, text.Length - 1 - i) + '0' + text.Substring(0, text.Length - i);
+                else
+                {
+                    char Digit = digitHandler(Value);
+                    text = text.Substring(0, text.Length - 1 - i) + Digit + text.Substring(0, text.Length - i);
+                    break;
+                }
+            }
+
+            if (Carry)
+                text = "1" + text;
+
+            return Result;
+        }
+
+        /// <summary>
+        /// Returns the input number decremented by one.
+        /// </summary>
+        /// <param name="text">The number to decrement.</param>
+        /// <param name="radix">The radix to use.</param>
+        /// <param name="validityHandler">The handler to use to validate digits.</param>
+        /// <param name="digitHandler">The handler to use to convert to digits.</param>
+        internal static string Decremented(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler)
+        {
+            Debug.Assert(text.Length > 0);
+            Debug.Assert(text[0] != '0');
+
+            string Result = string.Empty;
+            bool Carry = false;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                bool IsValid = validityHandler(text[text.Length - 1 - i], out int Value);
+                Debug.Assert(IsValid);
+                Debug.Assert(Value >= 0 && Value < radix);
+
+                Value--;
+                Carry = Value < 0;
+
+                if (Carry)
+                    text = text.Substring(0, text.Length - 1 - i) + '9' + text.Substring(0, text.Length - i);
+                else
+                {
+                    char Digit = digitHandler(Value);
+                    text = text.Substring(0, text.Length - 1 - i) + Digit + text.Substring(0, text.Length - i);
+                    break;
+                }
+            }
+
+            Debug.Assert(!Carry);
+
+            if (text.Length > 1 && text[0] == '0')
+                text = text.Substring(1);
+
+            Debug.Assert(text.Length > 0);
+            Debug.Assert(text[0] != '0' || text.Length == 1);
+
+            return Result;
+        }
     }
 }

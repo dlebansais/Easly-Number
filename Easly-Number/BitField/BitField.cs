@@ -16,6 +16,14 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="BitField"/> class.
         /// </summary>
+        public BitField(ulong value)
+            : base(value)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitField"/> class.
+        /// </summary>
         /// <param name="source">The source bits.</param>
         /// <param name="offset">The offset in <paramref name="source"/>.</param>
         /// <param name="length">The number of bits in <paramref name="source"/>.</param>
@@ -73,6 +81,34 @@
         protected override BitField_byte Create()
         {
             return new BitField();
+        }
+        #endregion
+
+        #region Tools
+        /// <summary>
+        /// Converts a ulong value to an array of bytes.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The converted array.</returns>
+        public static byte[] LongToArray_byte(ulong value)
+        {
+            return BitConverter.GetBytes(value);
+        }
+
+        /// <summary>
+        /// Converts a ulong value to an array of uint.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The converted array.</returns>
+        public static uint[] LongToArray_uint(ulong value)
+        {
+            byte[] Bytes = BitConverter.GetBytes(value);
+
+            uint[] Result = new uint[Bytes.Length / sizeof(uint)];
+            for (int i = 0; i < Result.Length; i++)
+                Result[i] = BitConverter.ToUInt32(Bytes, sizeof(uint) * 8 * i);
+
+            return Result;
         }
         #endregion
     }
