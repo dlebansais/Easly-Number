@@ -213,7 +213,7 @@
         /// <param name="fractionalString">The fractional part of the significand.</param>
         /// <param name="exponentString">The exponent part of the significand.</param>
         /// <param name="isExponentNegative">True if the exponent is negative.</param>
-        private void Normalize(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        private static void Normalize(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
         {
             if (integerString.Length > 1 || (integerString.Length == 1 && integerString[0] != '0'))
                 NormalizeIncreaseExponent(ref integerString, ref fractionalString, ref exponentString, isExponentNegative);
@@ -228,7 +228,7 @@
         /// <param name="fractionalString">The fractional part of the significand.</param>
         /// <param name="exponentString">The exponent part of the significand.</param>
         /// <param name="isExponentNegative">True if the exponent is negative.</param>
-        private void NormalizeIncreaseExponent(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        private static void NormalizeIncreaseExponent(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
         {
             while (integerString.Length > 1)
                 IncreaseExponents(ref integerString, ref fractionalString, ref exponentString, isExponentNegative);
@@ -251,7 +251,7 @@
         /// <param name="fractionalString">The fractional part of the significand.</param>
         /// <param name="exponentString">The exponent part of the significand.</param>
         /// <param name="isExponentNegative">True if the exponent is negative.</param>
-        private void IncreaseExponents(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        private static void IncreaseExponents(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
         {
             char LastDigit = integerString[integerString.Length - 1];
             integerString = integerString.Substring(0, integerString.Length - 1);
@@ -277,7 +277,7 @@
         /// <param name="fractionalString">The fractional part of the significand.</param>
         /// <param name="exponentString">The exponent part of the significand.</param>
         /// <param name="isExponentNegative">True if the exponent is negative.</param>
-        private void NormalizeDecreaseExponent(ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        private static void NormalizeDecreaseExponent(ref string fractionalString, ref string exponentString, bool isExponentNegative)
         {
             while (fractionalString.Length > 1 && fractionalString[0] == '0')
                 DecreaseExponents(ref fractionalString, ref exponentString, isExponentNegative);
@@ -292,7 +292,7 @@
         /// <param name="fractionalString">The fractional part of the significand.</param>
         /// <param name="exponentString">The exponent part of the significand.</param>
         /// <param name="isExponentNegative">True if the exponent is negative.</param>
-        private void DecreaseExponents(ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        private static void DecreaseExponents(ref string fractionalString, ref string exponentString, bool isExponentNegative)
         {
             Debug.Assert(fractionalString.Length > 1 && fractionalString[0] == '0');
 
@@ -312,37 +312,37 @@
             }
         }
 
-        private void FindBestPowerOfTwo(string integerString, string fractionalString, string exponentString, bool isExponentNegative, out string powerOfTwo)
+        private static void FindBestPowerOfTwo(string integerString, string fractionalString, string exponentString, bool isExponentNegative, out string powerOfTwo)
         {
             if (exponentString.Length < 15)
             {
                 if (double.TryParse(exponentString, out double ExponentValue))
                 {
                     ExponentValue *= Math.Log(10) / Math.Log(2);
-                    powerOfTwo = ((ulong)ExponentValue).ToString();
+                    powerOfTwo = ((ulong)ExponentValue).ToString(CultureInfo.CurrentCulture);
                     return;
                 }
             }
 
-            //TODO: multiply by Log(10) / Log(2).
+            // TODO: multiply by Log(10) / Log(2).
             powerOfTwo = string.Empty;
         }
 
-        private bool PowerOfTwoIsGreater(ulong powerOfTwo, string exponentString)
+        private static bool PowerOfTwoIsGreater(ulong powerOfTwo, string exponentString)
         {
             string PowerString = PowerOfTwoToString(powerOfTwo);
 
-            return (PowerString.Length > exponentString.Length) || (PowerString.Length == exponentString.Length && string.Compare(PowerString, exponentString) > 0);
+            return (PowerString.Length > exponentString.Length) || (PowerString.Length == exponentString.Length && string.Compare(PowerString, exponentString, StringComparison.InvariantCulture) > 0);
         }
 
-        private bool PowerOfTwoIsLower(ulong powerOfTwo, string exponentString)
+        private static bool PowerOfTwoIsLower(ulong powerOfTwo, string exponentString)
         {
             string PowerString = PowerOfTwoToString(powerOfTwo);
 
-            return (PowerString.Length < exponentString.Length) || (PowerString.Length == exponentString.Length && string.Compare(PowerString, exponentString) < 0);
+            return (PowerString.Length < exponentString.Length) || (PowerString.Length == exponentString.Length && string.Compare(PowerString, exponentString, StringComparison.InvariantCulture) < 0);
         }
 
-        private string PowerOfTwoToString(ulong powerOfTwo)
+        private static string PowerOfTwoToString(ulong powerOfTwo)
         {
             string Result = "1";
 
@@ -361,7 +361,7 @@
         /// <param name="integerString">The string representing the integer part of the significand.</param>
         /// <param name="significandPrecision">The number of bits in the significand.</param>
         /// <param name="integerField">The bit field of the integer part upon return.</param>
-        private void ConvertIntegerToBitField(string integerString, long significandPrecision, ref BitField integerField)
+        private static void ConvertIntegerToBitField(string integerString, long significandPrecision, ref BitField integerField)
         {
             long BitIndex = 0;
 
@@ -383,7 +383,7 @@
         /// <param name="significandPrecision">The number of bits in the significand.</param>
         /// <param name="integerBitIndex">The number of significant bits in the integer field part.</param>
         /// <param name="fractionalField">The bit field of the fractional part upon return.</param>
-        private void ConvertFractionalToBitField(string fractionalString, long significandPrecision, long integerBitIndex, ref BitField fractionalField)
+        private static void ConvertFractionalToBitField(string fractionalString, long significandPrecision, long integerBitIndex, ref BitField fractionalField)
         {
             long BitIndex = 0;
             int StartingLength = fractionalString.Length;
@@ -409,7 +409,7 @@
         /// <param name="exponentString">The string representing the exponent part.</param>
         /// <param name="exponentPrecision">The number of bits in the exponent.</param>
         /// <param name="exponentField">The bit field of the exponent part upon return.</param>
-        private void ConvertExponentToBitField(string exponentString, long exponentPrecision, ref BitField exponentField)
+        private static void ConvertExponentToBitField(string exponentString, long exponentPrecision, ref BitField exponentField)
         {
             long BitIndex = 0;
 

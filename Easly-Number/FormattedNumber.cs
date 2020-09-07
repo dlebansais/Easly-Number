@@ -1,11 +1,12 @@
 ﻿namespace EaslyNumber
 {
+    using System;
     using System.Diagnostics;
 
     /// <summary>
     /// Describes a number with discarded and invalid parts.
     /// </summary>
-    public struct FormattedNumber
+    public struct FormattedNumber : IEquatable<FormattedNumber>
     {
         #region Init
         /// <summary>
@@ -205,6 +206,33 @@
         public override string ToString()
         {
             return $"{DiscardedProlog}{BeforeExponent}{Exponent}{Suffix}{InvalidPart}";
+        }
+        #endregion
+
+        #region Overrides
+        public static bool operator ==(FormattedNumber obj1, FormattedNumber obj2)
+        {
+            return obj1.Equals(obj2);
+        }
+
+        public static bool operator !=(FormattedNumber obj1, FormattedNumber obj2)
+        {
+            return !obj1.Equals(obj2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public bool Equals(FormattedNumber obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
         #endregion
     }

@@ -70,7 +70,7 @@
         private void InitFromText(string text)
         {
             if (!Parse(text, out TextPartition Partition))
-                throw new ArgumentException();
+                throw new ArgumentException($"{nameof(text)} is not a valid number");
 
             InitFromPartition(Partition);
         }
@@ -108,10 +108,10 @@
         private void InitFromPartition(TextPartition partition)
         {
             if (partition.DiscardedProlog.Length > 0)
-                throw new ArgumentException();
+                throw new ArgumentException($"{nameof(partition)} does not represent a valid number");
 
             if (partition.InvalidPart.Length > 0)
-                throw new ArgumentException();
+                throw new ArgumentException($"{nameof(partition)} does not represent a valid number");
 
             bool IsHandled = false;
 
@@ -292,7 +292,7 @@
             ExponentField = null;
             Cheat = double.NaN;
 
-            InitFromText(value.ToString());
+            InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
             Cheat = (double)value;
         }
@@ -364,7 +364,7 @@
             ExponentField = null;
             Cheat = double.NaN;
 
-            InitFromText(value.ToString());
+            InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
             Cheat = (double)value;
         }
@@ -390,7 +390,7 @@
             ExponentField = null;
             Cheat = double.NaN;
 
-            InitFromText(value.ToString());
+            InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
             Cheat = (double)value;
         }
@@ -416,7 +416,7 @@
             ExponentField = null;
             Cheat = double.NaN;
 
-            InitFromText(value.ToString());
+            InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
             Cheat = (double)value;
         }
@@ -442,7 +442,7 @@
             ExponentField = null;
             Cheat = double.NaN;
 
-            InitFromText(value.ToString());
+            InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
             Cheat = (double)value;
         }
@@ -468,7 +468,7 @@
             ExponentField = null;
             Cheat = double.NaN;
 
-            InitFromText(value.ToString());
+            InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
             Cheat = (double)value;
         }
@@ -650,22 +650,38 @@
         public override bool Equals(object other)
         {
             if (other is Number AsNumber)
-            {
-                return IsNaN == AsNumber.IsNaN &&
-                       IsPositiveInfinity == AsNumber.IsPositiveInfinity &&
-                       IsNegativeInfinity == AsNumber.IsNegativeInfinity &&
-                       IsZero == AsNumber.IsZero &&
-                       SignificandPrecision == AsNumber.SignificandPrecision &&
-                       ExponentPrecision == AsNumber.ExponentPrecision &&
-                       Rounding == AsNumber.Rounding &&
-                       IsSignificandNegative == AsNumber.IsSignificandNegative &&
-                       IsExponentNegative == AsNumber.IsExponentNegative &&
-                       Equals(IntegerField, AsNumber.IntegerField) &&
-                       Equals(FractionalField, AsNumber.FractionalField) &&
-                       Equals(ExponentField, AsNumber.ExponentField);
-            }
+                return CompareWithNumber(AsNumber);
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Checks if two numbers are equal.
+        /// </summary>
+        /// <param name="other">The other instance.</param>
+        public bool Equals(Number other)
+        {
+            return CompareWithNumber(other);
+        }
+
+        /// <summary>
+        /// Checks if two numbers are equal.
+        /// </summary>
+        /// <param name="other">The other instance.</param>
+        private bool CompareWithNumber(Number other)
+        {
+            return IsNaN == other.IsNaN &&
+                    IsPositiveInfinity == other.IsPositiveInfinity &&
+                    IsNegativeInfinity == other.IsNegativeInfinity &&
+                    IsZero == other.IsZero &&
+                    SignificandPrecision == other.SignificandPrecision &&
+                    ExponentPrecision == other.ExponentPrecision &&
+                    Rounding == other.Rounding &&
+                    IsSignificandNegative == other.IsSignificandNegative &&
+                    IsExponentNegative == other.IsExponentNegative &&
+                    Equals(IntegerField, other.IntegerField) &&
+                    Equals(FractionalField, other.FractionalField) &&
+                    Equals(ExponentField, other.ExponentField);
         }
 
         /// <summary>
@@ -743,6 +759,63 @@
         public static bool operator >(Number x, Number y)
         {
             return y < x;
+        }
+
+        /// <summary>
+        /// Compares two instances of <see cref="Number"/> and returns an integer that indicates whether the first instance is earlier than, the same as, or later than the second instance.
+        /// Neither <paramref name="x"/> nor <paramref name="y"/> is allowed to be NaN.
+        /// </summary>
+        /// <param name="x">The first number.</param>
+        /// <param name="y">The second number.</param>
+        public static int Compare(Number x, Number y)
+        {
+            if (x.IsNaN)
+                throw new ArgumentException($"{nameof(x)} is not allowed to be NaN");
+            if (y.IsNaN)
+                throw new ArgumentException($"{nameof(y)} is not allowed to be NaN");
+
+            if (x.IsNegativeInfinity && !y.IsNegativeInfinity)
+                return -1;
+
+            if (x.IsPositiveInfinity && !y.IsPositiveInfinity)
+                return +1;
+
+            if ((x.IsNegativeInfinity && y.IsNegativeInfinity) || (x.IsPositiveInfinity && y.IsPositiveInfinity))
+                return 0;
+
+            if (x.IsZero && y.IsZero)
+                return 0;
+
+            if (x.IsZero)
+                return y.IsSignificandNegative ? +1 : -1;
+
+            if (y.IsZero)
+                return x.IsSignificandNegative ? -1 : +1;
+
+            Debug.Assert(!x.IsSpecial);
+            Debug.Assert(!y.IsSpecial);
+
+            if (x.IsSignificandNegative && !y.IsSignificandNegative)
+                return -1;
+
+            if (y.IsSignificandNegative && !x.IsSignificandNegative)
+                return +1;
+
+            Debug.Assert(x.IntegerField != null);
+            Debug.Assert(y.IntegerField != null);
+            Debug.Assert(x.FractionalField != null);
+            Debug.Assert(y.FractionalField != null);
+            Debug.Assert(x.ExponentField != null);
+            Debug.Assert(y.ExponentField != null);
+
+            bool IsSameInteger = x.IntegerField == y.IntegerField;
+            bool IsSameFractional = x.FractionalField == y.FractionalField;
+            bool IsSameExponent = x.ExponentField == y.ExponentField;
+
+            if (IsSameInteger && IsSameFractional && IsSameExponent)
+                return 0;
+
+            return x < y ? -1 : +1;
         }
 
         /// <summary>
@@ -830,7 +903,7 @@
         {
             Debug.Assert(x.IntegerField != y.IntegerField);
 
-            //TODO: handle exponent
+            // TODO: handle exponent
             bool IsSignificandLesser = x.IntegerField < y.IntegerField;
             return IsSignificandLesser ^ x.IsSignificandNegative;
         }
@@ -846,7 +919,7 @@
             Debug.Assert(x.IntegerField == y.IntegerField);
             Debug.Assert(x.FractionalField != y.FractionalField);
 
-            //TODO: handle exponent
+            // TODO: handle exponent
             bool IsSignificandLesser = x.FractionalField < y.FractionalField;
             return IsSignificandLesser ^ x.IsSignificandNegative;
         }
@@ -912,11 +985,11 @@
             string Result = null;
 
             if (IsNaN)
-                Result = double.NaN.ToString();
+                Result = double.NaN.ToString(CultureInfo.CurrentCulture);
             else if (IsPositiveInfinity)
-                Result = double.PositiveInfinity.ToString();
+                Result = double.PositiveInfinity.ToString(CultureInfo.CurrentCulture);
             else if (IsNegativeInfinity)
-                Result = double.NegativeInfinity.ToString();
+                Result = double.NegativeInfinity.ToString(CultureInfo.CurrentCulture);
             else
             {
                 switch (NumericFormat)
@@ -938,7 +1011,7 @@
             return Result;
         }
 
-        private bool ParseNumericFormat(string format, IFormatProvider provider, out NumericFormat numericFormat, out int precisionSpecifier)
+        private static bool ParseNumericFormat(string format, IFormatProvider provider, out NumericFormat numericFormat, out int precisionSpecifier)
         {
             numericFormat = NumericFormat.Default;
             precisionSpecifier = 15;
@@ -1193,7 +1266,7 @@
 
         private void SetCheatFromText()
         {
-            string AsText = ToString();
+            string AsText = ToString(CultureInfo.CurrentCulture);
             double AsDouble;
 
             if (double.TryParse(AsText, out AsDouble))

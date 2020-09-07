@@ -32,7 +32,9 @@
         #endregion
 
         #region Init
+#pragma warning disable CA1810 // Initialize reference type static fields inline
         static Arithmetic()
+#pragma warning restore CA1810 // Initialize reference type static fields inline
         {
             ThreadLocalSignificandPrecision = new ThreadLocal<long>();
             ThreadLocalExponentPrecision = new ThreadLocal<long>();
@@ -66,7 +68,7 @@
                 ThreadLocalSignificandPrecision.Value = value;
             }
         }
-        private static ThreadLocal<long> ThreadLocalSignificandPrecision;
+        private static readonly ThreadLocal<long> ThreadLocalSignificandPrecision;
 
         /// <summary>
         /// The number of bits in the exponent when numbers are created.

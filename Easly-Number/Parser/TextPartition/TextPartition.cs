@@ -55,7 +55,9 @@
         /// <summary>
         /// The end of <see cref="Text"/> that can be ignored.
         /// </summary>
+#pragma warning disable CA1822 // Mark members as static
         public string DiscardedEpilog { get { return string.Empty; } }
+#pragma warning restore CA1822 // Mark members as static
 
         /// <summary>
         /// The parser current state.

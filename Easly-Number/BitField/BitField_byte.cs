@@ -13,7 +13,7 @@ namespace EaslyNumber
         /// </summary>
         public BitField_byte()
         {
-            Content = new byte[0];
+            Content = Array.Empty<byte>();
             SignificantBits = 0;
             ShiftBits = 0;
 
@@ -471,7 +471,7 @@ namespace EaslyNumber
         /// </summary>
         /// <param name="position">The bit position.</param>
         /// <returns>The corresponding item index in <see cref="Content"/>.</returns>
-        private long ItemIndex(long position)
+        private static long ItemIndex(long position)
         {
             return position / (sizeof(byte) * 8);
         }
@@ -481,7 +481,7 @@ namespace EaslyNumber
         /// </summary>
         /// <param name="position">The bit position.</param>
         /// <returns>The corresponding offset in the <see cref="Content"/> item.</returns>
-        private int ItemOffset(long position)
+        private static int ItemOffset(long position)
         {
             return (int)(position % (sizeof(byte) * 8));
         }

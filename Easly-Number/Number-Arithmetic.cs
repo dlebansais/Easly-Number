@@ -5,7 +5,7 @@
     /// <summary>
     /// Describes and manipulates real numbers with arbitrary precision.
     /// </summary>
-    public partial struct Number
+    public partial struct Number : IEquatable<Number>
     {
         #region Arithmetic
         /// <summary>

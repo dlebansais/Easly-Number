@@ -1,5 +1,7 @@
 ﻿namespace EaslyNumber
 {
+    using System.Globalization;
+
     /// <summary>
     /// The partition of a string into different components of a special number.
     /// </summary>
@@ -20,17 +22,17 @@
         /// <summary>
         /// The string for NaN in the current culture.
         /// </summary>
-        private readonly string NaNString = double.NaN.ToString();
+        private readonly string NaNString = double.NaN.ToString(CultureInfo.CurrentCulture);
 
         /// <summary>
         /// The string for +∞ in the current culture.
         /// </summary>
-        private readonly string PositiveInfinityString = double.PositiveInfinity.ToString();
+        private readonly string PositiveInfinityString = double.PositiveInfinity.ToString(CultureInfo.CurrentCulture);
 
         /// <summary>
         /// The string for -∞ in the current culture.
         /// </summary>
-        private readonly string NegativeInfinityString = double.NegativeInfinity.ToString();
+        private readonly string NegativeInfinityString = double.NegativeInfinity.ToString(CultureInfo.CurrentCulture);
 
         /// <summary>
         /// Parses a new character.

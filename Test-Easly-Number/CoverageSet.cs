@@ -750,6 +750,33 @@
             Assert.That(!(n1 < n2));
             Assert.That(!(n1 > n2));
 
+            Exception ex;
+
+            ex = Assert.Throws<ArgumentException>(() => Number.Compare(n1, n2));
+            Assert.That(ex.Message == $"x is not allowed to be NaN", ex.Message);
+
+            ex = Assert.Throws<ArgumentException>(() => Number.Compare(n2, n1));
+            Assert.That(ex.Message == $"y is not allowed to be NaN", ex.Message);
+
+            n1 = new Number(double.PositiveInfinity);
+            n2 = new Number(double.PositiveInfinity);
+            Assert.That(Number.Compare(n1, n2) == 0);
+
+            n1 = new Number(double.NegativeInfinity);
+            n2 = new Number(double.NegativeInfinity);
+            Assert.That(Number.Compare(n1, n2) == 0);
+
+            n1 = new Number(double.PositiveInfinity);
+            n2 = new Number(double.NegativeInfinity);
+            Assert.That(Number.Compare(n1, n2) > 0);
+            Assert.That(Number.Compare(n2, n1) < 0);
+
+            n1 = Number.Zero;
+            n2 = new Number(11.0F);
+            Assert.That(Number.Compare(n1, n1) == 0);
+            Assert.That(Number.Compare(n1, n2) < 0);
+            Assert.That(Number.Compare(n2, n1) > 0);
+
             n1 = new Number(1.0F);
             n2 = new Number(-1.0F);
             Assert.That(n1.Cheat == 1.0);
@@ -770,18 +797,24 @@
             Assert.That(!(n2 > n1));
             Assert.That(n1 > n2);
             Assert.That(!(n1 < n2));
+            Assert.That(Number.Compare(n1, n2) > 0);
+            Assert.That(Number.Compare(n2, n1) < 0);
 
             n1 = new Number(2.0F);
             n2 = new Number(1.0F);
             Assert.That(n1.Cheat == 2.0);
             Assert.That(n2.Cheat == 1.0);
             Assert.That(n2 < n1);
+            Assert.That(Number.Compare(n1, n2) > 0);
+            Assert.That(Number.Compare(n2, n1) < 0);
 
             n1 = new Number(1.2F);
             n2 = new Number(1.1F);
             Assert.That(n1.Cheat == 1.2);
             Assert.That(n2.Cheat == 1.1);
             Assert.That(n2 < n1);
+            Assert.That(Number.Compare(n1, n2) > 0);
+            Assert.That(Number.Compare(n2, n1) < 0);
 
             n1 = new Number("1.0e2");
             n2 = new Number("1.0e1");
@@ -791,6 +824,8 @@
             Assert.That(n1 > n2);
             Assert.That(!(n2 > n1));
             Assert.That(!(n1 < n2));
+            Assert.That(Number.Compare(n1, n2) > 0);
+            Assert.That(Number.Compare(n2, n1) < 0);
 
             n1 = new Number("1.0");
             n2 = new Number("1.0");
@@ -798,6 +833,8 @@
             Assert.That(n2.Cheat == 1.0);
             Assert.That(!(n2 < n1));
             Assert.That(!(n2 > n1));
+            Assert.That(Number.Compare(n1, n2) == 0);
+            Assert.That(Number.Compare(n2, n1) == 0);
         }
         #endregion
     }
