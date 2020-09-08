@@ -218,7 +218,7 @@
             return !obj1.Equals(obj2);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }

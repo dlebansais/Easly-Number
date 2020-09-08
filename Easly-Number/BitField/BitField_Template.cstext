@@ -285,7 +285,7 @@ namespace EaslyNumber
         /// Checks if two bit fields are equal.
         /// </summary>
         /// <param name="other">The other instance.</param>
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (other is BitField_Template AsBitField)
                 return this == AsBitField;

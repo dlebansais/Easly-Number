@@ -647,7 +647,7 @@
         /// Checks if two numbers are equal.
         /// </summary>
         /// <param name="other">The other instance.</param>
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (other is Number AsNumber)
                 return CompareWithNumber(AsNumber);
@@ -977,7 +977,7 @@
         /// <param name="format">A numeric format string.</param>
         /// <param name="provider">An object that supplies culture-specific formatting information.</param>
         /// <returns>The string representation of the value of this instance as specified by format and provider.</returns>
-        public string ToString(string format, IFormatProvider provider)
+        public string ToString(string? format, IFormatProvider? provider)
         {
             if (!ParseNumericFormat(format, provider, out NumericFormat NumericFormat, out int PrecisionSpecifier))
                 throw new FormatException("Parameter format is invalid");
@@ -1011,7 +1011,7 @@
             return Result !;
         }
 
-        private static bool ParseNumericFormat(string format, IFormatProvider provider, out NumericFormat numericFormat, out int precisionSpecifier)
+        private static bool ParseNumericFormat(string? format, IFormatProvider? provider, out NumericFormat numericFormat, out int precisionSpecifier)
         {
             numericFormat = NumericFormat.Default;
             precisionSpecifier = 15;
@@ -1034,7 +1034,13 @@
                 case 'F':
                     numericFormat = NumericFormat.FixedPoint;
 
-                    NumberFormatInfo NumberFormatInfo = (NumberFormatInfo)provider.GetFormat(typeof(NumberFormatInfo));
+                    NumberFormatInfo NumberFormatInfo;
+
+                    if (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo)
+                        NumberFormatInfo = AsNumberFormatInfo;
+                    else
+                        NumberFormatInfo = NumberFormatInfo.CurrentInfo;
+
                     precisionSpecifier = NumberFormatInfo.NumberDecimalDigits;
                     break;
 
