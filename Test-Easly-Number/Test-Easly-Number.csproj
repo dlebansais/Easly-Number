@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>TestEaslyNumber</RootNamespace>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
