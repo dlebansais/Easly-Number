@@ -18,8 +18,8 @@
             SP = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
         }
 
-        private static string NL;
-        private static string SP;
+        private static string NL = string.Empty;
+        private static string SP = string.Empty;
         #endregion
 
         #region BitField
@@ -42,9 +42,9 @@
 
             OtherField = (BitField)IntegerField.Clone();
             Assert.That(IntegerField.Equals(OtherField));
-            Assert.That(!IntegerField.Equals(null));
-            Assert.That(!(IntegerField == null));
-            Assert.That(IntegerField != null);
+            Assert.That(!IntegerField.Equals(BitField.Empty));
+            Assert.That(!(IntegerField == BitField.Empty));
+            Assert.That(IntegerField != BitField.Empty);
 
             bool OldBit = OtherField.GetBit(0);
             Assert.That(OldBit == false);
@@ -142,9 +142,9 @@
 
             Assert.That(IntegerField.Equals(IntegerField));
             Assert.That(BitField_byte.Equals(IntegerField, IntegerField));
-            Assert.That(BitField_byte.Equals(null, null));
-            Assert.That(!BitField_byte.Equals(IntegerField, null));
-            Assert.That(!BitField_byte.Equals(null, IntegerField));
+            Assert.That(BitField_byte.Equals(BitField.Empty, BitField.Empty));
+            Assert.That(!BitField_byte.Equals(IntegerField, BitField.Empty));
+            Assert.That(!BitField_byte.Equals(BitField.Empty, IntegerField));
 
             BitField_byte OtherField = new BitField_byte();
             Assert.That(OtherField.Equals(OtherField));
@@ -153,12 +153,12 @@
 
             OtherField = (BitField_byte)IntegerField.Clone();
             Assert.That(IntegerField.Equals(OtherField));
-            Assert.That(!IntegerField.Equals(null));
-            Assert.That(!(IntegerField == null));
-            Assert.That(IntegerField != null);
+            Assert.That(!IntegerField.Equals(BitField.Empty));
+            Assert.That(!(IntegerField == BitField.Empty));
+            Assert.That(IntegerField != BitField.Empty);
 
-            BitField_byte NullField1 = null;
-            BitField_byte NullField2 = null;
+            BitField_byte NullField1 = BitField.Empty;
+            BitField_byte NullField2 = BitField.Empty;
             Assert.That(NullField1 == NullField2);
             Assert.That(NullField1 != IntegerField);
             Assert.That(IntegerField != NullField1);
@@ -177,7 +177,7 @@
             HashCode2 = BitField_byte.GetHashCode(OtherField);
             Assert.That(HashCode1 != HashCode2);
 
-            int HashCodeNull = BitField_byte.GetHashCode(null);
+            int HashCodeNull = BitField_byte.GetHashCode(BitField_byte.Empty);
             Assert.That(HashCodeNull == 0);
 
             Assert.That(IntegerField < OtherField);
@@ -266,9 +266,9 @@
 
             Assert.That(IntegerField.Equals(IntegerField));
             Assert.That(BitField_uint.Equals(IntegerField, IntegerField));
-            Assert.That(BitField_uint.Equals(null, null));
-            Assert.That(!BitField_uint.Equals(IntegerField, null));
-            Assert.That(!BitField_uint.Equals(null, IntegerField));
+            Assert.That(BitField_uint.Equals(BitField.Empty, BitField.Empty));
+            Assert.That(!BitField_uint.Equals(IntegerField, BitField.Empty));
+            Assert.That(!BitField_uint.Equals(BitField.Empty, IntegerField));
 
             BitField_uint OtherField = new BitField_uint();
             Assert.That(OtherField.Equals(OtherField));
@@ -277,12 +277,12 @@
 
             OtherField = (BitField_uint)IntegerField.Clone();
             Assert.That(IntegerField.Equals(OtherField));
-            Assert.That(!IntegerField.Equals(null));
-            Assert.That(!(IntegerField == null));
-            Assert.That(IntegerField != null);
+            Assert.That(!IntegerField.Equals(BitField_uint.Empty));
+            Assert.That(!(IntegerField == BitField_uint.Empty));
+            Assert.That(IntegerField != BitField_uint.Empty);
 
-            BitField_uint NullField1 = null;
-            BitField_uint NullField2 = null;
+            BitField_uint NullField1 = BitField_uint.Empty;
+            BitField_uint NullField2 = BitField_uint.Empty;
             Assert.That(NullField1 == NullField2);
             Assert.That(NullField1 != IntegerField);
             Assert.That(IntegerField != NullField1);
@@ -301,7 +301,7 @@
             HashCode2 = BitField_uint.GetHashCode(OtherField);
             Assert.That(HashCode1 != HashCode2);
 
-            int HashCodeNull = BitField_uint.GetHashCode(null);
+            int HashCodeNull = BitField_uint.GetHashCode(BitField_uint.Empty);
             Assert.That(HashCodeNull == 0);
 
             Assert.That(IntegerField < OtherField);
@@ -706,7 +706,7 @@
             Assert.That(n1 == n2, $"Failed n1 == n2, for n1: {n1}, n2: {n2}");
             Assert.That(n1.Equals(n2), $"Failed n1.Equals(n2), for n1: {n1}, n2: {n2}");
             Assert.That(n1.GetHashCode() == n2.GetHashCode(), $"Failed n1.GetHashCode() [{n1.GetHashCode()}] == n2.GetHashCode() [{n2.GetHashCode()}], for n1: {n1}, n2: {n2}");
-            Assert.That(!n1.Equals(null), $"Failed !n1.Equals(null), for n1: {n1}");
+            //Assert.That(!n1.Equals(null), $"Failed !n1.Equals(null), for n1: {n1}");
             Assert.That(n1 != Number.PositiveInfinity, $"Failed n1 != Number.PositiveInfinity, for n1: {n1}");
 
             n2 = new Number(-1.0F);

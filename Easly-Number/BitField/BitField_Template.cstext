@@ -7,6 +7,13 @@ namespace EaslyNumber
 
     internal class BitField_Template
     {
+        #region Constant
+        /// <summary>
+        /// Neutral value of the <see cref="BitField_Template"/> class.
+        /// </summary>
+        public static BitField_Template Empty { get; } = new BitField_Template();
+        #endregion
+
         #region Init
         /// <summary>
         /// Initializes a new instance of the <see cref="BitField_Template"/> class.

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
 
     /// <summary>
     /// Describes a number with discarded and invalid parts.
@@ -25,10 +26,7 @@
             DiscardedEpilog = string.Empty;
 
             if (Number.Parse(text, out TextPartition Partition))
-            {
-                Debug.Assert(Partition != null);
                 CreateFromPartition(Partition);
-            }
             else
             {
                 Value = Number.NaN;

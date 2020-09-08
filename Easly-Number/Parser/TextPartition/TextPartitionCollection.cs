@@ -28,7 +28,7 @@
         {
             get
             {
-                TextPartition Result = null;
+                TextPartition? Result = null;
 
                 foreach (TextPartition item in this)
                 {
@@ -37,7 +37,7 @@
                     Result = ChooseCandidate ? item : Result;
                 }
 
-                return Result;
+                return Result !;
             }
         }
     }

@@ -370,7 +370,7 @@
         /// <param name="radix">The radix.</param>
         internal static string RadixPrefixText(int radix)
         {
-            string Result = null;
+            string? Result = null;
 
             switch (radix)
             {
@@ -384,7 +384,7 @@
 
             Debug.Assert(Result != null);
 
-            return Result;
+            return Result !;
         }
 
         /// <summary>
@@ -393,7 +393,7 @@
         /// <param name="radix">The radix.</param>
         internal static string RadixSuffixText(int radix)
         {
-            string Result = null;
+            string? Result = null;
 
             switch (radix)
             {
@@ -410,7 +410,7 @@
 
             Debug.Assert(Result != null);
 
-            return Result;
+            return Result !;
         }
         #endregion
     }

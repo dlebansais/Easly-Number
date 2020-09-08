@@ -597,9 +597,9 @@
         [Category("Coverage")]
         public static void TestInvalidFormats()
         {
-            string NullString = null;
+            //string NullString = null;
 
-            TestInvalidFormats(NullString);
+            //TestInvalidFormats(NullString);
             TestInvalidFormats("");
             TestInvalidFormats("x");
             TestInvalidFormats("Ex");

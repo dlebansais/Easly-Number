@@ -4,6 +4,10 @@
 
     internal class BitField : BitField_byte
     {
+        #region Constant
+        public static new BitField Empty { get; } = new BitField();
+        #endregion
+
         #region Init
         /// <summary>
         /// Initializes a new instance of the <see cref="BitField"/> class.

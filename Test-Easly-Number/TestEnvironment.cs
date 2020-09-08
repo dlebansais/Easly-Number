@@ -18,7 +18,7 @@
             Thread.CurrentThread.CurrentCulture = frFR;
             Thread.CurrentThread.CurrentUICulture = frFR;
 
-            Assembly NumberAssembly;
+            Assembly? NumberAssembly;
 
             try
             {
@@ -30,35 +30,35 @@
             }
             Assume.That(NumberAssembly != null);
 
-            if (TextNaN == null)
+            if (TextNaN.Length == 0)
             {
                 TextNaN = double.NaN.ToString();
                 TestContext.Progress.WriteLine($"              NaN = {TextNaN}");
             }
 
-            if (TextPositiveInfinity == null)
+            if (TextPositiveInfinity.Length == 0)
             {
                 TextPositiveInfinity = double.PositiveInfinity.ToString();
                 TestContext.Progress.WriteLine($"Positive Infinity = {TextPositiveInfinity}");
             }
 
-            if (TextNegativeInfinity == null)
+            if (TextNegativeInfinity.Length == 0)
             {
                 TextNegativeInfinity = double.NegativeInfinity.ToString();
                 TestContext.Progress.WriteLine($"Negative Infinity = {TextNegativeInfinity}");
             }
 
-            if (SP == null)
+            if (SP.Length == 0)
             {
                 SP = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
                 TestContext.Progress.WriteLine($"Decimal Separator = {SP}");
             }
         }
 
-        private static string TextNaN;
-        private static string TextPositiveInfinity;
-        private static string TextNegativeInfinity;
-        private static string SP;
+        private static string TextNaN = string.Empty;
+        private static string TextPositiveInfinity = string.Empty;
+        private static string TextNegativeInfinity = string.Empty;
+        private static string SP = string.Empty;
         #endregion
 
         #region Tools

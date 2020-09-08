@@ -54,9 +54,9 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            IntegerField = BitField.Empty;
+            FractionalField = BitField.Empty;
+            ExponentField = BitField.Empty;
             Cheat = double.NaN;
 
             InitFromText(text);
@@ -92,9 +92,9 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            IntegerField = BitField.Empty;
+            FractionalField = BitField.Empty;
+            ExponentField = BitField.Empty;
             Cheat = double.NaN;
 
             InitFromPartition(partition);
@@ -287,9 +287,9 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            IntegerField = BitField.Empty;
+            FractionalField = BitField.Empty;
+            ExponentField = BitField.Empty;
             Cheat = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
@@ -321,9 +321,9 @@
                 Rounding = Arithmetic.Rounding;
                 IsSignificandNegative = false;
                 IsExponentNegative = false;
-                IntegerField = null;
-                FractionalField = null;
-                ExponentField = null;
+                IntegerField = BitField.Empty;
+                FractionalField = BitField.Empty;
+                ExponentField = BitField.Empty;
                 Cheat = double.NaN;
 
                 InitAsSpecial(ValueIsNaN, ValueIsPositiveInfinity, ValueIsNegativeInfinity);
@@ -359,9 +359,9 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            IntegerField = BitField.Empty;
+            FractionalField = BitField.Empty;
+            ExponentField = BitField.Empty;
             Cheat = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
@@ -385,9 +385,9 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            IntegerField = BitField.Empty;
+            FractionalField = BitField.Empty;
+            ExponentField = BitField.Empty;
             Cheat = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
@@ -411,9 +411,9 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            IntegerField = BitField.Empty;
+            FractionalField = BitField.Empty;
+            ExponentField = BitField.Empty;
             Cheat = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
@@ -437,9 +437,9 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            IntegerField = BitField.Empty;
+            FractionalField = BitField.Empty;
+            ExponentField = BitField.Empty;
             Cheat = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
@@ -463,9 +463,9 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            IntegerField = BitField.Empty;
+            FractionalField = BitField.Empty;
+            ExponentField = BitField.Empty;
             Cheat = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
@@ -490,9 +490,9 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            IntegerField = null;
-            FractionalField = null;
-            ExponentField = null;
+            IntegerField = BitField.Empty;
+            FractionalField = BitField.Empty;
+            ExponentField = BitField.Empty;
             Cheat = double.NaN;
 
             InitAsSpecial(isNaN, isPositiveInfinity, isNegativeInfinity);
@@ -525,9 +525,9 @@
 
             if (IsZero)
             {
-                IntegerField = null;
-                FractionalField = null;
-                ExponentField = null;
+                IntegerField = BitField.Empty;
+                FractionalField = BitField.Empty;
+                ExponentField = BitField.Empty;
             }
             else
             {
@@ -600,7 +600,7 @@
         /// <summary>
         /// True if the number is an integer.
         /// </summary>
-        public bool IsInteger { get { return IsZero || FractionalField == null || FractionalField.SignificantBits == 0 || FractionalField.IsZero; } }
+        public bool IsInteger { get { return IsZero || FractionalField == BitField.Empty || FractionalField.SignificantBits == 0 || FractionalField.IsZero; } }
 
         /// <summary>
         /// The binary data corresponding to the integer part.
@@ -703,12 +703,12 @@
             if (x.IsSignificandNegative != y.IsSignificandNegative || x.IsExponentNegative != y.IsExponentNegative)
                 return false;
 
-            Debug.Assert(x.IntegerField != null);
-            Debug.Assert(y.IntegerField != null);
-            Debug.Assert(x.FractionalField != null);
-            Debug.Assert(y.FractionalField != null);
-            Debug.Assert(x.ExponentField != null);
-            Debug.Assert(y.ExponentField != null);
+            Debug.Assert(x.IntegerField != BitField.Empty);
+            Debug.Assert(y.IntegerField != BitField.Empty);
+            Debug.Assert(x.FractionalField != BitField.Empty);
+            Debug.Assert(y.FractionalField != BitField.Empty);
+            Debug.Assert(x.ExponentField != BitField.Empty);
+            Debug.Assert(y.ExponentField != BitField.Empty);
 
             bool IsSameInteger = x.IntegerField == y.IntegerField;
             bool IsSameFractional = x.FractionalField == y.FractionalField;
@@ -801,12 +801,12 @@
             if (y.IsSignificandNegative && !x.IsSignificandNegative)
                 return +1;
 
-            Debug.Assert(x.IntegerField != null);
-            Debug.Assert(y.IntegerField != null);
-            Debug.Assert(x.FractionalField != null);
-            Debug.Assert(y.FractionalField != null);
-            Debug.Assert(x.ExponentField != null);
-            Debug.Assert(y.ExponentField != null);
+            Debug.Assert(x.IntegerField != BitField.Empty);
+            Debug.Assert(y.IntegerField != BitField.Empty);
+            Debug.Assert(x.FractionalField != BitField.Empty);
+            Debug.Assert(y.FractionalField != BitField.Empty);
+            Debug.Assert(x.ExponentField != BitField.Empty);
+            Debug.Assert(y.ExponentField != BitField.Empty);
 
             bool IsSameInteger = x.IntegerField == y.IntegerField;
             bool IsSameFractional = x.FractionalField == y.FractionalField;
@@ -982,7 +982,7 @@
             if (!ParseNumericFormat(format, provider, out NumericFormat NumericFormat, out int PrecisionSpecifier))
                 throw new FormatException("Parameter format is invalid");
 
-            string Result = null;
+            string? Result = null;
 
             if (IsNaN)
                 Result = double.NaN.ToString(CultureInfo.CurrentCulture);
@@ -1008,7 +1008,7 @@
 
             Debug.Assert(Result != null);
 
-            return Result;
+            return Result !;
         }
 
         private static bool ParseNumericFormat(string format, IFormatProvider provider, out NumericFormat numericFormat, out int precisionSpecifier)
@@ -1034,8 +1034,7 @@
                 case 'F':
                     numericFormat = NumericFormat.FixedPoint;
 
-                    NumberFormatInfo NumberFormatInfo = provider.GetFormat(typeof(NumberFormatInfo)) as NumberFormatInfo;
-                    Debug.Assert(NumberFormatInfo != null);
+                    NumberFormatInfo NumberFormatInfo = (NumberFormatInfo)provider.GetFormat(typeof(NumberFormatInfo));
                     precisionSpecifier = NumberFormatInfo.NumberDecimalDigits;
                     break;
 
@@ -1073,7 +1072,7 @@
 
                 string ExponentString;
 
-                if (ExponentField != null && ExponentField.SignificantBits > 0 && !ExponentField.IsZero)
+                if (ExponentField != BitField.Empty && ExponentField.SignificantBits > 0 && !ExponentField.IsZero)
                 {
                     ExponentString = "0";
                     BitIndex = 1;
@@ -1172,7 +1171,7 @@
             string IntegerString = "0";
             bitIndex = 1;
 
-            if (IntegerField != null)
+            if (IntegerField != BitField.Empty)
             {
                 while (bitIndex <= IntegerField.SignificantBits + IntegerField.ShiftBits)
                 {
@@ -1229,7 +1228,7 @@
 
         private string ComposeExponentString()
         {
-            if (ExponentField != null && ExponentField.SignificantBits > 0 && !ExponentField.IsZero)
+            if (ExponentField != BitField.Empty && ExponentField.SignificantBits > 0 && !ExponentField.IsZero)
             {
                 string ExponentString = "0";
                 long BitIndex = 1;
