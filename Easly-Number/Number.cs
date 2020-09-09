@@ -1016,10 +1016,9 @@
             numericFormat = NumericFormat.Default;
             precisionSpecifier = 15;
 
-            if (format == null || format.Length == 0)
-                return false;
+            char FormatCharacter = (format == null || format.Length == 0) ? 'G' : format[0];
 
-            switch (format[0])
+            switch (FormatCharacter)
             {
                 case 'G':
                     numericFormat = NumericFormat.Default;
@@ -1048,7 +1047,7 @@
                     return false;
             }
 
-            if (format.Length > 1)
+            if (format != null && format.Length > 1)
             {
                 if (!int.TryParse(format.Substring(1), out precisionSpecifier))
                     return false;

@@ -178,12 +178,19 @@
                 FractionalString = "0";
 
             if (HasExponentPart)
+            {
                 ExponentString = Text.Substring(FirstExponentPartIndex, LastExponentPartIndex - FirstExponentPartIndex);
+                while (ExponentString.Length > 1 && ExponentString[0] == '0')
+                    ExponentString = ExponentString.Substring(1);
+            }
             else
                 ExponentString = "0";
 
-            Normalize(ref IntegerString, ref FractionalString, ref ExponentString, ExponentSign == OptionalSign.Negative);
-            FindBestPowerOfTwo(ExponentString, out ExponentString);
+            if (Text != "0")
+            {
+                Normalize(ref IntegerString, ref FractionalString, ref ExponentString, ExponentSign == OptionalSign.Negative);
+                FindBestPowerOfTwo(ExponentString, out ExponentString);
+            }
 
             exponentField = new BitField();
 

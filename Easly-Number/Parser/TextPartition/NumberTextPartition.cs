@@ -151,7 +151,6 @@
         /// <param name="digitHandler">The handler to use to convert to digits.</param>
         internal static string Incremented(string text, int radix, IsValidDigitHandler validityHandler, ToDigitHandler digitHandler)
         {
-            string Result = string.Empty;
             bool Carry = false;
 
             for (int i = 0; i < text.Length; i++)
@@ -176,7 +175,7 @@
             if (Carry)
                 text = "1" + text;
 
-            return Result;
+            return text;
         }
 
         /// <summary>
@@ -191,7 +190,6 @@
             Debug.Assert(text.Length > 0);
             Debug.Assert(text[0] != '0');
 
-            string Result = string.Empty;
             bool Carry = false;
 
             for (int i = 0; i < text.Length; i++)
@@ -221,7 +219,7 @@
             Debug.Assert(text.Length > 0);
             Debug.Assert(text[0] != '0' || text.Length == 1);
 
-            return Result;
+            return text;
         }
     }
 }
