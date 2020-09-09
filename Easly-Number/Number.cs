@@ -232,8 +232,8 @@
             SignificandPrecision = significandPrecision;
             ExponentPrecision = exponentPrecision;
             Rounding = Arithmetic.Rounding;
-            IsSignificandNegative = false;
-            IsExponentNegative = false;
+            IsSignificandNegative = isSignificandNegative;
+            IsExponentNegative = isExponentNegative;
             Cheat = double.NaN;
 
             IntegerField = integerField;
@@ -260,7 +260,7 @@
             SignificandPrecision = significandPrecision;
             ExponentPrecision = exponentPrecision;
             Rounding = Arithmetic.Rounding;
-            IsSignificandNegative = false;
+            IsSignificandNegative = isSignificandNegative;
             IsExponentNegative = false;
             Cheat = double.NaN;
 
@@ -995,7 +995,7 @@
                 switch (NumericFormat)
                 {
                     case NumericFormat.Default:
-                        Result = ToStringDefaultFormat(PrecisionSpecifier, provider);
+                        Result = ToStringDefaultFormat(PrecisionSpecifier);
                         break;
                     case NumericFormat.Exponential:
                         Result = ToStringExponentialFormat(PrecisionSpecifier, provider);
@@ -1016,7 +1016,7 @@
             numericFormat = NumericFormat.Default;
             precisionSpecifier = 15;
 
-            if (string.IsNullOrEmpty(format))
+            if (format == null || format.Length == 0)
                 return false;
 
             switch (format[0])
@@ -1062,13 +1062,19 @@
             return true;
         }
 
-        private string ToStringExponentialFormat(int precisionSpecifier, IFormatProvider provider)
+        private string ToStringExponentialFormat(int precisionSpecifier, IFormatProvider? provider)
         {
             if (IsInteger)
             {
                 string IntegerString = ComposeIntegerString(out long BitIndex);
 
-                string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                NumberFormatInfo NumberFormat;
+                if (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo)
+                    NumberFormat = AsNumberFormatInfo;
+                else
+                    NumberFormat = CultureInfo.CurrentCulture.NumberFormat;
+
+                string Separator = NumberFormat.NumberDecimalSeparator;
                 string FractionalString = string.Empty;
                 for (int i = 0; i < precisionSpecifier; i++)
                     FractionalString += "0";
@@ -1118,15 +1124,21 @@
             }
         }
 
-        private string ToStringFixedPointFormat(int precisionSpecifier, IFormatProvider provider)
+        private string ToStringFixedPointFormat(int precisionSpecifier, IFormatProvider? provider)
         {
             string Result;
 
             if (IsInteger)
             {
-                string IntegerString = ComposeIntegerString(out long BitIndex);
+                string IntegerString = ComposeIntegerString(out long _);
 
-                string Separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                NumberFormatInfo NumberFormat;
+                if (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo)
+                    NumberFormat = AsNumberFormatInfo;
+                else
+                    NumberFormat = CultureInfo.CurrentCulture.NumberFormat;
+
+                string Separator = NumberFormat.NumberDecimalSeparator;
                 string FractionalString = string.Empty;
 
                 for (int i = 0; i < precisionSpecifier; i++)
@@ -1149,7 +1161,7 @@
             return Result;
         }
 
-        private string ToStringDefaultFormat(int precisionSpecifier, IFormatProvider provider)
+        private string ToStringDefaultFormat(int precisionSpecifier)
         {
             if (IsInteger)
             {

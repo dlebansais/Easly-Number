@@ -140,7 +140,7 @@
                 if (!ThreadLocalFlags.IsValueCreated)
                     ThreadLocalFlags.Value = new Flags();
 
-                return ThreadLocalFlags.Value;
+                return ThreadLocalFlags.Value !;
             }
         }
         private static ThreadLocal<Flags> ThreadLocalFlags;

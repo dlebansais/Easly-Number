@@ -54,11 +54,11 @@
                     break;
 
                 case ParsingState.SpecialPart:
-                    ParseSpecialPart(index, c);
+                    ParseSpecialPart(index);
                     break;
 
                 case ParsingState.InvalidPart:
-                    ParseInvalidPart(index, c);
+                    ParseInvalidPart(index);
                     break;
             }
         }
@@ -92,8 +92,7 @@
         /// Runs the parser in the <see cref="ParsingState.SpecialPart"/> state.
         /// </summary>
         /// <param name="index">Index of the parsed character.</param>
-        /// <param name="c">The parsed character.</param>
-        private void ParseSpecialPart(int index, char c)
+        private void ParseSpecialPart(int index)
         {
             string Substring = Text.Substring(FirstSpecialPartIndex, index - FirstSpecialPartIndex + 1);
 
@@ -138,8 +137,7 @@
         /// Runs the parser in the <see cref="ParsingState.InvalidPart"/> state.
         /// </summary>
         /// <param name="index">Index of the parsed character.</param>
-        /// <param name="c">The parsed character.</param>
-        private void ParseInvalidPart(int index, char c)
+        private void ParseInvalidPart(int index)
         {
             if (FirstInvalidCharacterIndex < 0)
                 FirstInvalidCharacterIndex = index;

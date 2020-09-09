@@ -65,6 +65,8 @@
         /// <returns>True if the conversion succeeded; Otherwise, false.</returns>
         public static bool TryParse(string text, out Number value)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+
             if (!Parse(text, out TextPartition Partition))
             {
                 value = Uninitialized;
@@ -145,6 +147,8 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidBinaryNumber(string text)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+
             TextPartitionCollection PartitionList = new TextPartitionCollection()
             {
                 new RadixPrefixTextPartition(text, BinaryRadix, BinaryPrefixCharacter, IsValidBinaryDigit, ToBinaryDigit),
@@ -198,6 +202,8 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidOctalNumber(string text)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+
             TextPartition OctalSuffixIntegerPartition = new RadixSuffixTextPartition(text, OctalRadix, OctalSuffixCharacter, IsValidOctalDigit, ToOctalDigit);
 
             for (int Index = 0; Index < text.Length && OctalSuffixIntegerPartition.IsValid; Index++)
@@ -308,6 +314,8 @@
         /// <returns>True if valid; Otherwise, false.</returns>
         public static bool IsValidHexadecimalNumber(string text)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+
             TextPartitionCollection PartitionList = new TextPartitionCollection()
             {
                 new RadixPrefixTextPartition(text, HexadecimalRadix, HexadecimalPrefixCharacter, IsValidHexadecimalDigit, ToUpperCaseHexadecimalDigit),

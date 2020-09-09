@@ -16,6 +16,8 @@
         /// <param name="text">The number in plain text.</param>
         public FormattedNumber(string text)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+
             Value = Number.Uninitialized;
             DiscardedProlog = string.Empty;
             Prefix = string.Empty;

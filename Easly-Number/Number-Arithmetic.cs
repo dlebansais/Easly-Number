@@ -1,6 +1,7 @@
 ﻿namespace EaslyNumber
 {
     using System;
+    using System.Diagnostics;
 
     /// <summary>
     /// Describes and manipulates real numbers with arbitrary precision.
@@ -30,6 +31,10 @@
         /// <returns>The arithmetic sum of <paramref name="x"/> and <paramref name="y"/>.</returns>
         public static Number Add(Number x, Number y, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
+            Debug.Assert(significandPrecision > 0);
+            Debug.Assert(exponentPrecision > 0);
+            Debug.Assert(rounding >= 0);
+
             return new Number(x.Cheat + y.Cheat);
         }
 
@@ -54,6 +59,10 @@
         /// <returns>The arithmetic difference of <paramref name="x"/> and <paramref name="y"/>.</returns>
         public static Number Subtract(Number x, Number y, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
+            Debug.Assert(significandPrecision > 0);
+            Debug.Assert(exponentPrecision > 0);
+            Debug.Assert(rounding >= 0);
+
             return new Number(x.Cheat - y.Cheat);
         }
 
@@ -78,6 +87,10 @@
         /// <returns>The arithmetic product of <paramref name="x"/> and <paramref name="y"/>.</returns>
         public static Number Multiply(Number x, Number y, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
+            Debug.Assert(significandPrecision > 0);
+            Debug.Assert(exponentPrecision > 0);
+            Debug.Assert(rounding >= 0);
+
             return new Number(x.Cheat * y.Cheat);
         }
 
@@ -102,6 +115,10 @@
         /// <returns>The arithmetic ratio of <paramref name="x"/> and <paramref name="y"/>.</returns>
         public static Number Divide(Number x, Number y, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
+            Debug.Assert(significandPrecision > 0);
+            Debug.Assert(exponentPrecision > 0);
+            Debug.Assert(rounding >= 0);
+
             return new Number(x.Cheat / y.Cheat);
         }
 
@@ -124,6 +141,10 @@
         /// <returns>The arithmetic negation of <paramref name="x"/>.</returns>
         public static Number Negate(Number x, long significandPrecision, long exponentPrecision, Rounding rounding)
         {
+            Debug.Assert(significandPrecision > 0);
+            Debug.Assert(exponentPrecision > 0);
+            Debug.Assert(rounding >= 0);
+
             return new Number(-x.Cheat);
         }
 

@@ -183,7 +183,7 @@
                 ExponentString = "0";
 
             Normalize(ref IntegerString, ref FractionalString, ref ExponentString, ExponentSign == OptionalSign.Negative);
-            FindBestPowerOfTwo(IntegerString, FractionalString, ExponentString, ExponentSign == OptionalSign.Negative, out ExponentString);
+            FindBestPowerOfTwo(ExponentString, out ExponentString);
 
             exponentField = new BitField();
 
@@ -312,7 +312,7 @@
             }
         }
 
-        private static void FindBestPowerOfTwo(string integerString, string fractionalString, string exponentString, bool isExponentNegative, out string powerOfTwo)
+        private static void FindBestPowerOfTwo(string exponentString, out string powerOfTwo)
         {
             if (exponentString.Length < 15)
             {
