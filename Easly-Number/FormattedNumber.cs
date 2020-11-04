@@ -2,7 +2,6 @@
 {
     using System;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
 
     /// <summary>
     /// Describes a number with discarded and invalid parts.

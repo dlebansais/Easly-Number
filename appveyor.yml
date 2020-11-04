@@ -24,10 +24,10 @@ before_build:
 build:
   project: build_all.xml
 
-test:
-  assemblies:
-    only:
-      - Test-Easly-Number/bin/x64/Release/net48/Test-Easly-Number.dll
+test: off
+#  assemblies:
+#    only:
+#      - Test-Easly-Number/bin/x64/Release/net48/Test-Easly-Number.dll
 
 artifacts:
   - path: Easly-Number/bin/
