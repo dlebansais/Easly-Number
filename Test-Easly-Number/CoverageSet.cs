@@ -429,7 +429,7 @@
 
                 Number Value = FormattedNumber.Value;
                 Assert.That(Value.ToString() == Text, $"Result #{i}={Value}, Expected={Text}");
-                Assert.That(Value.Cheat == d);
+                Assert.That(Value.CheatDouble == d);
             }
         }
 
@@ -506,7 +506,7 @@
 
                 Number Value = FormattedNumber.Value;
                 Assert.That(Value.ToString() == Text, $"Result #{i}={Value}, Expected={Text}");
-                Assert.That(Value.Cheat == d);
+                Assert.That(Value.CheatDouble == d);
             }
 
             Flags Flags = Arithmetic.Flags;
@@ -540,8 +540,8 @@
         {
             Assert.That(!Number.TryParse("", out Number n1));
             //Debug.Assert(false);
-            Assert.That(Number.TryParse("0", out Number n2) && n2.IsZero && n2.ToString() == "0" && n2.Cheat == 0, $"Result: {n2}, expected: 0");
-            Assert.That(Number.TryParse("1", out Number n3) && !n3.IsZero && n3.ToString() == "1" && n3.Cheat == 1, $"Result: {n3}, expected: 1");
+            Assert.That(Number.TryParse("0", out Number n2) && n2.IsZero && n2.ToString() == "0" && n2.CheatDouble == 0, $"Result: {n2}, expected: 0");
+            Assert.That(Number.TryParse("1", out Number n3) && !n3.IsZero && n3.ToString() == "1" && n3.CheatDouble == 1, $"Result: {n3}, expected: 1");
         }
 
         [Test]
@@ -557,28 +557,28 @@
             string TextNegativeInfinity = double.NegativeInfinity.ToString();
 
             ex = Assert.Throws<ArgumentException>(() => n1 = new Number(""));
-            Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+            Assert.That(ex.Message == $"text is not a valid number.", ex.Message);
 
             Number n2 = new Number("0");
-            Assert.That(n2.IsZero && n2.ToString() == "0" && n2.Cheat == 0, $"Result: {n2}, expected: 0");
+            Assert.That(n2.IsZero && n2.ToString() == "0" && n2.CheatDouble == 0, $"Result: {n2}, expected: 0");
 
             Number n3 = new Number("1");
-            Assert.That(!n3.IsZero && n3.ToString() == "1" && n3.Cheat == 1, $"Result: {n3}, expected: 1");
+            Assert.That(!n3.IsZero && n3.ToString() == "1" && n3.CheatDouble == 1, $"Result: {n3}, expected: 1");
 
             Number n4 = new Number(TextNaN);
-            Assert.That(n4.IsNaN && n4.ToString() == TextNaN && double.IsNaN(n4.Cheat), $"Result: {n4}, expected: {TextNaN}");
+            Assert.That(n4.IsNaN && n4.ToString() == TextNaN && double.IsNaN(n4.CheatDouble), $"Result: {n4}, expected: {TextNaN}");
 
             Number n5 = new Number(TextPositiveInfinity);
-            Assert.That(n5.IsPositiveInfinity && n5.ToString() == TextPositiveInfinity && double.IsPositiveInfinity(n5.Cheat), $"Result: {n5}, expected: {TextPositiveInfinity}");
+            Assert.That(n5.IsPositiveInfinity && n5.ToString() == TextPositiveInfinity && double.IsPositiveInfinity(n5.CheatDouble), $"Result: {n5}, expected: {TextPositiveInfinity}");
 
             if (TextPositiveInfinity[0] != '+')
             {
                 Number n6 = new Number($"+{TextPositiveInfinity}");
-                Assert.That(n6.IsPositiveInfinity && n6.ToString() == TextPositiveInfinity && double.IsPositiveInfinity(n6.Cheat), $"Result: {n6}, expected: {TextPositiveInfinity}");
+                Assert.That(n6.IsPositiveInfinity && n6.ToString() == TextPositiveInfinity && double.IsPositiveInfinity(n6.CheatDouble), $"Result: {n6}, expected: {TextPositiveInfinity}");
             }
 
             Number n7 = new Number(TextNegativeInfinity);
-            Assert.That(n7.IsNegativeInfinity && n7.ToString() == TextNegativeInfinity && double.IsNegativeInfinity(n7.Cheat), $"Result: {n7}, expected: {TextNegativeInfinity}");
+            Assert.That(n7.IsNegativeInfinity && n7.ToString() == TextNegativeInfinity && double.IsNegativeInfinity(n7.CheatDouble), $"Result: {n7}, expected: {TextNegativeInfinity}");
 
             ex = Assert.Throws<ArgumentException>(() => n4 = new Number($" {TextNaN}"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
@@ -587,7 +587,7 @@
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
 
             Number n8 = new Number("0xFF");
-            Assert.That(!n8.IsZero && n8.ToString() == "255" && n8.Cheat == 255, $"Result: {n8}, expected: 255");
+            Assert.That(!n8.IsZero && n8.ToString() == "255" && n8.CheatDouble == 255, $"Result: {n8}, expected: 255");
 
             ex = Assert.Throws<ArgumentException>(() => n8 = new Number(" 0xFF"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
@@ -596,7 +596,7 @@
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
 
             Number n9 = new Number("FF:H");
-            Assert.That(!n9.IsZero && n9.ToString() == "255" && n9.Cheat == 255, $"Result: {n9}, expected: 255");
+            Assert.That(!n9.IsZero && n9.ToString() == "255" && n9.CheatDouble == 255, $"Result: {n9}, expected: 255");
 
             ex = Assert.Throws<ArgumentException>(() => n9 = new Number(" FF:H"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
@@ -606,10 +606,10 @@
 
             //Debug.Assert(false);
             Number n10 = new Number("1.2e3");
-            Assert.That(n10.ToString() == $"1{SP}2e3" && n10.Cheat == 1.2e3, $"Result: {n10}, expected: 1{SP}2e3");
+            Assert.That(n10.ToString() == $"1{SP}2e3" && n10.CheatDouble == 1.2e3, $"Result: {n10}, expected: 1{SP}2e3");
 
             n10 = new Number("1.2E3");
-            Assert.That(n10.ToString() == $"1{SP}2e3" && n10.Cheat == 1.2E3, $"Result: {n10}, expected: 1{SP}2e3");
+            Assert.That(n10.ToString() == $"1{SP}2e3" && n10.CheatDouble == 1.2E3, $"Result: {n10}, expected: 1{SP}2e3");
 
             ex = Assert.Throws<ArgumentException>(() => n10 = new Number(" 1.2e3"));
             Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
@@ -624,25 +624,25 @@
         {
             //System.Diagnostics.Debug.Assert(false);
             Number n1 = new Number(1.0F);
-            Assert.That(n1.ToString() == "1" && n1.Cheat == 1, $"Result: {n1}, expected: 1");
+            Assert.That(n1.ToString() == "1" && n1.CheatSingle == 1, $"Result: {n1}, expected: 1");
 
             Number n2 = new Number(2.0);
-            Assert.That(n2.ToString() == "2" && n2.Cheat == 2, $"Result: {n2}, expected: 2");
+            Assert.That(n2.ToString() == "2" && n2.CheatDouble == 2, $"Result: {n2}, expected: 2");
 
             Number n3 = new Number(3.0M);
-            Assert.That(n3.ToString() == "3" && n3.Cheat == 3, $"Result: {n3}, expected: 3");
+            Assert.That(n3.ToString() == "3" && n3.CheatDouble == 3, $"Result: {n3}, expected: 3");
 
             Number n4 = new Number(4);
-            Assert.That(n4.ToString() == "4" && n4.Cheat == 4, $"Result: {n4}, expected: 4");
+            Assert.That(n4.ToString() == "4" && n4.CheatDouble == 4, $"Result: {n4}, expected: 4");
 
             Number n5 = new Number(5U);
-            Assert.That(n5.ToString() == "5" && n5.Cheat == 5, $"Result: {n5}, expected: 5");
+            Assert.That(n5.ToString() == "5" && n5.CheatDouble == 5, $"Result: {n5}, expected: 5");
 
             Number n6 = new Number(6L);
-            Assert.That(n6.ToString() == "6" && n6.Cheat == 6, $"Result: {n6}, expected: 6");
+            Assert.That(n6.ToString() == "6" && n6.CheatDouble == 6, $"Result: {n6}, expected: 6");
 
             Number n7 = new Number(7UL);
-            Assert.That(n7.ToString() == "7" && n7.Cheat == 7, $"Result: {n7}, expected: 7");
+            Assert.That(n7.ToString() == "7" && n7.CheatDouble == 7, $"Result: {n7}, expected: 7");
         }
         #endregion
 
@@ -779,8 +779,8 @@
 
             n1 = new Number(1.0F);
             n2 = new Number(-1.0F);
-            Assert.That(n1.Cheat == 1.0);
-            Assert.That(n2.Cheat == -1.0);
+            Assert.That(n1.CheatSingle == 1.0F);
+            Assert.That(n2.CheatSingle == -1.0F);
 
             Assert.That(n1 < Number.PositiveInfinity);
             Assert.That(n1 > Number.NegativeInfinity);
@@ -802,24 +802,25 @@
 
             n1 = new Number(2.0F);
             n2 = new Number(1.0F);
-            Assert.That(n1.Cheat == 2.0);
-            Assert.That(n2.Cheat == 1.0);
+            Assert.That(n1.CheatSingle == 2.0F);
+            Assert.That(n2.CheatSingle == 1.0F);
             Assert.That(n2 < n1);
             Assert.That(Number.Compare(n1, n2) > 0);
             Assert.That(Number.Compare(n2, n1) < 0);
 
+            //System.Diagnostics.Debug.Assert(false);
             n1 = new Number(1.2F);
             n2 = new Number(1.1F);
-            Assert.That(n1.Cheat == 1.2);
-            Assert.That(n2.Cheat == 1.1);
+            Assert.That(n1.CheatSingle == 1.2F);
+            Assert.That(n2.CheatSingle == 1.1F);
             Assert.That(n2 < n1);
             Assert.That(Number.Compare(n1, n2) > 0);
             Assert.That(Number.Compare(n2, n1) < 0);
 
             n1 = new Number("1.0e2");
             n2 = new Number("1.0e1");
-            Assert.That(n1.Cheat == 1.0e2);
-            Assert.That(n2.Cheat == 1.0e1);
+            Assert.That(n1.CheatDouble == 4);
+            Assert.That(n2.CheatDouble == 2);
             Assert.That(n2 < n1);
             Assert.That(n1 > n2);
             Assert.That(!(n2 > n1));
@@ -829,8 +830,8 @@
 
             n1 = new Number("1.0");
             n2 = new Number("1.0");
-            Assert.That(n1.Cheat == 1.0);
-            Assert.That(n2.Cheat == 1.0);
+            Assert.That(n1.CheatDouble == 1);
+            Assert.That(n2.CheatDouble == 1);
             Assert.That(!(n2 < n1));
             Assert.That(!(n2 > n1));
             Assert.That(Number.Compare(n1, n2) == 0);

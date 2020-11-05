@@ -35,7 +35,7 @@
             Debug.Assert(exponentPrecision > 0);
             Debug.Assert(rounding >= 0);
 
-            return new Number(x.Cheat + y.Cheat);
+            return new Number(x.CheatDouble + y.CheatDouble);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@
             Debug.Assert(exponentPrecision > 0);
             Debug.Assert(rounding >= 0);
 
-            return new Number(x.Cheat - y.Cheat);
+            return new Number(x.CheatDouble - y.CheatDouble);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@
             Debug.Assert(exponentPrecision > 0);
             Debug.Assert(rounding >= 0);
 
-            return new Number(x.Cheat * y.Cheat);
+            return new Number(x.CheatDouble * y.CheatDouble);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@
             Debug.Assert(exponentPrecision > 0);
             Debug.Assert(rounding >= 0);
 
-            return new Number(x.Cheat / y.Cheat);
+            return new Number(x.CheatDouble / y.CheatDouble);
         }
 
         /// <summary>
@@ -145,7 +145,7 @@
             Debug.Assert(exponentPrecision > 0);
             Debug.Assert(rounding >= 0);
 
-            return new Number(-x.Cheat);
+            return new Number(-x.CheatDouble);
         }
 
         /// <summary>
@@ -153,7 +153,7 @@
         /// </summary>
         public Number Abs()
         {
-            return new Number(Math.Abs(Cheat));
+            return new Number(Math.Abs(CheatDouble));
         }
 
         /// <summary>
@@ -161,7 +161,7 @@
         /// </summary>
         public Number Exp()
         {
-            return new Number(Math.Exp(Cheat));
+            return new Number(Math.Exp(CheatDouble));
         }
 
         /// <summary>
@@ -169,7 +169,7 @@
         /// </summary>
         public Number Log()
         {
-            return new Number(Math.Log(Cheat));
+            return new Number(Math.Log(CheatDouble));
         }
 
         /// <summary>
@@ -177,7 +177,7 @@
         /// </summary>
         public Number Log10()
         {
-            return new Number(Math.Log10(Cheat));
+            return new Number(Math.Log10(CheatDouble));
         }
 
         /// <summary>
@@ -186,7 +186,7 @@
         /// <param name="x">The number.</param>
         public Number Pow(Number x)
         {
-            return new Number(Math.Pow(Cheat, x.Cheat));
+            return new Number(Math.Pow(CheatDouble, x.CheatDouble));
         }
 
         /// <summary>
@@ -194,7 +194,7 @@
         /// </summary>
         public Number Sqrt()
         {
-            return new Number(Math.Sqrt(Cheat));
+            return new Number(Math.Sqrt(CheatDouble));
         }
 
         /// <summary>
@@ -203,7 +203,7 @@
         /// <param name="other">The other number.</param>
         public Number ShiftLeft(Number other)
         {
-            return new Number(((long)Cheat) << ((int)other.Cheat));
+            return new Number(((long)CheatDouble) << ((int)other.CheatDouble));
         }
 
         /// <summary>
@@ -212,7 +212,7 @@
         /// <param name="other">The other number.</param>
         public Number ShiftRight(Number other)
         {
-            return new Number(((long)Cheat) >> ((int)other.Cheat));
+            return new Number(((long)CheatDouble) >> ((int)other.CheatDouble));
         }
 
         /// <summary>
@@ -221,7 +221,7 @@
         /// <param name="x">The number.</param>
         public Number Remainder(Number x)
         {
-            return new Number(Math.IEEERemainder(Cheat, x.Cheat));
+            return new Number(Math.IEEERemainder(CheatDouble, x.CheatDouble));
         }
 
         /// <summary>
@@ -230,7 +230,7 @@
         /// <param name="other">The other number.</param>
         public Number BitwiseAnd(Number other)
         {
-            return new Number(((long)Cheat) & ((long)other.Cheat));
+            return new Number(((long)CheatDouble) & ((long)other.CheatDouble));
         }
 
         /// <summary>
@@ -239,7 +239,7 @@
         /// <param name="other">The other number.</param>
         public Number BitwiseOr(Number other)
         {
-            return new Number(((long)Cheat) | ((long)other.Cheat));
+            return new Number(((long)CheatDouble) | ((long)other.CheatDouble));
         }
 
         /// <summary>
@@ -248,7 +248,7 @@
         /// <param name="other">The other number.</param>
         public Number BitwiseXor(Number other)
         {
-            return new Number(((long)Cheat) ^ ((long)other.Cheat));
+            return new Number(((long)CheatDouble) ^ ((long)other.CheatDouble));
         }
 
         #endregion
@@ -260,9 +260,9 @@
         /// <param name="value">The value upon return.</param>
         public bool TryParseInt(out int value)
         {
-            value = (int)Cheat;
+            value = (int)CheatDouble;
 
-            if (value == Cheat)
+            if (value == CheatDouble)
                 return true;
             else
                 return false;

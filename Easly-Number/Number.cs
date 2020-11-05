@@ -57,7 +57,8 @@
             IntegerField = BitField.Empty;
             FractionalField = BitField.Empty;
             ExponentField = BitField.Empty;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             InitFromText(text);
         }
@@ -70,7 +71,7 @@
         private void InitFromText(string text)
         {
             if (!Parse(text, out TextPartition Partition))
-                throw new ArgumentException($"{nameof(text)} is not a valid number");
+                throw new ArgumentException($"{nameof(text)} is not a valid number.");
 
             InitFromPartition(Partition);
         }
@@ -95,7 +96,8 @@
             IntegerField = BitField.Empty;
             FractionalField = BitField.Empty;
             ExponentField = BitField.Empty;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             InitFromPartition(partition);
         }
@@ -234,7 +236,8 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = isSignificandNegative;
             IsExponentNegative = isExponentNegative;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             IntegerField = integerField;
             FractionalField = fractionalField;
@@ -262,7 +265,8 @@
             Rounding = Arithmetic.Rounding;
             IsSignificandNegative = isSignificandNegative;
             IsExponentNegative = false;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             IntegerField = integerField;
             FractionalField = new BitField();
@@ -290,11 +294,12 @@
             IntegerField = BitField.Empty;
             FractionalField = BitField.Empty;
             ExponentField = BitField.Empty;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
-            Cheat = (double)value;
+            CheatSingle = value;
         }
 
         /// <summary>
@@ -324,7 +329,8 @@
                 IntegerField = BitField.Empty;
                 FractionalField = BitField.Empty;
                 ExponentField = BitField.Empty;
-                Cheat = double.NaN;
+                CheatSingle = float.NaN;
+                CheatDouble = double.NaN;
 
                 InitAsSpecial(ValueIsNaN, ValueIsPositiveInfinity, ValueIsNegativeInfinity);
             }
@@ -339,7 +345,8 @@
                 IntegerField.SetOne();
                 FractionalField = BitField.CreateFractionBitField(value);
                 ExponentField = BitField.CreateExponentBitField(value);
-                Cheat = value;
+                CheatSingle = float.NaN;
+                CheatDouble = value;
             }
         }
 
@@ -362,11 +369,12 @@
             IntegerField = BitField.Empty;
             FractionalField = BitField.Empty;
             ExponentField = BitField.Empty;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
-            Cheat = (double)value;
+            CheatDouble = (double)value;
         }
 
         /// <summary>
@@ -388,11 +396,12 @@
             IntegerField = BitField.Empty;
             FractionalField = BitField.Empty;
             ExponentField = BitField.Empty;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
-            Cheat = (double)value;
+            CheatDouble = value;
         }
 
         /// <summary>
@@ -414,11 +423,12 @@
             IntegerField = BitField.Empty;
             FractionalField = BitField.Empty;
             ExponentField = BitField.Empty;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
-            Cheat = (double)value;
+            CheatDouble = value;
         }
 
         /// <summary>
@@ -440,11 +450,12 @@
             IntegerField = BitField.Empty;
             FractionalField = BitField.Empty;
             ExponentField = BitField.Empty;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
-            Cheat = (double)value;
+            CheatDouble = (double)value;
         }
 
         /// <summary>
@@ -466,11 +477,12 @@
             IntegerField = BitField.Empty;
             FractionalField = BitField.Empty;
             ExponentField = BitField.Empty;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             InitFromText(value.ToString(CultureInfo.CurrentCulture));
 
-            Cheat = (double)value;
+            CheatDouble = (double)value;
         }
 
         /// <summary>
@@ -493,7 +505,8 @@
             IntegerField = BitField.Empty;
             FractionalField = BitField.Empty;
             ExponentField = BitField.Empty;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             InitAsSpecial(isNaN, isPositiveInfinity, isNegativeInfinity);
         }
@@ -521,7 +534,8 @@
             Rounding = Rounding.ToNearest;
             IsSignificandNegative = false;
             IsExponentNegative = false;
-            Cheat = double.NaN;
+            CheatSingle = float.NaN;
+            CheatDouble = double.NaN;
 
             if (IsZero)
             {
@@ -1164,24 +1178,18 @@
         {
             if (IsInteger)
             {
-                bool Success = ExponentField.ToUInt64(out ulong ExponentValue);
-                Debug.Assert(Success); // TODO: what if really big.
-
-                string IntegerString = ComposeIntegerString(ExponentValue, out long BitIndex);
-                string Result = IntegerString;
-
-                return Result;
+                bool IsSmall = ExponentField.ToUInt64(out ulong ExponentValue);
+                if (IsSmall)
+                    return ComposeIntegerString(ExponentValue, out _);
             }
-            else
-            {
-                string IntegerString = ComposeIntegerString(0, out long BitIndex);
-                string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
-                string ExponentString = ComposeExponentString();
 
-                string Result = $"{IntegerString}{FractionalString}{ExponentString}";
+            string IntegerString = ComposeIntegerString(0, out long BitIndex);
+            string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
+            string ExponentString = ComposeExponentString();
 
-                return Result;
-            }
+            string Result = $"{IntegerString}{FractionalString}{ExponentString}";
+
+            return Result;
         }
 
         private string ComposeIntegerString(ulong exponentValue, out long bitIndex)
@@ -1278,13 +1286,25 @@
         private void SetCheatFromSpecialNumber()
         {
             if (IsNaN)
-                Cheat = double.NaN;
+            {
+                CheatSingle = float.NaN;
+                CheatDouble = double.NaN;
+            }
             else if (IsPositiveInfinity)
-                Cheat = double.PositiveInfinity;
+            {
+                CheatSingle = float.PositiveInfinity;
+                CheatDouble = double.PositiveInfinity;
+            }
             else if (IsNegativeInfinity)
-                Cheat = double.NegativeInfinity;
+            {
+                CheatSingle = float.NegativeInfinity;
+                CheatDouble = double.NegativeInfinity;
+            }
             else
-                Cheat = 0;
+            {
+                CheatSingle = 0;
+                CheatDouble = 0;
+            }
         }
 
         private void SetCheatFromText()
@@ -1293,13 +1313,18 @@
             double AsDouble;
 
             if (double.TryParse(AsText, out AsDouble))
-                Cheat = AsDouble;
+                CheatDouble = AsDouble;
         }
 
         /// <summary>
-        /// The cheat value.
+        /// The cheat value, as float.
         /// </summary>
-        public double Cheat { get; private set; }
+        public float CheatSingle { get; private set; }
+
+        /// <summary>
+        /// The cheat value, as double.
+        /// </summary>
+        public double CheatDouble { get; private set; }
         #endregion
     }
 }
