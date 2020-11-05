@@ -209,26 +209,50 @@
         #endregion
 
         #region Overrides
+        /// <summary>
+        /// Checks if <paramref name="obj1"/> is equal to <paramref name="obj2"/>.
+        /// </summary>
+        /// <param name="obj1">The first number.</param>
+        /// <param name="obj2">The second number.</param>
         public static bool operator ==(FormattedNumber obj1, FormattedNumber obj2)
         {
             return obj1.Equals(obj2);
         }
 
+        /// <summary>
+        /// Checks if <paramref name="obj1"/> is different then <paramref name="obj2"/>.
+        /// </summary>
+        /// <param name="obj1">The first number.</param>
+        /// <param name="obj2">The second number.</param>
         public static bool operator !=(FormattedNumber obj1, FormattedNumber obj2)
         {
             return !obj1.Equals(obj2);
         }
 
+        /// <summary>
+        /// Indicates whether this instance and a specified object are equal.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current instance.</param>
+        /// <returns>True if obj and this instance are the same type and represent the same value; otherwise, false.</returns>
         public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
 
+        /// <summary>
+        /// Indicates whether this instance and a specified object are equal.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current instance.</param>
+        /// <returns>True if obj and this instance are the same type and represent the same value; otherwise, false.</returns>
         public bool Equals(FormattedNumber obj)
         {
             return base.Equals(obj);
         }
 
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
         public override int GetHashCode()
         {
             return base.GetHashCode();

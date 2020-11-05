@@ -163,11 +163,11 @@
                 Carry = Value >= radix;
 
                 if (Carry)
-                    text = text.Substring(0, text.Length - 1 - i) + '0' + text.Substring(0, text.Length - i);
+                    text = text.Substring(0, text.Length - 1 - i) + '0' + text.Substring(text.Length - i);
                 else
                 {
                     char Digit = digitHandler(Value);
-                    text = text.Substring(0, text.Length - 1 - i) + Digit + text.Substring(0, text.Length - i);
+                    text = text.Substring(0, text.Length - 1 - i) + Digit + text.Substring(text.Length - i);
                     break;
                 }
             }

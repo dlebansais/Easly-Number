@@ -1,9 +1,10 @@
-﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("Test-Easly-Number")]
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Test-Easly-Number")]
 
 namespace EaslyNumber
 {
     using System;
     using System.Diagnostics;
+    using System.Text;
 
     internal class BitField_byte
     {
@@ -49,6 +50,16 @@ namespace EaslyNumber
         {
             Content = new byte[(length + (sizeof(byte) * 8) - 1) / (sizeof(byte) * 8)];
 
+            InitFillContent(source, offset);
+            InitCleanup(length);
+
+            ShiftBits = 0;
+
+            Debug.Assert(LastItemIndex >= 0);
+        }
+
+        private void InitFillContent(byte[] source, int offset)
+        {
             int ElementOffset = offset / (sizeof(byte) * 8);
             int BitOffset = offset - (ElementOffset * sizeof(byte) * 8);
 
@@ -67,11 +78,39 @@ namespace EaslyNumber
 
                 Carry = (byte)(NextElementValue << BitOffset);
             }
+        }
 
-            SignificantBits = length;
-            ShiftBits = 0;
+        private void InitCleanup(int length)
+        {
+            int FinalLength = length;
+            while (Content.Length > 1 && Content[Content.Length - 1] == 0)
+            {
+                Array.Resize(ref Content, Content.Length - 1);
+                FinalLength = Content.Length * sizeof(byte) * 8;
+            }
 
-            Debug.Assert(LastItemIndex >= 0);
+            byte LastItem = Content[Content.Length - 1];
+
+            if (LastItem == 0)
+            {
+                Debug.Assert(Content.Length == 1);
+                SignificantBits = 1;
+            }
+            else
+            {
+                Debug.Assert(FinalLength >= sizeof(byte) * 8);
+
+                int Offset = ItemOffset(FinalLength - 1);
+                byte Mask = (byte)(1UL << Offset);
+
+                while (FinalLength > 1 && (LastItem & Mask) == 0)
+                {
+                    FinalLength--;
+                    Mask >>= 1;
+                }
+
+                SignificantBits = FinalLength;
+            }
         }
         #endregion
 
@@ -217,6 +256,9 @@ namespace EaslyNumber
             }
         }
 
+        /// <summary>
+        /// Gets a clone of the object.
+        /// </summary>
         public BitField_byte Clone()
         {
             BitField_byte Result = Create();
@@ -229,6 +271,33 @@ namespace EaslyNumber
             Result.ShiftBits = ShiftBits;
 
             return Result;
+        }
+
+        /// <summary>
+        /// Gets the bit field content as a 64-bits integer if possible.
+        /// </summary>
+        /// <param name="value">The 64-bits integer value upon return.</param>
+        /// <returns>True if the value can be reprensented as a 64-bits integer; otherwise, false.</returns>
+        public bool ToUInt64(out ulong value)
+        {
+            value = 0;
+
+            if (ShiftBits + SignificantBits >= 64)
+                return false;
+
+            byte[] Result = new byte[8];
+            Debug.Assert(Content.Length <= 8 / sizeof(byte));
+
+            for (int i = 0; i < Content.Length; i++)
+            {
+                byte Item = Content[i];
+                byte[] ItemBytes = BitConverter.GetBytes(Item);
+
+                Array.Copy(ItemBytes, 0, Result, i * sizeof(byte), sizeof(byte));
+            }
+
+            value = BitConverter.ToUInt64(Result, 0);
+            return true;
         }
         #endregion
 
@@ -497,6 +566,37 @@ namespace EaslyNumber
         /// The bit field data.
         /// </summary>
         private byte[] Content;
+        #endregion
+
+        #region Debugging
+        public override string ToString()
+        {
+            if (IsZero)
+                return "0";
+
+            int ResultLength = (int)SignificantBits;
+            StringBuilder ResultBuilder = new StringBuilder(ResultLength);
+            ResultBuilder.Length = ResultLength;
+
+            int Offset = 0;
+            byte b = 0;
+
+            for (int i = 0; i < ResultLength; i++)
+            {
+                if (i % (sizeof(byte) * 8) == 0)
+                    b = Content[Offset++];
+
+                ResultBuilder[ResultLength - i - 1] = (b & 1) == 0 ? '0' : '1';
+                b >>= 1;
+            }
+
+            string Result = ResultBuilder.ToString();
+
+            if (ShiftBits != 0)
+                Result += $" << {ShiftBits}";
+
+            return Result;
+        }
         #endregion
     }
 }

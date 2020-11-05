@@ -1065,7 +1065,7 @@
         {
             if (IsInteger)
             {
-                string IntegerString = ComposeIntegerString(out long BitIndex);
+                string IntegerString = ComposeIntegerString(0, out long BitIndex);
 
                 NumberFormatInfo NumberFormat;
                 if (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo)
@@ -1113,7 +1113,7 @@
             }
             else
             {
-                string IntegerString = ComposeIntegerString(out long BitIndex);
+                string IntegerString = ComposeIntegerString(0, out long BitIndex);
                 string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
                 string ExponentString = ComposeExponentString();
 
@@ -1129,7 +1129,7 @@
 
             if (IsInteger)
             {
-                string IntegerString = ComposeIntegerString(out long _);
+                string IntegerString = ComposeIntegerString(0, out long _);
 
                 NumberFormatInfo NumberFormat;
                 if (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo)
@@ -1150,7 +1150,7 @@
             }
             else
             {
-                string IntegerString = ComposeIntegerString(out long BitIndex);
+                string IntegerString = ComposeIntegerString(0, out long BitIndex);
                 string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
                 string ExponentString = ComposeExponentString();
 
@@ -1164,16 +1164,17 @@
         {
             if (IsInteger)
             {
-                string IntegerString = ComposeIntegerString(out long BitIndex);
-                string ExponentString = ComposeExponentString();
+                bool Success = ExponentField.ToUInt64(out ulong ExponentValue);
+                Debug.Assert(Success); // TODO: what if really big.
 
-                string Result = $"{IntegerString}{ExponentString}";
+                string IntegerString = ComposeIntegerString(ExponentValue, out long BitIndex);
+                string Result = IntegerString;
 
                 return Result;
             }
             else
             {
-                string IntegerString = ComposeIntegerString(out long BitIndex);
+                string IntegerString = ComposeIntegerString(0, out long BitIndex);
                 string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
                 string ExponentString = ComposeExponentString();
 
@@ -1183,7 +1184,7 @@
             }
         }
 
-        private string ComposeIntegerString(out long bitIndex)
+        private string ComposeIntegerString(ulong exponentValue, out long bitIndex)
         {
             string IntegerString = "0";
             bitIndex = 1;
@@ -1195,6 +1196,12 @@
                     bool Carry = IntegerField.GetBit(IntegerField.SignificantBits + IntegerField.ShiftBits - bitIndex);
                     IntegerString = NumberTextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
                     bitIndex++;
+                }
+
+                while (exponentValue > 0)
+                {
+                    IntegerString = NumberTextPartition.MultipliedByTwo(IntegerString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, false);
+                    exponentValue--;
                 }
             }
 

@@ -622,7 +622,7 @@
         [Category("Coverage")]
         public void TestConversion()
         {
-            System.Diagnostics.Debug.Assert(false);
+            //System.Diagnostics.Debug.Assert(false);
             Number n1 = new Number(1.0F);
             Assert.That(n1.ToString() == "1" && n1.Cheat == 1, $"Result: {n1}, expected: 1");
 

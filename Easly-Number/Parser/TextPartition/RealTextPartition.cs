@@ -186,11 +186,11 @@
             else
                 ExponentString = "0";
 
-            if (Text != "0")
+            /*if (Text != "0")
             {
                 Normalize(ref IntegerString, ref FractionalString, ref ExponentString, ExponentSign == OptionalSign.Negative);
                 FindBestPowerOfTwo(ExponentString, out ExponentString);
-            }
+            }*/
 
             exponentField = new BitField();
 
@@ -262,7 +262,11 @@
         {
             char LastDigit = integerString[integerString.Length - 1];
             integerString = integerString.Substring(0, integerString.Length - 1);
-            fractionalString = $"{LastDigit}{fractionalString}";
+
+            if (fractionalString.Length == 0 || fractionalString == "0")
+                fractionalString = LastDigit.ToString();
+            else
+                fractionalString = $"{LastDigit}{fractionalString}";
 
             if (isExponentNegative)
             {
