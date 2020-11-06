@@ -62,9 +62,11 @@
         #endregion
 
         #region Tools
+        public const string FormatDouble = "E16";
+
         public static string DoubleString(double d)
         {
-            return d.ToString("E16");
+            return d.ToString(FormatDouble);
         }
         #endregion
     }

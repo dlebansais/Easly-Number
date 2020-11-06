@@ -110,10 +110,10 @@
         private void InitFromPartition(TextPartition partition)
         {
             if (partition.DiscardedProlog.Length > 0)
-                throw new ArgumentException($"{nameof(partition)} does not represent a valid number");
+                throw new ArgumentException($"{nameof(partition)} does not represent a valid number.");
 
             if (partition.InvalidPart.Length > 0)
-                throw new ArgumentException($"{nameof(partition)} does not represent a valid number");
+                throw new ArgumentException($"{nameof(partition)} does not represent a valid number.");
 
             bool IsHandled = false;
 
@@ -993,7 +993,7 @@
         /// <returns>The string representation of the value of this instance as specified by format and provider.</returns>
         public string ToString(string? format, IFormatProvider? provider)
         {
-            if (!ParseNumericFormat(format, provider, out NumericFormat NumericFormat, out int PrecisionSpecifier))
+            if (!ParseNumericFormat(format, provider, out DisplayFormat DisplayFormat))
                 throw new FormatException("Parameter format is invalid");
 
             string? Result = null;
@@ -1006,16 +1006,16 @@
                 Result = double.NegativeInfinity.ToString(CultureInfo.CurrentCulture);
             else
             {
-                switch (NumericFormat)
+                switch (DisplayFormat.NumericFormat)
                 {
                     case NumericFormat.Default:
-                        Result = ToStringDefaultFormat(PrecisionSpecifier);
+                        Result = ToStringDefaultFormat(DisplayFormat);
                         break;
                     case NumericFormat.Exponential:
-                        Result = ToStringExponentialFormat(PrecisionSpecifier, provider);
+                        Result = ToStringExponentialFormat(DisplayFormat);
                         break;
                     case NumericFormat.FixedPoint:
-                        Result = ToStringFixedPointFormat(PrecisionSpecifier, provider);
+                        Result = ToStringFixedPointFormat(DisplayFormat);
                         break;
                 }
             }
@@ -1025,139 +1025,120 @@
             return Result !;
         }
 
-        private static bool ParseNumericFormat(string? format, IFormatProvider? provider, out NumericFormat numericFormat, out int precisionSpecifier)
+        private static bool ParseNumericFormat(string? format, IFormatProvider? provider, out DisplayFormat displayFormat)
         {
-            numericFormat = NumericFormat.Default;
-            precisionSpecifier = 15;
-
             char FormatCharacter = (format == null || format.Length == 0) ? 'G' : format[0];
+            bool IsExponentUpperCase = char.IsUpper(FormatCharacter);
+            NumberFormatInfo NumberFormatInfo = (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo) ? AsNumberFormatInfo : NumberFormatInfo.CurrentInfo;
+
+            NumericFormat NumericFormat;
+            int PrecisionSpecifier;
 
             switch (FormatCharacter)
             {
                 case 'G':
-                    numericFormat = NumericFormat.Default;
-                    precisionSpecifier = 15;
+                case 'g':
+                    NumericFormat = NumericFormat.Default;
+                    PrecisionSpecifier = 15;
                     break;
 
                 case 'E':
-                    numericFormat = NumericFormat.Exponential;
-                    precisionSpecifier = 6;
+                case 'e':
+                    NumericFormat = NumericFormat.Exponential;
+                    PrecisionSpecifier = 6;
                     break;
 
                 case 'F':
-                    numericFormat = NumericFormat.FixedPoint;
-
-                    NumberFormatInfo NumberFormatInfo;
-
-                    if (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo)
-                        NumberFormatInfo = AsNumberFormatInfo;
-                    else
-                        NumberFormatInfo = NumberFormatInfo.CurrentInfo;
-
-                    precisionSpecifier = NumberFormatInfo.NumberDecimalDigits;
+                case 'f':
+                    NumericFormat = NumericFormat.FixedPoint;
+                    PrecisionSpecifier = NumberFormatInfo.NumberDecimalDigits;
                     break;
 
                 default:
+                    displayFormat = DisplayFormat.Empty;
                     return false;
             }
 
             if (format != null && format.Length > 1)
             {
-                if (!int.TryParse(format.Substring(1), out precisionSpecifier))
+                if (!int.TryParse(format.Substring(1), out PrecisionSpecifier))
+                {
+                    displayFormat = DisplayFormat.Empty;
                     return false;
+                }
 
-                if (precisionSpecifier < 0 || precisionSpecifier > 99)
+                if (PrecisionSpecifier < 0 || PrecisionSpecifier > 99)
+                {
+                    displayFormat = DisplayFormat.Empty;
                     return false;
+                }
             }
 
-            Debug.Assert(numericFormat == NumericFormat.Default || numericFormat == NumericFormat.Exponential || numericFormat == NumericFormat.FixedPoint);
-            Debug.Assert(precisionSpecifier >= 0 && precisionSpecifier <= 99);
+            Debug.Assert(NumericFormat == NumericFormat.Default || NumericFormat == NumericFormat.Exponential || NumericFormat == NumericFormat.FixedPoint);
+            Debug.Assert(PrecisionSpecifier >= 0 && PrecisionSpecifier <= 99);
+
+            displayFormat = new DisplayFormat(NumericFormat, IsExponentUpperCase, PrecisionSpecifier, NumberFormatInfo);
             return true;
         }
 
-        private string ToStringExponentialFormat(int precisionSpecifier, IFormatProvider? provider)
+        private string ToStringExponentialFormat(DisplayFormat displayFormat)
         {
-            if (IsInteger)
+            string IntegerString = ComposeIntegerString(0, out long BitIndex);
+            string Separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
+
+            string FractionalString = IsInteger ? (displayFormat.PrecisionSpecifier > 0 ? Separator : string.Empty) : ComposeFractionalString(displayFormat.PrecisionSpecifier, BitIndex);
+            for (int i = 0; i < displayFormat.PrecisionSpecifier; i++)
+                FractionalString += "0";
+
+            string ExponentString;
+            string ExponentCharacter = displayFormat.IsExponentUpperCase ? "E" : "e";
+
+            if (ExponentField != BitField.Empty && ExponentField.SignificantBits > 0 && !ExponentField.IsZero)
             {
-                string IntegerString = ComposeIntegerString(0, out long BitIndex);
+                ExponentString = "0";
+                BitIndex = 1;
 
-                NumberFormatInfo NumberFormat;
-                if (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo)
-                    NumberFormat = AsNumberFormatInfo;
-                else
-                    NumberFormat = CultureInfo.CurrentCulture.NumberFormat;
-
-                string Separator = NumberFormat.NumberDecimalSeparator;
-                string FractionalString = string.Empty;
-                for (int i = 0; i < precisionSpecifier; i++)
-                    FractionalString += "0";
-
-                if (precisionSpecifier > 0)
-                    FractionalString = $"{Separator}{FractionalString}";
-
-                string ExponentString;
-
-                if (ExponentField != BitField.Empty && ExponentField.SignificantBits > 0 && !ExponentField.IsZero)
+                while (BitIndex <= ExponentField.SignificantBits + ExponentField.ShiftBits)
                 {
-                    ExponentString = "0";
-                    BitIndex = 1;
-
-                    while (BitIndex <= ExponentField.SignificantBits + ExponentField.ShiftBits)
-                    {
-                        bool Carry = ExponentField.GetBit(ExponentField.SignificantBits + ExponentField.ShiftBits - BitIndex);
-                        ExponentString = NumberTextPartition.MultipliedByTwo(ExponentString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
-                        BitIndex++;
-                    }
-
-                    ExponentString = ExponentString.Substring(0, 3);
-
-                    if (IsExponentNegative)
-                        ExponentString = $"-{ExponentString}";
-                    else
-                        ExponentString = $"+{ExponentString}";
-
-                    ExponentString = $"E{ExponentString}";
+                    bool Carry = ExponentField.GetBit(ExponentField.SignificantBits + ExponentField.ShiftBits - BitIndex);
+                    ExponentString = NumberTextPartition.MultipliedByTwo(ExponentString, DecimalRadix, IsValidDecimalDigit, ToDecimalDigit, Carry);
+                    BitIndex++;
                 }
+
+                while (ExponentString.Length < 3)
+                    ExponentString = "0" + ExponentString;
+
+                ExponentString = ExponentString.Substring(0, 3);
+
+                if (IsExponentNegative)
+                    ExponentString = $"-{ExponentString}";
                 else
-                    ExponentString = "E+000";
+                    ExponentString = $"+{ExponentString}";
 
-                string Result = $"{IntegerString}{FractionalString}{ExponentString}";
-
-                return Result;
+                ExponentString = $"{ExponentCharacter}{ExponentString}";
             }
             else
-            {
-                string IntegerString = ComposeIntegerString(0, out long BitIndex);
-                string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
-                string ExponentString = ComposeExponentString();
+                ExponentString = $"{ExponentCharacter}+000";
 
-                string Result = $"{IntegerString}{FractionalString}{ExponentString}";
+            string Result = $"{IntegerString}{FractionalString}{ExponentString}";
 
-                return Result;
-            }
+            return Result;
         }
 
-        private string ToStringFixedPointFormat(int precisionSpecifier, IFormatProvider? provider)
+        private string ToStringFixedPointFormat(DisplayFormat displayFormat)
         {
             string Result;
 
             if (IsInteger)
             {
                 string IntegerString = ComposeIntegerString(0, out long _);
-
-                NumberFormatInfo NumberFormat;
-                if (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo)
-                    NumberFormat = AsNumberFormatInfo;
-                else
-                    NumberFormat = CultureInfo.CurrentCulture.NumberFormat;
-
-                string Separator = NumberFormat.NumberDecimalSeparator;
+                string Separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
                 string FractionalString = string.Empty;
 
-                for (int i = 0; i < precisionSpecifier; i++)
+                for (int i = 0; i < displayFormat.PrecisionSpecifier; i++)
                     FractionalString += "0";
 
-                if (precisionSpecifier > 0)
+                if (displayFormat.PrecisionSpecifier > 0)
                     FractionalString = $"{Separator}{FractionalString}";
 
                 Result = $"{IntegerString}{FractionalString}";
@@ -1165,8 +1146,8 @@
             else
             {
                 string IntegerString = ComposeIntegerString(0, out long BitIndex);
-                string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
-                string ExponentString = ComposeExponentString();
+                string FractionalString = ComposeFractionalString(displayFormat.PrecisionSpecifier, BitIndex);
+                string ExponentString = ComposeExponentString(displayFormat.IsExponentUpperCase);
 
                 Result = $"{IntegerString}{FractionalString}{ExponentString}";
             }
@@ -1174,7 +1155,7 @@
             return Result;
         }
 
-        private string ToStringDefaultFormat(int precisionSpecifier)
+        private string ToStringDefaultFormat(DisplayFormat displayFormat)
         {
             if (IsInteger)
             {
@@ -1184,8 +1165,8 @@
             }
 
             string IntegerString = ComposeIntegerString(0, out long BitIndex);
-            string FractionalString = ComposeFractionalString(precisionSpecifier, BitIndex);
-            string ExponentString = ComposeExponentString();
+            string FractionalString = ComposeFractionalString(displayFormat.PrecisionSpecifier, BitIndex);
+            string ExponentString = ComposeExponentString(displayFormat.IsExponentUpperCase);
 
             string Result = $"{IntegerString}{FractionalString}{ExponentString}";
 
@@ -1258,7 +1239,7 @@
             return $"{Separator}{FractionalString}";
         }
 
-        private string ComposeExponentString()
+        private string ComposeExponentString(bool isExponentUpperCase)
         {
             if (ExponentField != BitField.Empty && ExponentField.SignificantBits > 0 && !ExponentField.IsZero)
             {
@@ -1275,7 +1256,8 @@
                 if (IsExponentNegative)
                     ExponentString = $"-{ExponentString}";
 
-                return $"e{ExponentString}";
+                string ExponentLetter = isExponentUpperCase ? "E" : "e";
+                return $"{ExponentLetter}{ExponentString}";
             }
             else
                 return string.Empty;

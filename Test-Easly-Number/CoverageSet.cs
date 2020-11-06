@@ -483,7 +483,7 @@
                 1.0000001,
             };
 
-            //Debug.Assert(false);
+            System.Diagnostics.Debug.Assert(false);
 
             Assert.That(Arithmetic.SignificandPrecision == Arithmetic.DefaultSignificandPrecision);
             Arithmetic.SignificandPrecision = Arithmetic.DefaultSignificandPrecision;
@@ -505,7 +505,7 @@
                 FormattedNumber FormattedNumber = new FormattedNumber(Text);
 
                 Number Value = FormattedNumber.Value;
-                Assert.That(Value.ToString() == Text, $"Result #{i}={Value}, Expected={Text}");
+                Assert.That(Value.ToString(TestEnvironment.FormatDouble) == Text, $"Result #{i}={Value}, Expected={Text}");
                 Assert.That(Value.CheatDouble == d);
             }
 
@@ -581,28 +581,28 @@
             Assert.That(n7.IsNegativeInfinity && n7.ToString() == TextNegativeInfinity && double.IsNegativeInfinity(n7.CheatDouble), $"Result: {n7}, expected: {TextNegativeInfinity}");
 
             ex = Assert.Throws<ArgumentException>(() => n4 = new Number($" {TextNaN}"));
-            Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+            Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);
 
             ex = Assert.Throws<ArgumentException>(() => n4 = new Number($"{TextNaN}x"));
-            Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+            Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);
 
             Number n8 = new Number("0xFF");
             Assert.That(!n8.IsZero && n8.ToString() == "255" && n8.CheatDouble == 255, $"Result: {n8}, expected: 255");
 
             ex = Assert.Throws<ArgumentException>(() => n8 = new Number(" 0xFF"));
-            Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+            Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);
 
             ex = Assert.Throws<ArgumentException>(() => n8 = new Number("0xFFx"));
-            Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+            Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);
 
             Number n9 = new Number("FF:H");
             Assert.That(!n9.IsZero && n9.ToString() == "255" && n9.CheatDouble == 255, $"Result: {n9}, expected: 255");
 
             ex = Assert.Throws<ArgumentException>(() => n9 = new Number(" FF:H"));
-            Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+            Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);
 
             ex = Assert.Throws<ArgumentException>(() => n9 = new Number("FF:Hx"));
-            Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+            Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);
 
             //Debug.Assert(false);
             Number n10 = new Number("1.2e3");
@@ -612,10 +612,10 @@
             Assert.That(n10.ToString() == $"1{SP}2e3" && n10.CheatDouble == 1.2E3, $"Result: {n10}, expected: 1{SP}2e3");
 
             ex = Assert.Throws<ArgumentException>(() => n10 = new Number(" 1.2e3"));
-            Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+            Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);
 
             ex = Assert.Throws<ArgumentException>(() => n10 = new Number("1.2e3x"));
-            Assert.That(ex.Message == $"Value does not fall within the expected range.", ex.Message);
+            Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);
         }
 
         [Test]
