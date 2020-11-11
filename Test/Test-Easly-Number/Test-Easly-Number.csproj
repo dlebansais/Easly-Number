@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Easly-Number\Easly-Number.csproj" />
+    <ProjectReference Include="..\..\Easly-Number\Easly-Number.csproj" />
   </ItemGroup>
 
 </Project>

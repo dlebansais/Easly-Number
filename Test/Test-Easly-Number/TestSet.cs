@@ -638,7 +638,7 @@
             string Text1 = TestEnvironment.DoubleString(d1);
             string Text2 = TestEnvironment.DoubleString(d2);
 
-            Debug.Assert(false);
+            //Debug.Assert(false);
             FormattedNumber FormattedNumber1 = new FormattedNumber(Text1);
             FormattedNumber FormattedNumber2 = new FormattedNumber(Text2);
 
