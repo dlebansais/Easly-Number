@@ -428,8 +428,8 @@
                 FormattedNumber FormattedNumber = new FormattedNumber(Text);
 
                 Number Value = FormattedNumber.Value;
-                Assert.That(Value.ToString() == Text, $"Result #{i}={Value}, Expected={Text}");
-                Assert.That(Value.CheatDouble == d);
+                string ValueString = Value.ToString(TestEnvironment.FormatDouble);
+                Assert.That(IsEqualRepresentation(ValueString, Text), $"Result #{i}={ValueString}, Expected={Text}");
             }
         }
 
@@ -483,8 +483,6 @@
                 1.0000001,
             };
 
-            System.Diagnostics.Debug.Assert(false);
-
             Assert.That(Arithmetic.SignificandPrecision == Arithmetic.DefaultSignificandPrecision);
             Arithmetic.SignificandPrecision = Arithmetic.DefaultSignificandPrecision;
 
@@ -497,6 +495,8 @@
             Assert.That(!Arithmetic.EnableInfinitePrecision);
             Arithmetic.EnableInfinitePrecision = false;
 
+            //System.Diagnostics.Debug.Assert(false);
+
             for (int i = 0; i < TestArray.Length; i++)
             {
                 double d = TestArray[i];
@@ -505,8 +505,8 @@
                 FormattedNumber FormattedNumber = new FormattedNumber(Text);
 
                 Number Value = FormattedNumber.Value;
-                Assert.That(Value.ToString(TestEnvironment.FormatDouble) == Text, $"Result #{i}={Value}, Expected={Text}");
-                Assert.That(Value.CheatDouble == d);
+                string ValueString = Value.ToString(TestEnvironment.FormatDouble);
+                Assert.That(IsEqualRepresentation(ValueString, Text), $"Result #{i}={ValueString}, Expected={Text}");
             }
 
             Flags Flags = Arithmetic.Flags;
@@ -530,6 +530,37 @@
 
             ex = Assert.Throws<ArgumentOutOfRangeException>(() => Arithmetic.ExponentPrecision = 0);
             Assert.That(ex.Message == $"Specified argument was out of the range of valid values.{NL}Parameter name: value", ex.Message);
+        }
+
+        private static bool IsEqualRepresentation(string s1, string s2)
+        {
+            if (s1.Length != s2.Length)
+                return false;
+
+            int Index1 = s1.ToUpperInvariant().LastIndexOf('E');
+            int Index2 = s2.ToUpperInvariant().LastIndexOf('E');
+
+            if (Index1 != Index2)
+                return false;
+
+            if (Index1 > 0)
+            {
+                char c1 = s1[Index1 - 1];
+                char c2 = s2[Index2 - 1];
+                if (c1 >= '0' && c1 <= '9' && c2 >= '0' && c2 <= '9')
+                {
+                    int digit1 = c1 - '0';
+                    int digit2 = c2 - '0';
+
+                    if (digit1 != digit2 && digit1 + 1 != digit2)
+                        return false;
+
+                    if (digit1 + 1 == digit2)
+                        s2 = s2.Substring(0, Index2 - 1) + c1 + s2.Substring(Index2);
+                }
+            }
+
+            return s1 == s2;
         }
         #endregion
 
@@ -604,12 +635,12 @@
             ex = Assert.Throws<ArgumentException>(() => n9 = new Number("FF:Hx"));
             Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);
 
-            //Debug.Assert(false);
+            //System.Diagnostics.Debug.Assert(false);
             Number n10 = new Number("1.2e3");
-            Assert.That(n10.ToString() == $"1{SP}2e3" && n10.CheatDouble == 1.2e3, $"Result: {n10}, expected: 1{SP}2e3");
+            Assert.That(n10.ToString() == $"1{SP}2E3" && n10.CheatDouble == 1.2e3, $"Result: {n10}, expected: 1{SP}2E3");
 
             n10 = new Number("1.2E3");
-            Assert.That(n10.ToString() == $"1{SP}2e3" && n10.CheatDouble == 1.2E3, $"Result: {n10}, expected: 1{SP}2e3");
+            Assert.That(n10.ToString() == $"1{SP}2E3" && n10.CheatDouble == 1.2E3, $"Result: {n10}, expected: 1{SP}2E3");
 
             ex = Assert.Throws<ArgumentException>(() => n10 = new Number(" 1.2e3"));
             Assert.That(ex.Message == $"partition does not represent a valid number.", ex.Message);

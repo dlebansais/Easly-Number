@@ -1087,7 +1087,9 @@
             string Separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
 
             string FractionalString = IsInteger ? (displayFormat.PrecisionSpecifier > 0 ? Separator : string.Empty) : ComposeFractionalString(displayFormat.PrecisionSpecifier, BitIndex);
-            for (int i = 0; i < displayFormat.PrecisionSpecifier; i++)
+
+            int i = FractionalString.Length > 0 ? FractionalString.Length - 1 : FractionalString.Length;
+            for (; i < displayFormat.PrecisionSpecifier; i++)
                 FractionalString += "0";
 
             string ExponentString;

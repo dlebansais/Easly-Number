@@ -186,16 +186,20 @@
             else
                 ExponentString = "0";
 
-            /*if (Text != "0")
+            string PowerOfTwo;
+
+            if (Text != "0")
             {
                 Normalize(ref IntegerString, ref FractionalString, ref ExponentString, ExponentSign == OptionalSign.Negative);
-                FindBestPowerOfTwo(ExponentString, out ExponentString);
-            }*/
+                FindBestPowerOfTwo(ref IntegerString, ref FractionalString, ref ExponentString, out PowerOfTwo);
+            }
+            else
+                PowerOfTwo = "0";
 
             exponentField = new BitField();
 
-            if (ExponentString != "0")
-                ConvertExponentToBitField(ExponentString, exponentPrecision, ref exponentField);
+            if (PowerOfTwo != "0")
+                ConvertExponentToBitField(PowerOfTwo, exponentPrecision, ref exponentField);
             else
                 exponentField.SetZero();
 
@@ -214,7 +218,7 @@
         }
 
         /// <summary>
-        /// Changes the string representation of a number to ensure the integer part is zero and the fractional part does not start with a zero.
+        /// Changes the string representation of a number to ensure that either the exponent part, the integer part or the fractional part is equal to zero.
         /// </summary>
         /// <param name="integerString">The integer part of the significand.</param>
         /// <param name="fractionalString">The fractional part of the significand.</param>
@@ -222,121 +226,217 @@
         /// <param name="isExponentNegative">True if the exponent is negative.</param>
         private static void Normalize(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
         {
-            if (integerString.Length > 1 || (integerString.Length == 1 && integerString[0] != '0'))
-                NormalizeIncreaseExponent(ref integerString, ref fractionalString, ref exponentString, isExponentNegative);
-            else if (fractionalString[0] == '0')
-                NormalizeDecreaseExponent(ref fractionalString, ref exponentString, isExponentNegative);
+            if (isExponentNegative)
+                NormalizeIncreaseExponent(ref integerString, ref fractionalString, ref exponentString);
+            else
+                NormalizeDecreaseExponent(ref integerString, ref fractionalString, ref exponentString);
         }
 
         /// <summary>
-        /// Changes the string representation of a number to ensure the integer part is zero by moving digits from the integer part to the fractional part.
+        /// Changes the string representation of a number to ensure that either the exponent part, the integer part or the fractional part is equal to zero by moving digits from the integer part to the fractional part.
         /// </summary>
         /// <param name="integerString">The integer part of the significand.</param>
         /// <param name="fractionalString">The fractional part of the significand.</param>
         /// <param name="exponentString">The exponent part of the significand.</param>
-        /// <param name="isExponentNegative">True if the exponent is negative.</param>
-        private static void NormalizeIncreaseExponent(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        private static void NormalizeIncreaseExponent(ref string integerString, ref string fractionalString, ref string exponentString)
         {
-            while (integerString.Length > 1)
-                IncreaseExponents(ref integerString, ref fractionalString, ref exponentString, isExponentNegative);
+            if (integerString.Length == 0)
+                integerString = "0";
+            if (fractionalString.Length == 0)
+                fractionalString = "0";
+            if (exponentString.Length == 0)
+                exponentString = "0";
 
-            Debug.Assert(integerString.Length == 1);
+            while (exponentString != "0" && integerString != "0" && fractionalString != "0")
+                IncreaseExponent(ref integerString, ref fractionalString, ref exponentString);
+
+            Debug.Assert(integerString.Length >= 1);
+            Debug.Assert(fractionalString.Length >= 1);
+            Debug.Assert(exponentString.Length >= 1);
+            Debug.Assert(exponentString == "0" || integerString == "0" || fractionalString == "0");
+        }
+
+        /// <summary>
+        /// Changes the string representation of a number by moving one digit from the integer part to the fractional part and increasing the exponent.
+        /// </summary>
+        /// <param name="integerString">The integer part of the significand.</param>
+        /// <param name="fractionalString">The fractional part of the significand.</param>
+        /// <param name="exponentString">The exponent part of the significand.</param>
+        private static void IncreaseExponent(ref string integerString, ref string fractionalString, ref string exponentString)
+        {
+            Debug.Assert(integerString.Length > 0);
+            Debug.Assert(fractionalString.Length > 0);
+            Debug.Assert(fractionalString.Length > 0 && exponentString != "0");
+
+            char LastDigit;
 
             if (integerString != "0")
             {
-                IncreaseExponents(ref integerString, ref fractionalString, ref exponentString, isExponentNegative);
-                Debug.Assert(integerString.Length == 0);
+                LastDigit = integerString[integerString.Length - 1];
 
-                integerString = "0";
+                if (integerString.Length > 1)
+                    integerString = integerString.Substring(0, integerString.Length - 1);
+                else
+                    integerString = "0";
             }
-        }
+            else
+                LastDigit = '0';
 
-        /// <summary>
-        /// Changes the string representation of a number to move one digit to the fractional, increasing the exponent.
-        /// </summary>
-        /// <param name="integerString">The integer part of the significand.</param>
-        /// <param name="fractionalString">The fractional part of the significand.</param>
-        /// <param name="exponentString">The exponent part of the significand.</param>
-        /// <param name="isExponentNegative">True if the exponent is negative.</param>
-        private static void IncreaseExponents(ref string integerString, ref string fractionalString, ref string exponentString, bool isExponentNegative)
-        {
-            char LastDigit = integerString[integerString.Length - 1];
-            integerString = integerString.Substring(0, integerString.Length - 1);
-
-            if (fractionalString.Length == 0 || fractionalString == "0")
+            if (fractionalString == "0")
                 fractionalString = LastDigit.ToString();
             else
                 fractionalString = $"{LastDigit}{fractionalString}";
 
-            if (isExponentNegative)
-            {
-                if (exponentString == "0")
-                {
-                    exponentString = "1";
-                    isExponentNegative = false;
-                }
-                else
-                    exponentString = Decremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
-            }
-            else
-                exponentString = Incremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
+            exponentString = Incremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
         }
 
         /// <summary>
-        /// Changes the string representation of a number to ensure the fractional part does not start with zero by removing digits from the fractional part.
+        /// Changes the string representation of a number to ensure that either the exponent part, the integer part or the fractional part is equal to zero by moving digits from the fractional part to the integer part.
         /// </summary>
+        /// <param name="integerString">The integer part of the significand.</param>
         /// <param name="fractionalString">The fractional part of the significand.</param>
         /// <param name="exponentString">The exponent part of the significand.</param>
-        /// <param name="isExponentNegative">True if the exponent is negative.</param>
-        private static void NormalizeDecreaseExponent(ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        private static void NormalizeDecreaseExponent(ref string integerString, ref string fractionalString, ref string exponentString)
         {
-            while (fractionalString.Length > 1 && fractionalString[0] == '0')
-                DecreaseExponents(ref fractionalString, ref exponentString, isExponentNegative);
+            if (integerString.Length == 0)
+                integerString = "0";
+            if (fractionalString.Length == 0)
+                fractionalString = "0";
+            if (exponentString.Length == 0)
+                exponentString = "0";
 
+            while (exponentString != "0" && integerString != "0" && fractionalString != "0")
+                DecreaseExponent(ref integerString, ref fractionalString, ref exponentString);
+
+            Debug.Assert(integerString.Length >= 1);
             Debug.Assert(fractionalString.Length >= 1);
-            Debug.Assert(fractionalString[0] != '0');
+            Debug.Assert(exponentString.Length >= 1);
+            Debug.Assert(exponentString == "0" || integerString == "0" || fractionalString == "0");
         }
 
         /// <summary>
-        /// Changes the string representation of a number to remove the first digit of the fractional part, decreasing the exponent.
+        /// Changes the string representation of a number by moving one digit from the fractional part to the integer part and increasing the exponent.
         /// </summary>
+        /// <param name="integerString">The integer part of the significand.</param>
         /// <param name="fractionalString">The fractional part of the significand.</param>
         /// <param name="exponentString">The exponent part of the significand.</param>
-        /// <param name="isExponentNegative">True if the exponent is negative.</param>
-        private static void DecreaseExponents(ref string fractionalString, ref string exponentString, bool isExponentNegative)
+        private static void DecreaseExponent(ref string integerString, ref string fractionalString, ref string exponentString)
         {
-            Debug.Assert(fractionalString.Length > 1 && fractionalString[0] == '0');
+            Debug.Assert(integerString.Length > 0);
+            Debug.Assert(fractionalString.Length > 0);
+            Debug.Assert(fractionalString.Length > 0 && exponentString != "0");
 
-            fractionalString = fractionalString.Substring(1);
+            char FirstDigit;
 
-            if (isExponentNegative)
-                exponentString = Incremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
-            else
+            if (fractionalString != "0")
             {
-                if (exponentString == "0")
-                {
-                    exponentString = "1";
-                    isExponentNegative = true;
-                }
+                FirstDigit = fractionalString[0];
+
+                if (fractionalString.Length > 1)
+                    fractionalString = fractionalString.Substring(1);
                 else
-                    exponentString = Decremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
+                    fractionalString = "0";
             }
+            else
+                FirstDigit = '0';
+
+            if (integerString == "0")
+                integerString = FirstDigit.ToString();
+            else
+                integerString = $"{integerString}{FirstDigit}";
+
+            exponentString = Decremented(exponentString, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit);
         }
 
-        private static void FindBestPowerOfTwo(string exponentString, out string powerOfTwo)
+        private static void FindBestPowerOfTwo(ref string integerString, ref string fractionalString, ref string exponentString, out string powerOfTwo)
         {
-            if (exponentString.Length < 15)
+            if (exponentString == "0")
             {
-                if (double.TryParse(exponentString, out double ExponentValue))
-                {
-                    ExponentValue *= Math.Log(10) / Math.Log(2);
-                    powerOfTwo = ((ulong)ExponentValue).ToString(CultureInfo.CurrentCulture);
-                    return;
-                }
+                powerOfTwo = "0";
+                return;
             }
 
-            // TODO: multiply by Log(10) / Log(2).
-            powerOfTwo = string.Empty;
+            if (fractionalString == "0")
+            {
+                int Base2Digits;
+
+                if (int.TryParse(exponentString, out int ExponentValue))
+                {
+                    double Base10Digits = integerString.Length + ExponentValue;
+                    Base2Digits = (int)(Base10Digits * Math.Log(10) / Math.Log(2));
+                }
+                else
+                {
+                    Base2Digits = 0; //TODO
+                    ExponentValue = 0;
+                }
+
+                string RootBase2 = "1";
+
+                for (int i = 0; i < Base2Digits; i++)
+                    RootBase2 = MultipliedByTwo(RootBase2, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, false);
+
+                while (RootBase2.Length > integerString.Length + ExponentValue)
+                {
+                    RootBase2 = DividedByTwo(RootBase2, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out _);
+                    Base2Digits--;
+                }
+
+                string RootBase2Short = RootBase2.Substring(0, integerString.Length);
+
+                while (string.Compare(RootBase2Short, integerString, StringComparison.InvariantCulture) > 0)
+                {
+                    RootBase2 = DividedByTwo(RootBase2, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out _);
+                    Base2Digits--;
+
+                    RootBase2Short = RootBase2.Substring(0, integerString.Length);
+                }
+
+                powerOfTwo = Base2Digits.ToString(CultureInfo.InvariantCulture);
+                return;
+            }
+
+            if (integerString == "0")
+            {
+                int Base2Digits;
+
+                if (int.TryParse(exponentString, out int ExponentValue))
+                {
+                    double Base10Digits = fractionalString.Length + ExponentValue;
+                    Base2Digits = (int)(Base10Digits * Math.Log(10) / Math.Log(2));
+                }
+                else
+                {
+                    Base2Digits = 0; //TODO
+                    ExponentValue = 0;
+                }
+
+                string RootBase2 = "1";
+
+                for (int i = 0; i < Base2Digits; i++)
+                    RootBase2 = MultipliedByTwo(RootBase2, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, false);
+
+                while (RootBase2.Length > fractionalString.Length + ExponentValue)
+                {
+                    RootBase2 = DividedByTwo(RootBase2, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out _);
+                    Base2Digits--;
+                }
+
+                string RootBase2Short = RootBase2.Substring(0, fractionalString.Length);
+
+                while (string.Compare(RootBase2Short, fractionalString, StringComparison.InvariantCulture) > 0)
+                {
+                    RootBase2 = DividedByTwo(RootBase2, Number.DecimalRadix, Number.IsValidDecimalDigit, Number.ToDecimalDigit, out _);
+                    Base2Digits--;
+
+                    RootBase2Short = RootBase2.Substring(0, fractionalString.Length);
+                }
+
+                powerOfTwo = Base2Digits.ToString(CultureInfo.InvariantCulture);
+                return;
+            }
+
+            powerOfTwo = "0";
         }
 
         private static bool PowerOfTwoIsGreater(ulong powerOfTwo, string exponentString)
