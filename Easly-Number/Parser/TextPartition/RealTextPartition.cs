@@ -367,7 +367,7 @@
                 }
                 else
                 {
-                    Base2Digits = 0; //TODO
+                    Base2Digits = 0; // TODO
                     ExponentValue = 0;
                 }
 
@@ -407,7 +407,7 @@
                 }
                 else
                 {
-                    Base2Digits = 0; //TODO
+                    Base2Digits = 0; // TODO
                     ExponentValue = 0;
                 }
 
