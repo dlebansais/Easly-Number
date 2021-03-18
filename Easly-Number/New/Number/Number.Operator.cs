@@ -1,11 +1,12 @@
 ﻿namespace EaslyNumber2
 {
+    using System;
     using static EaslyNumber2.NativeMethods;
 
     /// <summary>
     /// Represents numbers with arbitrary precision.
     /// </summary>
-    public partial struct Number
+    public partial struct Number : IFormattable
     {
         #region Add
         /// <summary>
@@ -15,7 +16,10 @@
         /// <param name="y">The second operand.</param>
         public static Number operator +(Number x, Number y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+            y.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_add(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x.Rounding);
 
@@ -29,7 +33,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator +(Number x, ulong y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_add_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -43,7 +49,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator +(ulong x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_add_ui(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
 
@@ -57,7 +65,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator +(Number x, long y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_add_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -71,7 +81,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator +(long x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_add_si(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
 
@@ -85,7 +97,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator +(Number x, double y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_add_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -99,7 +113,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator +(double x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_add_d(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
 
@@ -115,7 +131,10 @@
         /// <param name="y">The second operand.</param>
         public static Number operator -(Number x, Number y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+            y.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_sub(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x.Rounding);
 
@@ -129,7 +148,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator -(Number x, ulong y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_sub_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -143,7 +164,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator -(ulong x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_ui_sub(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
 
@@ -157,7 +180,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator -(Number x, long y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_sub_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -171,7 +196,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator -(long x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_si_sub(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
 
@@ -185,7 +212,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator -(Number x, double y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_sub_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -199,7 +228,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator -(double x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_d_sub(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
 
@@ -215,7 +246,10 @@
         /// <param name="y">The second operand.</param>
         public static Number operator *(Number x, Number y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+            y.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_mul(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x.Rounding);
 
@@ -229,7 +263,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator *(Number x, ulong y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_mul_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -243,7 +279,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator *(ulong x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_mul_ui(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
 
@@ -257,7 +295,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator *(Number x, long y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_mul_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -271,7 +311,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator *(long x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_mul_si(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
 
@@ -285,7 +327,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator *(Number x, double y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_mul_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -299,7 +343,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator *(double x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_mul_d(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
 
@@ -315,7 +361,10 @@
         /// <param name="y">The second operand.</param>
         public static Number operator /(Number x, Number y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+            y.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_div(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x.Rounding);
 
@@ -329,7 +378,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator /(Number x, ulong y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_div_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -343,7 +394,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator /(ulong x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_ui_div(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
 
@@ -357,7 +410,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator /(Number x, long y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_div_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -371,7 +426,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator /(long x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_si_div(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
 
@@ -385,7 +442,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator /(Number x, double y)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_div_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
 
@@ -399,7 +458,9 @@
         /// <param name="y">The second operand.</param>
         public static Number operator /(double x, Number y)
         {
-            Number z = Uninitialized;
+            y.Consolidate();
+
+            Number z = new Number(y.Precision, y.Rounding);
 
             mpfr_d_div(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
 
@@ -414,7 +475,9 @@
         /// <param name="x">The operand.</param>
         public static Number operator -(Number x)
         {
-            Number z = Uninitialized;
+            x.Consolidate();
+
+            Number z = new Number(x.Precision, x.Rounding);
 
             mpfr_neg(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, x.Rounding);
 
@@ -430,6 +493,9 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >(Number x, Number y)
         {
+            x.Consolidate();
+            y.Consolidate();
+
             return mpfr_greater_p(ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct) != 0;
         }
 
@@ -440,6 +506,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >(Number x, ulong y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) > 0;
         }
 
@@ -450,6 +518,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >(ulong x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) < 0;
         }
 
@@ -460,6 +530,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >(Number x, long y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) > 0;
         }
 
@@ -470,6 +542,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >(long x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) < 0;
         }
 
@@ -480,6 +554,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >(Number x, double y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) > 0;
         }
 
@@ -490,6 +566,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >(double x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) < 0;
         }
 
@@ -500,6 +578,9 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >=(Number x, Number y)
         {
+            x.Consolidate();
+            y.Consolidate();
+
             return mpfr_greaterequal_p(ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct) != 0;
         }
 
@@ -510,6 +591,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >=(Number x, ulong y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) >= 0;
         }
 
@@ -520,6 +603,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >=(ulong x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) <= 0;
         }
 
@@ -530,6 +615,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >=(Number x, long y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) >= 0;
         }
 
@@ -540,6 +627,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >=(long x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) <= 0;
         }
 
@@ -550,6 +639,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >=(Number x, double y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) >= 0;
         }
 
@@ -560,6 +651,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator >=(double x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) <= 0;
         }
 
@@ -570,6 +663,9 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <(Number x, Number y)
         {
+            x.Consolidate();
+            y.Consolidate();
+
             return mpfr_less_p(ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct) != 0;
         }
 
@@ -580,6 +676,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <(Number x, ulong y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) < 0;
         }
 
@@ -590,6 +688,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <(ulong x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) > 0;
         }
 
@@ -600,6 +700,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <(Number x, long y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) < 0;
         }
 
@@ -610,6 +712,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <(long x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) > 0;
         }
 
@@ -620,6 +724,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <(Number x, double y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) < 0;
         }
 
@@ -630,6 +736,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <(double x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) > 0;
         }
 
@@ -640,6 +748,9 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <=(Number x, Number y)
         {
+            x.Consolidate();
+            y.Consolidate();
+
             return mpfr_lessequal_p(ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct) != 0;
         }
 
@@ -650,6 +761,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <=(Number x, ulong y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) <= 0;
         }
 
@@ -660,6 +773,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <=(ulong x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) >= 0;
         }
 
@@ -670,6 +785,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <=(Number x, long y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) <= 0;
         }
 
@@ -680,6 +797,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <=(long x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) >= 0;
         }
 
@@ -690,6 +809,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <=(Number x, double y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) <= 0;
         }
 
@@ -700,6 +821,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator <=(double x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) >= 0;
         }
 
@@ -710,6 +833,9 @@
         /// <param name="y">The second operand.</param>
         public static bool operator ==(Number x, Number y)
         {
+            x.Consolidate();
+            y.Consolidate();
+
             return mpfr_equal_p(ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct) != 0;
         }
 
@@ -720,6 +846,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator ==(Number x, ulong y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) == 0;
         }
 
@@ -730,6 +858,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator ==(ulong x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) == 0;
         }
 
@@ -740,6 +870,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator ==(Number x, long y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) == 0;
         }
 
@@ -750,6 +882,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator ==(long x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) == 0;
         }
 
@@ -760,6 +894,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator ==(Number x, double y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) == 0;
         }
 
@@ -770,6 +906,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator ==(double x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) == 0;
         }
 
@@ -780,6 +918,9 @@
         /// <param name="y">The second operand.</param>
         public static bool operator !=(Number x, Number y)
         {
+            x.Consolidate();
+            y.Consolidate();
+
             return mpfr_equal_p(ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct) == 0;
         }
 
@@ -790,6 +931,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator !=(Number x, ulong y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) != 0;
         }
 
@@ -800,6 +943,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator !=(ulong x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) != 0;
         }
 
@@ -810,6 +955,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator !=(Number x, long y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) != 0;
         }
 
@@ -820,6 +967,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator !=(long x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) != 0;
         }
 
@@ -830,6 +979,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator !=(Number x, double y)
         {
+            x.Consolidate();
+
             return x.CompareTo(y) != 0;
         }
 
@@ -840,6 +991,8 @@
         /// <param name="y">The second operand.</param>
         public static bool operator !=(double x, Number y)
         {
+            y.Consolidate();
+
             return y.CompareTo(x) != 0;
         }
         #endregion

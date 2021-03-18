@@ -6,14 +6,9 @@
     /// <summary>
     /// Represents numbers with arbitrary precision.
     /// </summary>
-    public partial struct Number
+    public partial struct Number : IFormattable
     {
         #region Special Values
-        /// <summary>
-        /// A special value for uninitialized instances.
-        /// </summary>
-        internal static readonly Number Uninitialized;
-
         /// <summary>
         /// The special value for not-a-number.
         /// </summary>
@@ -138,6 +133,27 @@
             Rounding = DefaultRounding;
 
             mpfr_set_ui(ref Proxy.MpfrStruct, value, Rounding);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Number"/> struct.
+        /// </summary>
+        /// <param name="proxy">A fake proxy.</param>
+        private Number(mpfr_t proxy)
+        {
+            Proxy = proxy;
+            Rounding = DefaultRounding;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Number"/> struct.
+        /// </summary>
+        /// <param name="precision">The precision.</param>
+        /// <param name="rounding">The rounding.</param>
+        private Number(ulong precision, Rounding rounding)
+        {
+            Proxy = new mpfr_t(precision);
+            Rounding = DefaultRounding;
         }
 
         /// <summary>
