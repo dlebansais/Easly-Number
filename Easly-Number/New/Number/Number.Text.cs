@@ -1,6 +1,7 @@
 ﻿namespace EaslyNumber2
 {
     using System;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Text;
     using static EaslyNumber2.NativeMethods;
@@ -49,6 +50,40 @@
         {
             Consolidate();
 
+            if (!DisplayFormat.Parse(format, provider, out DisplayFormat Format))
+                throw new FormatException("Parameter format is invalid");
+
+            string? Result = null;
+
+            if (IsNaN)
+                Result = Format.NumberFormatInfo.NaNSymbol;
+            else if (IsPositiveInfinity)
+                Result = Format.NumberFormatInfo.PositiveInfinitySymbol;
+            else if (IsNegativeInfinity)
+                Result = Format.NumberFormatInfo.NegativeInfinitySymbol;
+            else
+            {
+                switch (Format.NumericFormat)
+                {
+                    case NumericFormat.Default:
+                        Result = ToStringDefaultFormat(Format);
+                        break;
+                    case NumericFormat.Exponential:
+                        Result = ToStringExponentialFormat(Format);
+                        break;
+                    case NumericFormat.FixedPoint:
+                        Result = ToStringFixedPointFormat(Format);
+                        break;
+                }
+            }
+
+            Debug.Assert(Result != null);
+
+            return Result;
+        }
+
+        private string ToStringDefaultFormat(DisplayFormat displayFormat)
+        {
             ulong SizeInDigits = Precision;
             int Resultbase = 10;
             StringBuilder Data = new StringBuilder((int)(SizeInDigits + 2));
@@ -57,10 +92,6 @@
             mpfr_get_str(Data, out Exponent, Resultbase, SizeInDigits, ref Proxy.MpfrStruct, Rounding);
 
             string Result = Data.ToString();
-
-            if (Result == "@NaN@" || Result == "@Inf@" || Result == "-@Inf@")
-                return Result;
-
             bool IsNegative = Result.Length > 0 && Result[0] == '-';
 
             bool IsZero = true;
@@ -97,6 +128,16 @@
             Result = $"{IntegerPart}{FractionalPart}E{ExponentPart}";
 
             return Result;
+        }
+
+        private string ToStringExponentialFormat(DisplayFormat displayFormat)
+        {
+            return string.Empty;
+        }
+
+        private string ToStringFixedPointFormat(DisplayFormat displayFormat)
+        {
+            return string.Empty;
         }
     }
 }

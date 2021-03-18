@@ -5,7 +5,7 @@
     using System;
     using System.Diagnostics;
 
-    [TestFixture]
+    //[TestFixture]
     public class TestSet
     {
         #region Setup
@@ -19,7 +19,7 @@
         #endregion
 
         #region Basic Tests
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void TestDigits()
         {
@@ -133,7 +133,7 @@
             Assert.Throws<ArgumentOutOfRangeException>(() => Number.ToHexadecimalDigit(16, true));
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void TestBinary()
         {
@@ -161,7 +161,7 @@
             Assert.That(!Number.IsValidBinaryNumber("1:Bx"));
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void TestOctal()
         {
@@ -181,7 +181,7 @@
             Assert.That(!Number.IsValidOctalNumber("1:Ox"));
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void TestHexadecimal()
         {
@@ -209,7 +209,7 @@
             Assert.That(!Number.IsValidHexadecimalNumber("F:Hx"));
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void SimpleParse()
         {
@@ -260,7 +260,7 @@
             Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsInteger && FormattedNumber.BeforeExponent == "123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF" && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix == ":H" && !FormattedNumber.Value.IsZero, $"Result: {FormattedNumber}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void SimpleRealParse()
         {
@@ -376,7 +376,7 @@
             Assert.That(FormattedNumber.IsValid && FormattedNumber.Value.IsSpecial && FormattedNumber.DiscardedProlog == " " && FormattedNumber.BeforeExponent == TextNegativeInfinity && FormattedNumber.Exponent.Length == 0 && FormattedNumber.Suffix.Length == 0 && FormattedNumber.Value.IsNegativeInfinity, $"Result: {FormattedNumber}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void FullParse()
         {
@@ -427,7 +427,7 @@
         #endregion
 
         #region ToString tests
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void TestToString()
         {
@@ -593,7 +593,7 @@
             Assert.That(DSN == NSN, $"Expected: {DSN}, got: {NSN}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void TestInvalidFormats()
         {
@@ -628,7 +628,7 @@
         #endregion
 
         #region Arithmetic Tests
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Add0()
         {
@@ -667,7 +667,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Subtract0()
         {
@@ -704,7 +704,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Multiply0()
         {
@@ -741,7 +741,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Divide0()
         {
@@ -780,7 +780,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Negate0()
         {
@@ -811,7 +811,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Abs0()
         {
@@ -843,7 +843,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Exp0()
         {
@@ -872,7 +872,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Log0()
         {
@@ -904,7 +904,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Log10_0()
         {
@@ -936,7 +936,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Pow0()
         {
@@ -975,7 +975,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Sqrt0()
         {
@@ -1007,7 +1007,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void ShiftLeft0()
         {
@@ -1046,7 +1046,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void ShiftRight0()
         {
@@ -1085,7 +1085,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void Remainder0()
         {
@@ -1124,7 +1124,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void BitwiseAnd0()
         {
@@ -1163,7 +1163,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void BitwiseOr0()
         {
@@ -1202,7 +1202,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void BitwiseXor0()
         {
@@ -1241,7 +1241,7 @@
             Assert.That(ResultText == ExpectedText, $"Result={ResultText}, Expected={ExpectedText}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public static void TryParseInt0()
         {

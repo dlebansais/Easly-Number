@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netcoreapp3.1;net48</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net48</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Codecov" Version="1.13.0" />
+    <PackageReference Include="MpfrDotNet" Version="1.0.2" />
     <PackageReference Include="NUnit" Version="3.13.1">
         <NoWarn>NU1701</NoWarn>
     </PackageReference>
@@ -25,5 +26,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Easly-Number\Easly-Number.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /Y $(SolutionDir)Test\Test-Feature\bin\$(Platform)\$(Configuration)\$(TargetFramework)\mpir.dll $(TargetDir)&#xD;&#xA;copy /Y $(SolutionDir)Test\Test-Feature\bin\$(Platform)\$(Configuration)\$(TargetFramework)\mpfr.dll $(TargetDir)" />
+  </Target>
 
 </Project>

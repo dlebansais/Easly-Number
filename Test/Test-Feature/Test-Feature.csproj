@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net48</TargetFrameworks>
     <RootNamespace>TestEaslyNumber</RootNamespace>
     <UseWPF>true</UseWPF>
     <Platforms>x64</Platforms>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /Y $(TargetDir)runtimes\win-x64\native\*.dll $(TargetDir)" />
+    <Exec Command="if exist $(TargetDir)runtimes\win-x64\native\*.dll copy /Y $(TargetDir)runtimes\win-x64\native\*.dll $(TargetDir)" />
   </Target>
 
 </Project>

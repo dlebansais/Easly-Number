@@ -5,7 +5,7 @@
     using System;
     using System.Globalization;
 
-    [TestFixture]
+    //[TestFixture]
     public class CoverageSet
     {
         #region Setup
@@ -23,7 +23,7 @@
         #endregion
 
         #region BitField
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestBitField()
         {
@@ -67,7 +67,7 @@
             Assert.That(IntegerField.GetBit(0) == false);
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestBitFieldComparison()
         {
@@ -130,7 +130,7 @@
             return IntegerField;
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestBitField_byte()
         {
@@ -191,7 +191,7 @@
             Assert.That(IntegerField.GetBit(0) == false);
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestBitField_byteComparison()
         {
@@ -254,7 +254,7 @@
             return IntegerField;
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestBitField_uint()
         {
@@ -315,7 +315,7 @@
             Assert.That(IntegerField.GetBit(0) == false);
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestBitField_uintComparison()
         {
@@ -402,7 +402,7 @@
         #endregion
 
         #region Rounding
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestRounding()
         {
@@ -433,7 +433,7 @@
             }
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestRoundingText()
         {
@@ -467,7 +467,7 @@
         #endregion
 
         #region Precision
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestPrecision()
         {
@@ -565,7 +565,7 @@
         #endregion
 
         #region Misc
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestTryParse()
         {
@@ -575,7 +575,7 @@
             Assert.That(Number.TryParse("1", out Number n3) && !n3.IsZero && n3.ToString() == "1" && n3.CheatDouble == 1, $"Result: {n3}, expected: 1");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestCreate()
         {
@@ -649,7 +649,7 @@
             Assert.That(ex?.Message == $"partition does not represent a valid number.", ex?.Message);
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestConversion()
         {
@@ -678,7 +678,7 @@
         #endregion
 
         #region Comparison
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestEqual()
         {
@@ -770,7 +770,7 @@
             Assert.That(IdenticalNumber == IdenticalDouble, $"Failed #4 IdenticalNumber == IdenticalDouble, for d: {d}");
         }
 
-        [Test]
+        //[Test]
         [Category("Coverage")]
         public void TestLower()
         {

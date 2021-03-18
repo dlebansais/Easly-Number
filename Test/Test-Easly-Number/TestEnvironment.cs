@@ -5,7 +5,7 @@
     using System.Reflection;
     using System.Threading;
 
-    [TestFixture]
+    //[TestFixture]
     public class TestEnvironment
     {
         #region Setup

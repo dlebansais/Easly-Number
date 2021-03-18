@@ -6,7 +6,7 @@
 
     public class UnitFunctionSet
     {
-        [Test]
+        //[Test]
         [Category("aUnit")]
         public void TestIncremented()
         {
@@ -63,7 +63,7 @@
             }
         }
 
-        [Test]
+        //[Test]
         [Category("aUnit")]
         public void TestDecremented()
         {

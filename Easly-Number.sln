@@ -9,10 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Easly-Number", "Easly-Numbe
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test-Easly-Number", "Test\Test-Easly-Number\Test-Easly-Number.csproj", "{C9BD0C7F-72A0-4B3C-95FB-86A07C10602B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{00BB6C9D-474B-459C-ACAA-BCA1E3E626DE} = {00BB6C9D-474B-459C-ACAA-BCA1E3E626DE}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreBuild", "PreBuild\PreBuild.csproj", "{99C5BCEA-41CA-45CF-9AFD-18987D6E489F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test-Feature", "Test\Test-Feature\Test-Feature.csproj", "{00BB6C9D-474B-459C-ACAA-BCA1E3E626DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test-Feature", "Test\Test-Feature\Test-Feature.csproj", "{00BB6C9D-474B-459C-ACAA-BCA1E3E626DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
