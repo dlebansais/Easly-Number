@@ -618,12 +618,12 @@
             double d = 0;
             Number n = new Number(d);
 
-            Exception exDouble;
-            Exception exNumber;
+            Exception? exDouble;
+            Exception? exNumber;
 
             exDouble = Assert.Throws<FormatException>(() => d.ToString(format));
             exNumber = Assert.Throws<FormatException>(() => n.ToString(format));
-            Assert.That(exDouble.Message == exNumber.Message, $"Expected: {exDouble.Message}, got: {exNumber.Message}");
+            Assert.That(exDouble?.Message == exNumber?.Message, $"Expected: {exDouble?.Message}, got: {exNumber?.Message}");
         }
         #endregion
 

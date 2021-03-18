@@ -11,12 +11,12 @@
         None,
 
         /// <summary>
-        /// 'E' character
+        /// 'E' character.
         /// </summary>
         UpperCaseE,
 
         /// <summary>
-        /// 'e' character
+        /// 'e' character.
         /// </summary>
         LowerCaseE,
     }

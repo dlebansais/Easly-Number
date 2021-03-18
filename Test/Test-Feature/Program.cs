@@ -12,6 +12,10 @@
 
         public static int Main(string[] args)
         {
+            EaslyNumber2.Number n = new EaslyNumber2.Number();
+            bool b = n.IsNaN;
+            bool c = n.IsNegativeInfinity;
+
             Number n10 = new Number("1.2e3");
             Debug.Assert(n10.ToString() == $"1{SP}2E3" && n10.CheatDouble == 1.2e3, $"Result: {n10}, expected: 1{SP}2E3");
 
