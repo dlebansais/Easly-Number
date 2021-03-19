@@ -157,6 +157,7 @@
 
             TestToString(positiveDouble, PositiveDoubleNumber, negativeDouble, NegativeDoubleNumber);
 
+            TestToString(positiveDouble, PositiveDoubleNumber, negativeDouble, NegativeDoubleNumber, "");
             TestToString(positiveDouble, PositiveDoubleNumber, negativeDouble, NegativeDoubleNumber, "E");
             TestToString(positiveDouble, PositiveDoubleNumber, negativeDouble, NegativeDoubleNumber, "F");
             TestToString(positiveDouble, PositiveDoubleNumber, negativeDouble, NegativeDoubleNumber, "G");
@@ -175,8 +176,16 @@
             string NSP = positiveDoubleNumber.ToString();
             string DSN = negativeDouble.ToString();
             string NSN = negativeDoubleNumber.ToString();
-            Assert.That(DSP == NSP, $"Expected: {DSP}, got: {NSP}");
-            Assert.That(DSN == NSN, $"Expected: {DSN}, got: {NSN}");
+
+            bool IsSPEqual = IsNumberStringEqual(DSP, NSP);
+            bool IsSNEqual = IsNumberStringEqual(DSN, NSN);
+
+            if (!IsSPEqual || !IsSNEqual)
+            {
+            }
+
+            Assert.That(IsSPEqual, $"Expected: {DSP}, got: {NSP}");
+            Assert.That(IsSNEqual, $"Expected: {DSN}, got: {NSN}");
         }
 
         public static void TestToString(double positiveDouble, Number positiveDoubleNumber, double negativeDouble, Number negativeDoubleNumber, string format)
@@ -185,28 +194,144 @@
             string NSP = positiveDoubleNumber.ToString(format);
             string DSN = negativeDouble.ToString(format);
             string NSN = negativeDoubleNumber.ToString(format);
-            Assert.That(DSP == NSP, $"Expected: {DSP}, got: {NSP}");
-            Assert.That(DSN == NSN, $"Expected: {DSN}, got: {NSN}");
+
+            bool IsSPEqual = IsNumberStringEqual(DSP, NSP);
+            bool IsSNEqual = IsNumberStringEqual(DSN, NSN);
+
+            if (!IsSPEqual || !IsSNEqual)
+            {
+            }
+
+            Assert.That(IsSPEqual, $"Expected: {DSP}, got: {NSP}");
+            Assert.That(IsSNEqual, $"Expected: {DSN}, got: {NSN}");
+        }
+
+        const int RequiredPrecision = 7;
+
+        private static bool IsNumberStringEqual(string doubleString, string numberString)
+        {
+            if (doubleString == numberString)
+                return true;
+
+            int DoubleFractionalPartIndex = doubleString.IndexOf(SP);
+            int NumberFractionalPartIndex = numberString.IndexOf(SP);
+
+            if (DoubleFractionalPartIndex != NumberFractionalPartIndex)
+                return false;
+
+            bool IsFractionalPartEqual = true;
+
+            if (DoubleFractionalPartIndex >= 0)
+            {
+                int DoubleExponentPartIndex = doubleString.ToUpper().IndexOf("E", DoubleFractionalPartIndex + 1);
+                int NumberExponentPartIndex = numberString.ToUpper().IndexOf("E", NumberFractionalPartIndex + 1);
+
+                if (DoubleExponentPartIndex < 0)
+                    DoubleExponentPartIndex = doubleString.Length;
+                if (NumberExponentPartIndex < 0)
+                    NumberExponentPartIndex = numberString.Length;
+
+                string DoubleFractionalPart = doubleString.Substring(DoubleFractionalPartIndex + 1, DoubleExponentPartIndex - DoubleFractionalPartIndex - 1);
+                string NumberFractionalPart = numberString.Substring(NumberFractionalPartIndex + 1, NumberExponentPartIndex - NumberFractionalPartIndex - 1);
+
+                if (DoubleExponentPartIndex > DoubleFractionalPartIndex + RequiredPrecision)
+                {
+                    if (IsPartEqual(DoubleFractionalPart, NumberFractionalPart))
+                    {
+                        /*System.Diagnostics.Debug.WriteLine(doubleString);
+                        System.Diagnostics.Debug.WriteLine(numberString);
+                        System.Diagnostics.Debug.WriteLine("");*/
+                        return true;
+                    }
+                }
+
+                IsFractionalPartEqual = DoubleFractionalPart == NumberFractionalPart;
+            }
+
+            if (DoubleFractionalPartIndex < 0)
+                DoubleFractionalPartIndex = doubleString.Length;
+            if (NumberFractionalPartIndex < 0)
+                NumberFractionalPartIndex = numberString.Length;
+
+            if (IsFractionalPartEqual && DoubleFractionalPartIndex > RequiredPrecision && NumberFractionalPartIndex > RequiredPrecision)
+            {
+                string DoubleIntegerPart = doubleString.Substring(0, DoubleFractionalPartIndex);
+                string NumberIntegerPart = numberString.Substring(0, NumberFractionalPartIndex);
+
+                if (IsPartEqual(DoubleIntegerPart, NumberIntegerPart))
+                {
+                    /*System.Diagnostics.Debug.WriteLine(doubleString);
+                    System.Diagnostics.Debug.WriteLine(numberString);
+                    System.Diagnostics.Debug.WriteLine("");*/
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsPartEqual(string doublePart, string numberPart)
+        {
+            if (doublePart.Length > RequiredPrecision)
+                doublePart = doublePart.Substring(0, RequiredPrecision);
+            if (numberPart.Length > RequiredPrecision)
+                numberPart = numberPart.Substring(0, RequiredPrecision);
+
+            while (doublePart.Length < numberPart.Length)
+                doublePart += "0";
+            while (numberPart.Length < doublePart.Length)
+                numberPart += "0";
+
+            if (long.TryParse(doublePart, out long DoubleFractional) && long.TryParse(numberPart, out long NumberFractional))
+            {
+                long Diff = DoubleFractional - NumberFractional;
+                if (Diff < 10)
+                    return true;
+            }
+
+            return false;
+        }
+
+        [Test]
+        [Category("Coverage")]
+        public static void TestCopiedFormats()
+        {
+            TestCopiedFormats("Ex");
+            TestCopiedFormats("E-1");
+            TestCopiedFormats("E100");
+            TestCopiedFormats("Fx");
+            TestCopiedFormats("F-1");
+            TestCopiedFormats("F100");
+            TestCopiedFormats("Gx");
+            TestCopiedFormats("G-1");
+            TestCopiedFormats("G100");
+            TestCopiedFormats("zz");
+        }
+
+        public static void TestCopiedFormats(string format)
+        {
+            double d = 0;
+            Number n = new Number(d);
+
+            string s = "*";
+
+            s = d.ToString(format);
+            Assert.That(s == format, $"Double: format '{format}' was expected to give {s}");
+
+            s = n.ToString(format);
+            Assert.That(s == format, $"Number: format '{format}' was expected to give {s}");
         }
 
         [Test]
         [Category("Coverage")]
         public static void TestInvalidFormats()
         {
-            //string NullString = null;
-
-            //TestInvalidFormats(NullString);
-            TestInvalidFormats("");
+            TestInvalidFormats("X");
             TestInvalidFormats("x");
-            TestInvalidFormats("Ex");
-            TestInvalidFormats("E-1");
-            TestInvalidFormats("E100");
-            TestInvalidFormats("Fx");
-            TestInvalidFormats("F-1");
-            TestInvalidFormats("F100");
-            TestInvalidFormats("Gx");
-            TestInvalidFormats("G-1");
-            TestInvalidFormats("G100");
+            TestInvalidFormats("D");
+            TestInvalidFormats("d");
+            TestInvalidFormats("Z");
+            TestInvalidFormats("z");
         }
 
         public static void TestInvalidFormats(string format)
@@ -217,9 +342,29 @@
             Exception? exDouble;
             Exception? exNumber;
 
+            string s = "*";
+
+            try
+            {
+                s = d.ToString(format);
+                Assert.That(s == "*", $"Double: format '{format}' did not throw an exception, but gave {s}");
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                s = n.ToString(format);
+                Assert.That(s == "*", $"Number: format '{format}' did not throw an exception, but gave {s}");
+            }
+            catch
+            {
+            }
+
             exDouble = Assert.Throws<FormatException>(() => d.ToString(format));
             exNumber = Assert.Throws<FormatException>(() => n.ToString(format));
-            Assert.That(exDouble?.Message == exNumber?.Message, $"Expected: {exDouble?.Message}, got: {exNumber?.Message}");
+            Assert.That(exDouble?.Message == exNumber?.Message, $"Expected: '{exDouble?.Message}', got: '{exNumber?.Message}'. Format: {format}");
         }
         #endregion
     }

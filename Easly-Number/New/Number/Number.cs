@@ -67,7 +67,7 @@
         /// <param name="value">The number value.</param>
         public Number(double value)
         {
-            Proxy = new mpfr_t();
+            Proxy = new mpfr_t(60);
             Rounding = DefaultRounding;
 
             mpfr_set_d(ref Proxy.MpfrStruct, value, Rounding);

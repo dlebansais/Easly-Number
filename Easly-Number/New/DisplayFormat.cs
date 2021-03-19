@@ -43,7 +43,7 @@
                 case 'G':
                 case 'g':
                     NumericFormat = NumericFormat.Default;
-                    PrecisionSpecifier = 15;
+                    PrecisionSpecifier = 0;
                     break;
 
                 case 'E':
@@ -59,7 +59,7 @@
                     break;
 
                 default:
-                    displayFormat = DisplayFormat.Empty;
+                    displayFormat = Empty;
                     return false;
             }
 
@@ -67,16 +67,19 @@
             {
                 if (!int.TryParse(format.Substring(1), out PrecisionSpecifier))
                 {
-                    displayFormat = DisplayFormat.Empty;
+                    displayFormat = Empty;
                     return false;
                 }
 
                 if (PrecisionSpecifier < 0 || PrecisionSpecifier > 99)
                 {
-                    displayFormat = DisplayFormat.Empty;
+                    displayFormat = Empty;
                     return false;
                 }
             }
+
+            if (NumericFormat == NumericFormat.Default && PrecisionSpecifier == 0)
+                PrecisionSpecifier = 15;
 
             Debug.Assert(NumericFormat == NumericFormat.Default || NumericFormat == NumericFormat.Exponential || NumericFormat == NumericFormat.FixedPoint);
             Debug.Assert(PrecisionSpecifier >= 0 && PrecisionSpecifier <= 99);
