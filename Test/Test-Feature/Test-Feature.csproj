@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp3.1;net48</TargetFrameworks>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <RootNamespace>TestEaslyNumber</RootNamespace>
     <UseWPF>true</UseWPF>
     <Platforms>x64</Platforms>
