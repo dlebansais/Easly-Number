@@ -28,6 +28,8 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="dir $(SolutionDir)Test\Test-Feature\bin\$(Platform)\$(Configuration)" Condition="'$(SolutionDir)'!='*Undefined*'" />
+    <Exec Command="dir $(SolutionDir)Test\Test-Feature\bin\$(Platform)\$(Configuration)\$(TargetFramework)" Condition="'$(SolutionDir)'!='*Undefined*'" />
     <Exec Command="copy /Y $(SolutionDir)Test\Test-Feature\bin\$(Platform)\$(Configuration)\$(TargetFramework)\mpir.dll $(TargetDir)" Condition="'$(SolutionDir)'!='*Undefined*'" />
     <Exec Command="copy /Y $(SolutionDir)Test\Test-Feature\bin\$(Platform)\$(Configuration)\$(TargetFramework)\mpfr.dll $(TargetDir)" Condition="'$(SolutionDir)'!='*Undefined*'" />
     <Exec Command="if not exist .\bin\$(Platform)\$(Configuration)\publish\NUL mkdir .\bin\$(Platform)\$(Configuration)\publish" Condition="'$(SolutionDir)'=='*Undefined*'" />
