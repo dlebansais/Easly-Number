@@ -2,8 +2,10 @@
 {
     using EaslyNumber2;
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Globalization;
+    using System.IO;
 
     public static class Program
     {
@@ -12,18 +14,40 @@
 
         public static int Main(string[] args)
         {
-            Number n = new Number();
-            Number x = -n;
-            bool b = n.IsNaN;
-            bool c = n.IsNegativeInfinity;
-
-            Number n10 = new Number("1.2e3");
-            double d = 1.2e3;
-            string ds = d.ToString();
-
-            Debug.Assert(n10.ToString() == $"1{SP}2E3", $"Result: {n10}, expected: 1{SP}2E3");
+            CreateSingleTextFile();
+            CreateDoubleTextFile();
 
             return 0;
+        }
+
+        private static void CreateSingleTextFile()
+        {
+            List<OutputSingle> TestList = new();
+            TestSingle.GenerateSingleOutput(TestList);
+
+            using FileStream Stream = new FileStream("SingleOutput.txt", FileMode.Create);
+            using StreamWriter Writer = new StreamWriter(Stream);
+
+            foreach (OutputSingle Item in TestList)
+            {
+                Writer.WriteLine(Item.PositiveString);
+                Writer.WriteLine(Item.NegativeString);
+            }
+        }
+
+        private static void CreateDoubleTextFile()
+        {
+            List<OutputDouble> TestList = new();
+            TestDouble.GenerateDoubleOutput(TestList);
+
+            using FileStream Stream = new FileStream("DoubleOutput.txt", FileMode.Create);
+            using StreamWriter Writer = new StreamWriter(Stream);
+
+            foreach (OutputDouble Item in TestList)
+            {
+                Writer.WriteLine(Item.PositiveString);
+                Writer.WriteLine(Item.NegativeString);
+            }
         }
     }
 }

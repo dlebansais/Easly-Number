@@ -1,6 +1,7 @@
 ﻿namespace EaslyNumber2
 {
     using System;
+    using System.Globalization;
     using static EaslyNumber2.NativeMethods;
 
     /// <summary>
@@ -42,9 +43,25 @@
             Proxy = new mpfr_t();
             Rounding = DefaultRounding;
 
-            int Success = mpfr_set_str(ref Proxy.MpfrStruct, text, 10, Rounding);
-            if (Success != 0)
-                throw new ArgumentException(nameof(text));
+            if (text == CultureInfo.CurrentCulture.NumberFormat.NaNSymbol)
+                mpfr_set_nan(ref Proxy.MpfrStruct);
+            else if (text == CultureInfo.CurrentCulture.NumberFormat.PositiveInfinitySymbol)
+                mpfr_set_inf(ref Proxy.MpfrStruct, +1);
+            else if (text == CultureInfo.CurrentCulture.NumberFormat.NegativeInfinitySymbol)
+                mpfr_set_inf(ref Proxy.MpfrStruct, -1);
+            else
+            {
+                text = text.Replace(" ", string.Empty);
+                text = text.Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+                text = text.Replace(CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator, string.Empty);
+
+                if (text.Length > 0 && text[0] == '.')
+                    text = "0" + text;
+
+                int Success = mpfr_set_str(ref Proxy.MpfrStruct, text, 10, Rounding);
+                if (Success != 0)
+                    throw new ArgumentException(nameof(text));
+            }
         }
 
         /// <summary>
@@ -57,6 +74,7 @@
             Proxy = new mpfr_t();
             Rounding = DefaultRounding;
 
+            mpfr_set_prec(ref Proxy.MpfrStruct, 24);
             mpfr_set_flt(ref Proxy.MpfrStruct, value, Rounding);
         }
 

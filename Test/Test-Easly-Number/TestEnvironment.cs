@@ -55,10 +55,10 @@
             }
         }
 
-        private static string TextNaN = string.Empty;
-        private static string TextPositiveInfinity = string.Empty;
-        private static string TextNegativeInfinity = string.Empty;
-        private static string SP = string.Empty;
+        public static string TextNaN = string.Empty;
+        public static string TextPositiveInfinity = string.Empty;
+        public static string TextNegativeInfinity = string.Empty;
+        public static string SP = string.Empty;
         #endregion
 
         #region Tools

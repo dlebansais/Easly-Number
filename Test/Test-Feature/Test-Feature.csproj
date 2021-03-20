@@ -4,9 +4,11 @@
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp3.1;net48</TargetFrameworks>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <RootNamespace>TestEaslyNumber</RootNamespace>
     <UseWPF>true</UseWPF>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
+    <RootNamespace>TestEaslyNumber</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

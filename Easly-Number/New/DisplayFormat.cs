@@ -29,7 +29,7 @@
         public int PrecisionSpecifier { get; }
         public NumberFormatInfo NumberFormatInfo { get; }
 
-        public static bool Parse(string? format, IFormatProvider? provider, out DisplayFormat displayFormat)
+        public static bool Parse(string? format, IFormatProvider? provider, ulong precision, out DisplayFormat displayFormat)
         {
             char FormatCharacter = (format == null || format.Length == 0) ? 'G' : format[0];
             bool IsExponentUpperCase = char.IsUpper(FormatCharacter);
@@ -79,7 +79,10 @@
             }
 
             if (NumericFormat == NumericFormat.Default && PrecisionSpecifier == 0)
-                PrecisionSpecifier = 15;
+                if (precision <= 24)
+                    PrecisionSpecifier = 7 + 1;
+                else
+                    PrecisionSpecifier = 15 + 2;
 
             Debug.Assert(NumericFormat == NumericFormat.Default || NumericFormat == NumericFormat.Exponential || NumericFormat == NumericFormat.FixedPoint);
             Debug.Assert(PrecisionSpecifier >= 0 && PrecisionSpecifier <= 99);

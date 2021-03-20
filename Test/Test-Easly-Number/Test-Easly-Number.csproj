@@ -2,11 +2,21 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net48</TargetFrameworks>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <RootNamespace>TestEaslyNumber</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="New\DoubleOutput.txt" />
+    <None Remove="New\SingleOutput.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="New\DoubleOutput.txt" />
+    <EmbeddedResource Include="New\SingleOutput.txt" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Codecov" Version="1.13.0" />

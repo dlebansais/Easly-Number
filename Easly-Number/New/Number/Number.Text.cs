@@ -48,12 +48,10 @@
         /// <returns>The string representation of the value of this instance as specified by format and provider.</returns>
         public string ToString(string? format, IFormatProvider? provider)
         {
-            Consolidate();
-
             if (format == null)
                 format = "G";
 
-            if (!DisplayFormat.Parse(format, provider, out DisplayFormat Format))
+            if (!DisplayFormat.Parse(format, provider, Precision, out DisplayFormat Format))
             {
                 if (format.Length == 1)
                     throw new FormatException("Format specifier was invalid.");
@@ -61,33 +59,36 @@
                     return format;
             }
 
-            string Result;
-
             if (IsNaN)
-                Result = Format.NumberFormatInfo.NaNSymbol;
+                return Format.NumberFormatInfo.NaNSymbol;
             else if (IsPositiveInfinity)
-                Result = Format.NumberFormatInfo.PositiveInfinitySymbol;
+                return Format.NumberFormatInfo.PositiveInfinitySymbol;
             else if (IsNegativeInfinity)
-                Result = Format.NumberFormatInfo.NegativeInfinitySymbol;
+                return Format.NumberFormatInfo.NegativeInfinitySymbol;
             else
+                return ToString(Format);
+        }
+
+        private string ToString(DisplayFormat format)
+        {
+            Consolidate();
+
+            string Result = string.Empty;
+
+            switch (format.NumericFormat)
             {
-                Result = string.Empty;
-
-                switch (Format.NumericFormat)
-                {
-                    case NumericFormat.Default:
-                        Result = ToStringDefaultFormat(Format);
-                        break;
-                    case NumericFormat.Exponential:
-                        Result = ToStringExponentialFormat(Format);
-                        break;
-                    case NumericFormat.FixedPoint:
-                        Result = ToStringFixedPointFormat(Format);
-                        break;
-                }
-
-                Debug.Assert(Result.Length > 0);
+                case NumericFormat.Default:
+                    Result = ToStringDefaultFormat(format);
+                    break;
+                case NumericFormat.Exponential:
+                    Result = ToStringExponentialFormat(format);
+                    break;
+                case NumericFormat.FixedPoint:
+                    Result = ToStringFixedPointFormat(format);
+                    break;
             }
+
+            Debug.Assert(Result.Length > 0);
 
             return Result;
         }
@@ -97,7 +98,7 @@
             GetNumberString((ulong)displayFormat.PrecisionSpecifier, out string NumberString, out int Exponent, out string NegativeSign, out bool IsZero);
 
             if (IsZero)
-                return "0";
+                return NegativeSign + "0";
 
             if (Exponent > -5 && Exponent <= displayFormat.PrecisionSpecifier)
             {
@@ -193,52 +194,26 @@
                 string ExponentSign;
                 string ExponentString;
 
+                int ExponentDigitCount = Precision <= 24 ? 2 : 3;
+                string ExponentDigitFormat = $"D0{ExponentDigitCount}";
+
                 if (IsFirstDigitZero)
                 {
                     ExponentSign = Exponent >= 0 ? "+" : "-";
-                    ExponentString = (Exponent >= 0 ? Exponent : -Exponent).ToString("D03");
+                    ExponentString = (Exponent >= 0 ? Exponent : -Exponent).ToString(ExponentDigitFormat);
                 }
                 else
                 {
                     Exponent--;
 
                     ExponentSign = Exponent >= 0 ? "+" : "-";
-                    ExponentString = (Exponent >= 0 ? Exponent : -Exponent).ToString("D03");
+                    ExponentString = (Exponent >= 0 ? Exponent : -Exponent).ToString(ExponentDigitFormat);
                 }
 
                 string Result = $"{NegativeSign}{FirstDigit}{Separator}{OtherDigits}{ExponentCharacter}{ExponentSign}{ExponentString}";
 
                 return Result;
             }
-
-            /*
-            int FractionalIndex = 1;
-
-            if (FractionalIndex > NumberString.Length)
-                return NumberString;
-
-            string IntegerPart = NumberString.Substring(0, FractionalIndex);
-            string FractionalPart = NumberString.Substring(FractionalIndex);
-
-            string Separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
-
-            int LastNonZero = FractionalPart.Length;
-            while (LastNonZero > 0 && FractionalPart[LastNonZero - 1] == '0')
-                LastNonZero--;
-
-            FractionalPart = FractionalPart.Substring(0, LastNonZero);
-
-            if (FractionalPart.Length == 0)
-                Separator = string.Empty;
-
-            string ExponentPart = (Exponent - 1).ToString();
-            if (Exponent > 0)
-                ExponentPart = "+" + ExponentPart;
-
-            string Result = $"{NegativeSign}{IntegerPart}{Separator}{FractionalPart}E{ExponentPart}";
-
-            return Result;
-            */
         }
 
         private string ToStringExponentialFormat(DisplayFormat displayFormat)
@@ -299,90 +274,26 @@
 
         private string ToStringFixedPointFormat(DisplayFormat displayFormat)
         {
-            GetNumberString(Precision, out string NumberString, out int Exponent, out string NegativeSign, out bool IsZero);
+            string Format = $"%.{displayFormat.PrecisionSpecifier}RNF";
+            int DigitCount = mpfr_snprintf(IntPtr.Zero, 0, Format, ref Proxy.MpfrStruct, IntPtr.Zero);
+            int SizeInDigits = DigitCount + 2;
 
-            int SignificantDigitCount = Exponent;
+            StringBuilder Data = new StringBuilder(SizeInDigits);
 
-            string IntegerPart;
-            if (SignificantDigitCount <= NumberString.Length)
-            {
-                if (SignificantDigitCount > 0)
-                {
-                    IntegerPart = NumberString.Substring(0, SignificantDigitCount);
-                    NumberString = NumberString.Substring(SignificantDigitCount);
-                }
-                else
-                {
-                    if (displayFormat.PrecisionSpecifier > 0 || NumberString.Length == 0 || Exponent < 0)
-                        IntegerPart = "0";
-                    else if (Exponent > 0)
-                        IntegerPart = "1";
-                    else
-                    {
-                        if (NumberString[0] >= '5')
-                            IntegerPart = "1";
-                        else
-                            IntegerPart = "0";
-                    }
+            mpfr_sprintf(Data, Format, ref Proxy.MpfrStruct, IntPtr.Zero);
 
-                    while (SignificantDigitCount < 0)
-                    {
-                        SignificantDigitCount++;
-                        NumberString = "0" + NumberString.Substring(0, NumberString.Length - 1);
-                    }
-                }
-            }
-            else
-            {
-                IntegerPart = NumberString;
+            string NumberString = Data.ToString();
+            NumberString = NumberString.Replace(".", displayFormat.NumberFormatInfo.NumberDecimalSeparator);
 
-                while (SignificantDigitCount > NumberString.Length)
-                {
-                    SignificantDigitCount--;
-                    IntegerPart += "0";
-                }
-
-                NumberString = string.Empty;
-            }
-
-            string Separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
-
-            string FractionalPart = NumberString;
-
-            if (FractionalPart.Length > displayFormat.PrecisionSpecifier)
-                FractionalPart = FractionalPart.Substring(0, displayFormat.PrecisionSpecifier);
-            else
-            {
-                while (FractionalPart.Length < displayFormat.PrecisionSpecifier)
-                    FractionalPart += "0";
-            }
-
-            if (FractionalPart.Length == 0)
-                Separator = string.Empty;
-
-            string Digits = $"{IntegerPart}{FractionalPart}";
-
-            IsZero = true;
-            for (int i = 0; i < Digits.Length; i++)
-                if (Digits[i] != '0')
-                {
-                    IsZero = false;
-                    break;
-                }
-
-            if (IsZero)
-                NegativeSign = string.Empty;
-
-            string Result = $"{NegativeSign}{IntegerPart}{Separator}{FractionalPart}";
-
-            return Result;
+            return NumberString;
         }
 
         private void GetNumberString(ulong precision, out string numberString, out int exponent, out string negativeSign, out bool isZero)
         {
+            const int Resultbase = 10;
+
             ulong SizeInDigits = precision > 0 ? precision : 1UL;
 
-            int Resultbase = 10;
             StringBuilder Data = new StringBuilder((int)(SizeInDigits + 2));
             Rounding StringRounding = Rounding.Nearest;
 
@@ -407,9 +318,6 @@
                     isZero = false;
                     break;
                 }
-
-            if (isZero)
-                negativeSign = string.Empty;
         }
     }
 }
