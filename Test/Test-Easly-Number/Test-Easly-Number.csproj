@@ -9,13 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="New\DoubleOutput.txt" />
-    <None Remove="New\SingleOutput.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="New\DoubleOutput.txt" />
-    <EmbeddedResource Include="New\SingleOutput.txt" />
+    <EmbeddedResource Include="DoubleOutput.txt" />
+    <EmbeddedResource Include="SingleOutput.txt" />
   </ItemGroup>
 
   <ItemGroup>

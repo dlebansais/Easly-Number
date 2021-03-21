@@ -1,5 +1,7 @@
 ﻿namespace EaslyNumber
 {
+    using System;
+    using System.Diagnostics;
     using System.Globalization;
 
     internal class DisplayFormat
@@ -26,5 +28,67 @@
         public bool IsExponentUpperCase { get; }
         public int PrecisionSpecifier { get; }
         public NumberFormatInfo NumberFormatInfo { get; }
+
+        public static bool Parse(string? format, IFormatProvider? provider, ulong precision, out DisplayFormat displayFormat)
+        {
+            char FormatCharacter = (format == null || format.Length == 0) ? 'G' : format[0];
+            bool IsExponentUpperCase = char.IsUpper(FormatCharacter);
+            NumberFormatInfo NumberFormatInfo = (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo) ? AsNumberFormatInfo : NumberFormatInfo.CurrentInfo;
+
+            NumericFormat NumericFormat;
+            int PrecisionSpecifier;
+
+            switch (FormatCharacter)
+            {
+                case 'G':
+                case 'g':
+                    NumericFormat = NumericFormat.Default;
+                    PrecisionSpecifier = 0;
+                    break;
+
+                case 'E':
+                case 'e':
+                    NumericFormat = NumericFormat.Exponential;
+                    PrecisionSpecifier = 6;
+                    break;
+
+                case 'F':
+                case 'f':
+                    NumericFormat = NumericFormat.FixedPoint;
+                    PrecisionSpecifier = NumberFormatInfo.NumberDecimalDigits;
+                    break;
+
+                default:
+                    displayFormat = Empty;
+                    return false;
+            }
+
+            if (format != null && format.Length > 1)
+            {
+                if (!int.TryParse(format.Substring(1), out PrecisionSpecifier))
+                {
+                    displayFormat = Empty;
+                    return false;
+                }
+
+                if (PrecisionSpecifier < 0 || PrecisionSpecifier > 99)
+                {
+                    displayFormat = Empty;
+                    return false;
+                }
+            }
+
+            if (NumericFormat == NumericFormat.Default && PrecisionSpecifier == 0)
+                if (precision <= 24)
+                    PrecisionSpecifier = 7 + 1;
+                else
+                    PrecisionSpecifier = 15 + 2;
+
+            Debug.Assert(NumericFormat == NumericFormat.Default || NumericFormat == NumericFormat.Exponential || NumericFormat == NumericFormat.FixedPoint);
+            Debug.Assert(PrecisionSpecifier >= 0 && PrecisionSpecifier <= 99);
+
+            displayFormat = new DisplayFormat(NumericFormat, IsExponentUpperCase, PrecisionSpecifier, NumberFormatInfo);
+            return true;
+        }
     }
 }

@@ -5,10 +5,9 @@
     using System.Reflection;
     using System.Threading;
 
-    //[TestFixture]
+    [TestFixture]
     public class TestEnvironment
     {
-        #region Setup
         [OneTimeSetUp]
         public static void InitTestSession()
         {
@@ -59,15 +58,5 @@
         public static string TextPositiveInfinity = string.Empty;
         public static string TextNegativeInfinity = string.Empty;
         public static string SP = string.Empty;
-        #endregion
-
-        #region Tools
-        public const string FormatDouble = "E16";
-
-        public static string DoubleString(double d)
-        {
-            return d.ToString(FormatDouble);
-        }
-        #endregion
     }
 }

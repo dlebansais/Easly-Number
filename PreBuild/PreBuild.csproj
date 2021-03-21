@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="call &quot;$(SolutionDir)updateversion.bat&quot; &quot;$(SolutionDir)&quot; &quot;$(SolutionPath)&quot;&#xD;&#xA;call &quot;$(SolutionDir)Easly-Number/BitField/replace_template.bat&quot; &quot;$(SolutionDir)Easly-Number/BitField&quot;" />
+    <Exec Command="call &quot;$(SolutionDir)updateversion.bat&quot; &quot;$(SolutionDir)&quot; &quot;$(SolutionPath)&quot;" />
   </Target>
 
 </Project>

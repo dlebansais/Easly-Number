@@ -1,6 +1,6 @@
 ﻿namespace TestEaslyNumber
 {
-    using EaslyNumber2;
+    using EaslyNumber;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
