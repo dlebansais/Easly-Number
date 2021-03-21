@@ -7,13 +7,15 @@
     {
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!IsCacheCleared)
             {
-                if (IsValueCreated)
-                    mpfr_free_cache2(1);
+                IsCacheCleared = true;
+                mpfr_free_cache2(1);
             }
 
             base.Dispose(disposing);
         }
+
+        private bool IsCacheCleared;
     }
 }

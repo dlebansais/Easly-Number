@@ -2,6 +2,7 @@
 {
     using EaslyNumber;
     using NUnit.Framework;
+    using System;
 
     [TestFixture]
     public partial class TestNumberArithmetic
@@ -252,6 +253,29 @@
             string NumberString = Value.ToString();
 
             Assert.AreEqual(IntString, NumberString);
+        }
+
+        [Test]
+        [Category("Coverage")]
+        public static void Bitwise()
+        {
+            double d1 = 1.2547856e2;
+            double d2 = 5.478231405e-3;
+
+            Number Value1 = new Number(d1);
+            Number Value2 = new Number(d2);
+
+            Exception? exNumber;
+            string Message = "Value does not fall within the expected range.";
+
+            exNumber = Assert.Throws<ArgumentException>(() => { Number Value = Value1 & Value2; });
+            Assert.That(exNumber?.Message == Message, $"Expected: '{Message}', got: '{exNumber?.Message}'");
+
+            exNumber = Assert.Throws<ArgumentException>(() => { Number Value = Value1 | Value2; });
+            Assert.That(exNumber?.Message == Message, $"Expected: '{Message}', got: '{exNumber?.Message}'");
+
+            exNumber = Assert.Throws<ArgumentException>(() => { Number Value = Value1 ^ Value2; });
+            Assert.That(exNumber?.Message == Message, $"Expected: '{Message}', got: '{exNumber?.Message}'");
         }
     }
 }
