@@ -23,7 +23,7 @@
             Assert.IsFalse(n.IsZero);
 
             string Text = n.ToString();
-            Assert.That(Text == TestEaslyNumber.TestEnvironment.TextNaN, $"Expected: {TestEaslyNumber.TestEnvironment.TextNaN}, got: {Text}");
+            Assert.That(Text == TestEnvironment.TextNaN, $"Expected: {TestEnvironment.TextNaN}, got: {Text}");
         }
 
         [Test]

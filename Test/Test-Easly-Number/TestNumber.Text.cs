@@ -4,11 +4,12 @@
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Reflection;
 
     [TestFixture]
-    public partial class TestNumber
+    public partial class TestNumberText
     {
         [Test]
         [Category("Coverage")]
@@ -131,8 +132,8 @@
             if (doubleString == numberString)
                 return true;
 
-            int DoubleFractionalPartIndex = doubleString.IndexOf(SP);
-            int NumberFractionalPartIndex = numberString.IndexOf(SP);
+            int DoubleFractionalPartIndex = doubleString.IndexOf(TestNumber.SP);
+            int NumberFractionalPartIndex = numberString.IndexOf(TestNumber.SP);
 
             if (DoubleFractionalPartIndex != NumberFractionalPartIndex)
                 return false;

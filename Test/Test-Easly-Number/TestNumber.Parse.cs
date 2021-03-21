@@ -4,7 +4,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public partial class TestNumber
+    public partial class TestNumberParse
     {
         [Test]
         [Category("Coverage")]
@@ -18,9 +18,15 @@
 
             bool IsParsed1 = Value1.TryParseInt(out int Result1);
             bool IsParsed2 = Value2.TryParseInt(out int Result2);
+            bool IsParsed3 = Value2.TryParseUInt(out uint Result3);
+            bool IsParsed4 = Value2.TryParseLong(out long Result4);
+            bool IsParsed5 = Value2.TryParseULong(out ulong Result5);
 
             Assert.That(IsParsed1 && Result1 == (int)d1);
             Assert.That(!IsParsed2);
+            Assert.That(!IsParsed3);
+            Assert.That(!IsParsed4);
+            Assert.That(!IsParsed5);
         }
 
         [Test]

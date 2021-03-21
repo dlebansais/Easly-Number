@@ -83,7 +83,11 @@
             Consolidate();
 
             double d = mpfr_get_d(ref Proxy.MpfrStruct, DefaultRounding);
-            return d.GetHashCode();
+            uint HashCode = (uint)d.GetHashCode();
+
+            HashCode ^= 0xFFFFFFFF;
+
+            return (int)HashCode;
         }
     }
 }

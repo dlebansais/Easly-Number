@@ -98,7 +98,8 @@
                     PrecisionSpecifier = 15 + 2;
 
             Debug.Assert(NumericFormat == NumericFormat.Default || NumericFormat == NumericFormat.Exponential || NumericFormat == NumericFormat.FixedPoint);
-            Debug.Assert(PrecisionSpecifier >= 0 && PrecisionSpecifier <= 99);
+            Debug.Assert(PrecisionSpecifier >= 0);
+            Debug.Assert(PrecisionSpecifier <= 99);
 
             displayFormat = new DisplayFormat(NumericFormat, IsExponentUpperCase, PrecisionSpecifier, NumberFormatInfo);
             return true;

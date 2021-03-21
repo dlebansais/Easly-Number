@@ -26,9 +26,6 @@
 
             long Result = mpfr_get_si(ref Proxy.MpfrStruct, Rounding);
 
-            if (value < int.MinValue || value > int.MaxValue)
-                return false;
-
             value = (int)Result;
             return true;
         }
@@ -50,9 +47,6 @@
                 return false;
 
             ulong Result = mpfr_get_ui(ref Proxy.MpfrStruct, Rounding);
-
-            if (value > uint.MaxValue)
-                return false;
 
             value = (uint)Result;
             return true;

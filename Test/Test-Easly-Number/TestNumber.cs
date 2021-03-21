@@ -1,6 +1,5 @@
 ﻿namespace TestEaslyNumber
 {
-    using EaslyNumber;
     using NUnit.Framework;
     using System;
     using System.Globalization;
@@ -11,13 +10,13 @@
         [OneTimeSetUp]
         public static void InitTestSession()
         {
-            TestEaslyNumber.TestEnvironment.InitTestSession();
+            TestEnvironment.InitTestSession();
 
             NL = Environment.NewLine;
             SP = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
         }
 
-        private static string NL = string.Empty;
-        private static string SP = string.Empty;
+        public static string NL = string.Empty;
+        public static string SP = string.Empty;
     }
 }
