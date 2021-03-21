@@ -111,7 +111,7 @@
         /// </summary>
         /// <param name="precision">The precision to use for the result.</param>
         /// <param name="rounding">The rounding mode to use when creating the result.</param>
-        public Number Abs(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Nearest)
+        public Number Abs(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
             Consolidate();
 
@@ -127,13 +127,13 @@
         /// </summary>
         /// <param name="precision">The precision to use for the result.</param>
         /// <param name="rounding">The rounding mode to use when creating the result.</param>
-        public Number Exp(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Nearest)
+        public Number Exp(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
             Consolidate();
 
             Number z = new Number(precision, rounding);
 
-            mpfr_exp(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, rounding);
+            mpfr_exp(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, z.Rounding);
 
             return z;
         }
@@ -143,13 +143,13 @@
         /// </summary>
         /// <param name="precision">The precision to use for the result.</param>
         /// <param name="rounding">The rounding mode to use when creating the result.</param>
-        public Number Log(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Nearest)
+        public Number Log(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
             Consolidate();
 
             Number z = new Number(precision, rounding);
 
-            mpfr_log(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, rounding);
+            mpfr_log(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, z.Rounding);
 
             return z;
         }
@@ -159,13 +159,13 @@
         /// </summary>
         /// <param name="precision">The precision to use for the result.</param>
         /// <param name="rounding">The rounding mode to use when creating the result.</param>
-        public Number Log10(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Nearest)
+        public Number Log10(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
             Consolidate();
 
             Number z = new Number(precision, rounding);
 
-            mpfr_log10(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, rounding);
+            mpfr_log10(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, z.Rounding);
 
             return z;
         }
@@ -176,14 +176,14 @@
         /// <param name="x">The number.</param>
         /// <param name="precision">The precision to use for the result.</param>
         /// <param name="rounding">The rounding mode to use when creating the result.</param>
-        public Number Pow(Number x, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Nearest)
+        public Number Pow(Number x, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
             Consolidate();
             x.Consolidate();
 
             Number z = new Number(precision, rounding);
 
-            mpfr_pow(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, rounding);
+            mpfr_pow(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, z.Rounding);
 
             return z;
         }
@@ -193,13 +193,13 @@
         /// </summary>
         /// <param name="precision">The precision to use for the result.</param>
         /// <param name="rounding">The rounding mode to use when creating the result.</param>
-        public Number Sqrt(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Nearest)
+        public Number Sqrt(ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
             Consolidate();
 
             Number z = new Number(precision, rounding);
 
-            mpfr_sqrt(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, rounding);
+            mpfr_sqrt(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, z.Rounding);
 
             return z;
         }
@@ -210,13 +210,13 @@
         /// <param name="shift">The power of two.</param>
         /// <param name="precision">The precision to use for the result.</param>
         /// <param name="rounding">The rounding mode to use when creating the result.</param>
-        public Number ShiftLeft(ulong shift, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Nearest)
+        public Number ShiftLeft(ulong shift, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
             Consolidate();
 
             Number z = new Number(precision, rounding);
 
-            mpfr_mul_2exp(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, shift, rounding);
+            mpfr_mul_2exp(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, shift, z.Rounding);
 
             return z;
         }
@@ -227,13 +227,13 @@
         /// <param name="shift">The power of two.</param>
         /// <param name="precision">The precision to use for the result.</param>
         /// <param name="rounding">The rounding mode to use when creating the result.</param>
-        public Number ShiftRight(ulong shift, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Nearest)
+        public Number ShiftRight(ulong shift, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
             Consolidate();
 
             Number z = new Number(precision, rounding);
 
-            mpfr_div_2exp(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, shift, rounding);
+            mpfr_div_2exp(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, shift, z.Rounding);
 
             return z;
         }
@@ -244,14 +244,14 @@
         /// <param name="x">The number.</param>
         /// <param name="precision">The precision to use for the result.</param>
         /// <param name="rounding">The rounding mode to use when creating the result.</param>
-        public Number Remainder(Number x, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Nearest)
+        public Number Remainder(Number x, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
             Consolidate();
             x.Consolidate();
 
             Number z = new Number(precision, rounding);
 
-            mpfr_remainder(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, rounding);
+            mpfr_remainder(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, z.Rounding);
 
             return z;
         }

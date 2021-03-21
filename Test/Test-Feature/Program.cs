@@ -14,8 +14,8 @@
 
         public static int Main(string[] args)
         {
-            CreateSingleTextFile();
-            CreateDoubleTextFile();
+            //CreateSingleTextFile();
+            //CreateDoubleTextFile();
 
             return 0;
         }

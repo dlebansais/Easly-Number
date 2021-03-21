@@ -39,5 +39,10 @@
         /// Faithful rounding.
         /// </summary>
         Faithful,
+
+        /// <summary>
+        /// Use rounding from another source.
+        /// </summary>
+        Default,
     }
 }

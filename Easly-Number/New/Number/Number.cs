@@ -197,8 +197,15 @@
         /// <param name="rounding">The rounding.</param>
         private Number(ulong precision, Rounding rounding)
         {
-            Proxy = new mpfr_t(precision);
-            Rounding = DefaultRounding;
+            if (precision == ulong.MaxValue)
+                Proxy = new mpfr_t();
+            else
+                Proxy = new mpfr_t(precision);
+
+            if (rounding == Rounding.Default)
+                Rounding = DefaultRounding;
+            else
+                Rounding = rounding;
         }
 
         /// <summary>

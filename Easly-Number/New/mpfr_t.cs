@@ -12,6 +12,10 @@
 
         public mpfr_t(ulong precision)
         {
+            if (precision == ulong.MaxValue)
+            {
+            }
+
             mpfr_init2(ref MpfrStruct, precision);
 
             InitCacheManagement();
