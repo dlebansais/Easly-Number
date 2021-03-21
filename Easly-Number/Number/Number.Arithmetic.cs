@@ -262,27 +262,102 @@
         /// Returns the bitwise AND of this object's value and another.
         /// </summary>
         /// <param name="other">The other number.</param>
-        public Number BitwiseAnd(Number other)
+        /// <param name="precision">The precision to use for the result.</param>
+        /// <param name="rounding">The rounding mode to use when creating the result.</param>
+        public Number BitwiseAnd(Number other, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
-            throw new NotImplementedException();
+            Consolidate();
+            other.Consolidate();
+
+            if (!IsInteger || !other.IsInteger)
+                throw new ArgumentException();
+
+            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref IntValue);
+            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
+
+            __mpz_t OtherValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref OtherValue);
+            mpfr_get_z(ref OtherValue, ref other.Proxy.MpfrStruct, Rounding.Nearest);
+
+            __mpz_t ResultValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref ResultValue);
+
+            mpz_and(ref ResultValue, ref IntValue, ref OtherValue);
+
+            Number z = new Number(precision, rounding);
+
+            mpfr_set_z(ref z.Proxy.MpfrStruct, ref ResultValue, Rounding);
+
+            return z;
         }
 
         /// <summary>
         /// Returns the bitwise OR of this object's value and another.
         /// </summary>
         /// <param name="other">The other number.</param>
-        public Number BitwiseOr(Number other)
+        /// <param name="precision">The precision to use for the result.</param>
+        /// <param name="rounding">The rounding mode to use when creating the result.</param>
+        public Number BitwiseOr(Number other, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
-            throw new NotImplementedException();
+            Consolidate();
+            other.Consolidate();
+
+            if (!IsInteger || !other.IsInteger)
+                throw new ArgumentException();
+
+            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref IntValue);
+            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
+
+            __mpz_t OtherValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref OtherValue);
+            mpfr_get_z(ref OtherValue, ref other.Proxy.MpfrStruct, Rounding.Nearest);
+
+            __mpz_t ResultValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref ResultValue);
+
+            mpz_ior(ref ResultValue, ref IntValue, ref OtherValue);
+
+            Number z = new Number(precision, rounding);
+
+            mpfr_set_z(ref z.Proxy.MpfrStruct, ref ResultValue, Rounding);
+
+            return z;
         }
 
         /// <summary>
         /// Returns the bitwise OR of this object's value and another.
         /// </summary>
         /// <param name="other">The other number.</param>
-        public Number BitwiseXor(Number other)
+        /// <param name="precision">The precision to use for the result.</param>
+        /// <param name="rounding">The rounding mode to use when creating the result.</param>
+        public Number BitwiseXor(Number other, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
         {
-            throw new NotImplementedException();
+            Consolidate();
+            other.Consolidate();
+
+            if (!IsInteger || !other.IsInteger)
+                throw new ArgumentException();
+
+            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref IntValue);
+            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
+
+            __mpz_t OtherValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref OtherValue);
+            mpfr_get_z(ref OtherValue, ref other.Proxy.MpfrStruct, Rounding.Nearest);
+
+            __mpz_t ResultValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref ResultValue);
+
+            mpz_xor(ref ResultValue, ref IntValue, ref OtherValue);
+
+            Number z = new Number(precision, rounding);
+
+            mpfr_set_z(ref z.Proxy.MpfrStruct, ref ResultValue, Rounding);
+
+            return z;
         }
     }
 }

@@ -34,15 +34,15 @@
         public static __mpfr_set_d mpfr_set_d { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_set_d>(GetMpfrPointer(nameof(mpfr_set_d)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int __mpfr_set_z(ref __mpfr_t rop, ref __mpfr_t op, Rounding rnd);
+        public delegate int __mpfr_set_z(ref __mpfr_t rop, ref __mpz_t op, Rounding rnd);
         public static __mpfr_set_z mpfr_set_z { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_set_z>(GetMpfrPointer(nameof(mpfr_set_z)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int __mpfr_set_q(ref __mpfr_t rop, ref __mpfr_t op, Rounding rnd);
+        public delegate int __mpfr_set_q(ref __mpfr_t rop, ref __mpq_t op, Rounding rnd);
         public static __mpfr_set_q mpfr_set_q { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_set_q>(GetMpfrPointer(nameof(mpfr_set_q)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int __mpfr_set_f(ref __mpfr_t rop, ref __mpfr_t op, Rounding rnd);
+        public delegate int __mpfr_set_f(ref __mpfr_t rop, ref __mpf_t op, Rounding rnd);
         public static __mpfr_set_f mpfr_set_f { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_set_f>(GetMpfrPointer(nameof(mpfr_set_f)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]

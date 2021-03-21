@@ -68,7 +68,7 @@
                 Consolidate();
                 other.Consolidate();
 
-                return mpfr_equal_p(ref Proxy.MpfrStruct, ref other.Proxy.MpfrStruct) == 0;
+                return mpfr_equal_p(ref Proxy.MpfrStruct, ref other.Proxy.MpfrStruct) != 0;
             }
             else
                 return false;

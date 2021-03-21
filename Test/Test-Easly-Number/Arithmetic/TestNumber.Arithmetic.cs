@@ -196,5 +196,62 @@
 
             Assert.AreEqual(DoubleString, NumberString);
         }
+
+        [Test]
+        [Category("Coverage")]
+        public static void BitwiseAnd()
+        {
+            int n1 = 12345;
+            int n2 = 25;
+
+            Number Value1 = new Number(n1);
+            Number Value2 = new Number(n2);
+
+            int n = n1 & n2;
+            Number Value = Value1 & Value2;
+
+            string IntString = n.ToString();
+            string NumberString = Value.ToString();
+
+            Assert.AreEqual(IntString, NumberString);
+        }
+
+        [Test]
+        [Category("Coverage")]
+        public static void BitwiseOr()
+        {
+            int n1 = 12345;
+            int n2 = 25;
+
+            Number Value1 = new Number(n1);
+            Number Value2 = new Number(n2);
+
+            int n = n1 | n2;
+            Number Value = Value1 | Value2;
+
+            string IntString = n.ToString();
+            string NumberString = Value.ToString();
+
+            Assert.AreEqual(IntString, NumberString);
+        }
+
+        [Test]
+        [Category("Coverage")]
+        public static void BitwiseXor()
+        {
+            int n1 = 12345;
+            int n2 = 25;
+
+            Number Value1 = new Number(n1);
+            Number Value2 = new Number(n2);
+
+            int n = n1 ^ n2;
+            Number Value = Value1 ^ Value2;
+
+            string IntString = n.ToString();
+            string NumberString = Value.ToString();
+
+            Assert.AreEqual(IntString, NumberString);
+        }
     }
 }

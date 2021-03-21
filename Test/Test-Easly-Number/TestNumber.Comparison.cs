@@ -246,6 +246,14 @@
             IsEqual = Value1.Equals(d2);
             Assert.IsFalse(IsEqual);
 
+            Number Value2 = new Number(d2);
+
+            IsEqual = Value1.Equals(Value2);
+            Assert.IsFalse(IsEqual);
+
+            IsEqual = Value1.Equals(Value1);
+            Assert.IsTrue(IsEqual);
+
             int HashCodeDouble = d1.GetHashCode();
             int HashCodeNumber = Value1.GetHashCode();
             Assert.AreNotEqual(HashCodeDouble, HashCodeNumber);

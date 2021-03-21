@@ -519,6 +519,38 @@
         }
         #endregion
 
+        #region Bitwise
+        /// <summary>
+        /// Return x &amp; y.
+        /// </summary>
+        /// <param name="x">The first operand.</param>
+        /// <param name="y">The second operand.</param>
+        public static Number operator &(Number x, Number y)
+        {
+            return x.BitwiseAnd(y, x.Precision, x.Rounding);
+        }
+
+        /// <summary>
+        /// Return x | y.
+        /// </summary>
+        /// <param name="x">The first operand.</param>
+        /// <param name="y">The second operand.</param>
+        public static Number operator |(Number x, Number y)
+        {
+            return x.BitwiseOr(y, x.Precision, x.Rounding);
+        }
+
+        /// <summary>
+        /// Return x ^ y.
+        /// </summary>
+        /// <param name="x">The first operand.</param>
+        /// <param name="y">The second operand.</param>
+        public static Number operator ^(Number x, Number y)
+        {
+            return x.BitwiseXor(y, x.Precision, x.Rounding);
+        }
+        #endregion
+
         #region Comparison
         /// <summary>
         /// Return whether x > y.
