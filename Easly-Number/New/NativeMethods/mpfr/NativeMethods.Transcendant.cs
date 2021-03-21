@@ -59,11 +59,9 @@
         public delegate int __mpfr_pow_si(ref __mpfr_t rop, ref __mpfr_t op1, long op2, Rounding rnd);
         public static __mpfr_pow_si mpfr_pow_si { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_pow_si>(GetMpfrPointer(nameof(mpfr_pow_si)));
 
-        /*
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_pow_z(ref __mpfr_t rop, ref __mpfr_t op1, ref __mpz_t op2, Rounding rnd);
         public static __mpfr_pow_z mpfr_pow_z { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_pow_z>(GetMpfrPointer(nameof(mpfr_pow_z)));
-        */
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_ui_pow_ui(ref __mpfr_t rop, ulong op1, ulong op2, Rounding rnd);

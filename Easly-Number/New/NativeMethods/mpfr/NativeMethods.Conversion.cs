@@ -39,7 +39,6 @@
         public delegate int __mpfr_frexp(out long exp, ref __mpfr_t x, ref __mpfr_t y, Rounding rnd);
         public static __mpfr_frexp mpfr_frexp { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_frexp>(GetMpfrPointer(nameof(mpfr_frexp)));
 
-        /*
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_get_z_2exp(ref __mpz_t rop, ref __mpfr_t op);
         public static __mpfr_get_z_2exp mpfr_get_z_2exp { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_get_z_2exp>(GetMpfrPointer(nameof(mpfr_get_z_2exp)));
@@ -55,7 +54,6 @@
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_get_f(ref __mpf_t rop, ref __mpfr_t op, Rounding rnd);
         public static __mpfr_get_f mpfr_get_f { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_get_f>(GetMpfrPointer(nameof(mpfr_get_f)));
-        */
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate ulong __mpfr_get_str_ndigits(int b, ulong p);

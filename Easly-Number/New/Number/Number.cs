@@ -29,6 +29,21 @@
         /// The special value zero.
         /// </summary>
         public static readonly Number Zero = new Number(false, false, false);
+
+        /// <summary>
+        /// The special min value for long.
+        /// </summary>
+        public static readonly Number LongMinValue = new Number("-9223372036854775808", 10);
+
+        /// <summary>
+        /// The special max value for long.
+        /// </summary>
+        public static readonly Number LongMaxValue = new Number("7FFFFFFFFFFFFFFF", 16);
+
+        /// <summary>
+        /// The special max value for ulong.
+        /// </summary>
+        public static readonly Number ULongMaxValue = new Number("FFFFFFFFFFFFFFFF", 16);
         #endregion
 
         #region Init
@@ -71,10 +86,9 @@
         /// <param name="value">The number value.</param>
         public Number(float value)
         {
-            Proxy = new mpfr_t();
+            Proxy = new mpfr_t(24);
             Rounding = DefaultRounding;
 
-            mpfr_set_prec(ref Proxy.MpfrStruct, 24);
             mpfr_set_flt(ref Proxy.MpfrStruct, value, Rounding);
         }
 
@@ -85,7 +99,7 @@
         /// <param name="value">The number value.</param>
         public Number(double value)
         {
-            Proxy = new mpfr_t(60);
+            Proxy = new mpfr_t(53);
             Rounding = DefaultRounding;
 
             mpfr_set_d(ref Proxy.MpfrStruct, value, Rounding);
@@ -108,7 +122,7 @@
         /// <param name="value">The number value.</param>
         public Number(int value)
         {
-            Proxy = new mpfr_t();
+            Proxy = new mpfr_t(32);
             Rounding = DefaultRounding;
 
             mpfr_set_si(ref Proxy.MpfrStruct, value, Rounding);
@@ -121,7 +135,7 @@
         /// <param name="value">The number value.</param>
         public Number(uint value)
         {
-            Proxy = new mpfr_t();
+            Proxy = new mpfr_t(32);
             Rounding = DefaultRounding;
 
             mpfr_set_ui(ref Proxy.MpfrStruct, value, Rounding);
@@ -134,10 +148,10 @@
         /// <param name="value">The number value.</param>
         public Number(long value)
         {
-            Proxy = new mpfr_t();
+            Proxy = new mpfr_t(64);
             Rounding = DefaultRounding;
 
-            mpfr_set_si(ref Proxy.MpfrStruct, value, Rounding);
+            mpfr_set_str(ref Proxy.MpfrStruct, value.ToString(), 10, Rounding);
         }
 
         /// <summary>
@@ -147,10 +161,23 @@
         /// <param name="value">The number value.</param>
         public Number(ulong value)
         {
+            Proxy = new mpfr_t(64);
+            Rounding = DefaultRounding;
+
+            mpfr_set_str(ref Proxy.MpfrStruct, value.ToString(), 10, Rounding);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Number"/> struct.
+        /// </summary>
+        /// <param name="text">The number in plain text.</param>
+        /// <param name="textBase">The digit base for <paramref name="text"/>.</param>
+        private Number(string text, uint textBase)
+        {
             Proxy = new mpfr_t();
             Rounding = DefaultRounding;
 
-            mpfr_set_ui(ref Proxy.MpfrStruct, value, Rounding);
+            mpfr_set_str(ref Proxy.MpfrStruct, text, textBase, Rounding);
         }
 
         /// <summary>

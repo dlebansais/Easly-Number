@@ -18,6 +18,9 @@
 
             Consolidate();
 
+            if (!IsInteger)
+                return false;
+
             if (mpfr_fits_sint_p(ref Proxy.MpfrStruct, Rounding) == 0)
                 return false;
 
@@ -39,6 +42,9 @@
             value = 0;
 
             Consolidate();
+
+            if (!IsInteger)
+                return false;
 
             if (mpfr_fits_uint_p(ref Proxy.MpfrStruct, Rounding) == 0)
                 return false;
@@ -62,10 +68,22 @@
 
             Consolidate();
 
-            if (mpfr_fits_sint_p(ref Proxy.MpfrStruct, Rounding) == 0)
+            if (!IsInteger)
                 return false;
 
-            value = mpfr_get_si(ref Proxy.MpfrStruct, Rounding);
+            if (mpfr_cmp(ref Proxy.MpfrStruct, ref LongMinValue.Proxy.MpfrStruct) < 0 || mpfr_cmp(ref Proxy.MpfrStruct, ref LongMaxValue.Proxy.MpfrStruct) > 0)
+                return false;
+
+            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref IntValue);
+            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
+
+            byte[] Bytes = new byte[16];
+
+            long countp;
+            mpz_export(Bytes, out countp, -1, sizeof(byte), 0, 0, ref IntValue);
+
+            value = BitConverter.ToInt64(Bytes, 0);
             return true;
         }
 
@@ -73,16 +91,28 @@
         /// Gets the value if it can be represented with a <see cref="ulong"/>.
         /// </summary>
         /// <param name="value">The value upon return.</param>
-        public bool TryParseUInt(out ulong value)
+        public bool TryParseULong(out ulong value)
         {
             value = 0;
 
             Consolidate();
 
-            if (mpfr_fits_uint_p(ref Proxy.MpfrStruct, Rounding) == 0)
+            if (!IsInteger)
                 return false;
 
-            value = mpfr_get_ui(ref Proxy.MpfrStruct, Rounding);
+            if (mpfr_sgn(ref Proxy.MpfrStruct) < 0 || mpfr_cmp(ref Proxy.MpfrStruct, ref ULongMaxValue.Proxy.MpfrStruct) > 0)
+                return false;
+
+            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
+            mpz_init(ref IntValue);
+            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
+
+            byte[] Bytes = new byte[16];
+
+            long countp;
+            mpz_export(Bytes, out countp, -1, sizeof(byte), 0, 0, ref IntValue);
+
+            value = BitConverter.ToUInt64(Bytes, 0);
             return true;
         }
     }

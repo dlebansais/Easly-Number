@@ -30,6 +30,19 @@
             return Result;
         }
 
+        private static IntPtr GetMpirPointer(string name)
+        {
+            LoadLibrary("mpir.dll", ref hMpirLib);
+
+            string FunctionName = $"__g{name}";
+            IntPtr Result = GetProcAddress(hMpirLib, FunctionName);
+
+            if (Result == IntPtr.Zero)
+                throw new ArgumentException($"Method {FunctionName} not found", nameof(name));
+
+            return Result;
+        }
+
         private static bool LoadLibrary(string libraryName, ref IntPtr hLib)
         {
             if (hLib == IntPtr.Zero)

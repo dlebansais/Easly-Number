@@ -22,7 +22,6 @@
         public delegate int __mpfr_cmp_d(ref __mpfr_t op1, double op2);
         public static __mpfr_cmp_d mpfr_cmp_d { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_cmp_d>(GetMpfrPointer(nameof(mpfr_cmp_d)));
 
-        /*
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_cmp_z(ref __mpfr_t op1, ref __mpz_t op2);
         public static __mpfr_cmp_z mpfr_cmp_z { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_cmp_z>(GetMpfrPointer(nameof(mpfr_cmp_z)));
@@ -34,7 +33,6 @@
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_cmp_f(ref __mpfr_t op1, ref __mpf_t op2);
         public static __mpfr_cmp_f mpfr_cmp_f { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_cmp_f>(GetMpfrPointer(nameof(mpfr_cmp_f)));
-        */
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_cmp_ui_2exp(ref __mpfr_t op1, ulong op2, int e);

@@ -13,7 +13,7 @@
     <Product />
     <Description>Arbitrary precision arithmetic for Easly</Description>
     <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.0.0.51</AssemblyVersion>
+    <AssemblyVersion>1.0.0.53</AssemblyVersion>
     <FileVersion>1.0.0.20</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Easly-Number</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -31,6 +31,10 @@
     </PackageReference>
     <PackageReference Include="Contracts-Debug" Version="1.0.11" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <PackageReference Include="Contracts" Version="1.0.11" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="New\NativeMethods\mpir\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
