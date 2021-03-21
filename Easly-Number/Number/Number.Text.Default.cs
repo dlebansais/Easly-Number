@@ -47,21 +47,6 @@
             return Result;
         }
 
-        private void FixedPointFractionalPart(DisplayFormat displayFormat, ref string numberString, int exponent, out string separator, out string fractionalPart)
-        {
-            separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
-            fractionalPart = numberString;
-
-            while (fractionalPart.Length > 0 && fractionalPart[fractionalPart.Length - 1] == '0')
-                fractionalPart = fractionalPart.Substring(0, fractionalPart.Length - 1);
-
-            if (fractionalPart.Length > displayFormat.PrecisionSpecifier)
-                fractionalPart = fractionalPart.Substring(0, displayFormat.PrecisionSpecifier);
-
-            if (fractionalPart.Length == 0)
-                separator = string.Empty;
-        }
-
         private void FixedPointIntegerPart(ref string numberString, int exponent, out string integerPart)
         {
             int SignificantDigitCount = exponent;
@@ -91,60 +76,82 @@
             }
         }
 
+        private void FixedPointFractionalPart(DisplayFormat displayFormat, ref string numberString, int exponent, out string separator, out string fractionalPart)
+        {
+            separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
+            fractionalPart = numberString;
+
+            while (fractionalPart.Length > 0 && fractionalPart[fractionalPart.Length - 1] == '0')
+                fractionalPart = fractionalPart.Substring(0, fractionalPart.Length - 1);
+
+            if (fractionalPart.Length > displayFormat.PrecisionSpecifier)
+                fractionalPart = fractionalPart.Substring(0, displayFormat.PrecisionSpecifier);
+
+            if (fractionalPart.Length == 0)
+                separator = string.Empty;
+        }
+
         private string ToStringDefaultFormatScientific(DisplayFormat displayFormat, string numberString, int exponent, string negativeSign)
         {
-            bool IsFirstDigitZero;
-            string FirstDigit;
+            ScientificFirstDigit(ref numberString, out bool IsFirstDigitZero, out string FirstDigit);
+            ScientificOtherDigits(displayFormat, ref numberString, out string Separator, out string OtherDigits);
+            ScientificExponent(displayFormat, IsFirstDigitZero, exponent, out string ExponentCharacter, out string ExponentSign, out string ExponentString);
+
+            string Result = $"{negativeSign}{FirstDigit}{Separator}{OtherDigits}{ExponentCharacter}{ExponentSign}{ExponentString}";
+
+            return Result;
+        }
+
+        private void ScientificFirstDigit(ref string numberString, out bool isFirstDigitZero, out string firstDigit)
+        {
             if (numberString.Length > 0)
             {
-                FirstDigit = numberString.Substring(0, 1);
+                firstDigit = numberString.Substring(0, 1);
                 numberString = numberString.Substring(1);
-                IsFirstDigitZero = FirstDigit == "0";
+                isFirstDigitZero = firstDigit == "0";
             }
             else
             {
-                FirstDigit = "0";
-                IsFirstDigitZero = true;
+                firstDigit = "0";
+                isFirstDigitZero = true;
             }
+        }
 
-            string Separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
-
-            string OtherDigits;
+        private void ScientificOtherDigits(DisplayFormat displayFormat, ref string numberString, out string separator, out string otherDigits)
+        {
+            separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
 
             if (numberString.Length > displayFormat.PrecisionSpecifier)
-                OtherDigits = numberString.Substring(0, displayFormat.PrecisionSpecifier);
+                otherDigits = numberString.Substring(0, displayFormat.PrecisionSpecifier);
             else
-                OtherDigits = numberString;
+                otherDigits = numberString;
 
-            while (OtherDigits.Length > 0 && OtherDigits[OtherDigits.Length - 1] == '0')
-                OtherDigits = OtherDigits.Substring(0, OtherDigits.Length - 1);
+            while (otherDigits.Length > 0 && otherDigits[otherDigits.Length - 1] == '0')
+                otherDigits = otherDigits.Substring(0, otherDigits.Length - 1);
 
-            if (OtherDigits.Length == 0)
-                Separator = string.Empty;
+            if (otherDigits.Length == 0)
+                separator = string.Empty;
+        }
 
-            string ExponentCharacter = displayFormat.IsExponentUpperCase ? "E" : "e";
-            string ExponentSign;
-            string ExponentString;
+        private void ScientificExponent(DisplayFormat displayFormat, bool isFirstDigitZero, int exponent, out string exponentCharacter, out string exponentSign, out string exponentString)
+        {
+            exponentCharacter = displayFormat.IsExponentUpperCase ? "E" : "e";
 
             int ExponentDigitCount = Precision <= 24 ? 2 : 3;
             string ExponentDigitFormat = $"D0{ExponentDigitCount}";
 
-            if (IsFirstDigitZero)
+            if (isFirstDigitZero)
             {
-                ExponentSign = exponent >= 0 ? "+" : "-";
-                ExponentString = (exponent >= 0 ? exponent : -exponent).ToString(ExponentDigitFormat);
+                exponentSign = exponent >= 0 ? "+" : "-";
+                exponentString = (exponent >= 0 ? exponent : -exponent).ToString(ExponentDigitFormat);
             }
             else
             {
                 exponent--;
 
-                ExponentSign = exponent >= 0 ? "+" : "-";
-                ExponentString = (exponent >= 0 ? exponent : -exponent).ToString(ExponentDigitFormat);
+                exponentSign = exponent >= 0 ? "+" : "-";
+                exponentString = (exponent >= 0 ? exponent : -exponent).ToString(ExponentDigitFormat);
             }
-
-            string Result = $"{negativeSign}{FirstDigit}{Separator}{OtherDigits}{ExponentCharacter}{ExponentSign}{ExponentString}";
-
-            return Result;
         }
     }
 }
