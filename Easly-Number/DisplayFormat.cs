@@ -29,53 +29,66 @@
         public int PrecisionSpecifier { get; }
         public NumberFormatInfo NumberFormatInfo { get; }
 
+        private static bool ParseFormatCharacter(char formatCharacter, NumberFormatInfo numberFormatInfo, out NumericFormat numericFormat, out int precisionSpecifier)
+        {
+            numericFormat = NumericFormat.Default;
+            precisionSpecifier = 0;
+
+            switch (formatCharacter)
+            {
+                case 'G':
+                case 'g':
+                    break;
+
+                case 'E':
+                case 'e':
+                    numericFormat = NumericFormat.Exponential;
+                    precisionSpecifier = 6;
+                    break;
+
+                case 'F':
+                case 'f':
+                    numericFormat = NumericFormat.FixedPoint;
+                    precisionSpecifier = numberFormatInfo.NumberDecimalDigits;
+                    break;
+
+                default:
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool ParsePrecisionSpecifier(string? format, ref int precisionSpecifier)
+        {
+            if (format != null && format.Length > 1)
+            {
+                if (!int.TryParse(format.Substring(1), out precisionSpecifier))
+                    return false;
+
+                if (precisionSpecifier < 0 || precisionSpecifier > 99)
+                    return false;
+            }
+
+            return true;
+        }
+
         public static bool Parse(string? format, IFormatProvider? provider, ulong precision, out DisplayFormat displayFormat)
         {
             char FormatCharacter = (format == null || format.Length == 0) ? 'G' : format[0];
             bool IsExponentUpperCase = char.IsUpper(FormatCharacter);
             NumberFormatInfo NumberFormatInfo = (provider != null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo) ? AsNumberFormatInfo : NumberFormatInfo.CurrentInfo;
 
-            NumericFormat NumericFormat;
-            int PrecisionSpecifier;
-
-            switch (FormatCharacter)
+            if (!ParseFormatCharacter(FormatCharacter, NumberFormatInfo, out NumericFormat NumericFormat, out int PrecisionSpecifier))
             {
-                case 'G':
-                case 'g':
-                    NumericFormat = NumericFormat.Default;
-                    PrecisionSpecifier = 0;
-                    break;
-
-                case 'E':
-                case 'e':
-                    NumericFormat = NumericFormat.Exponential;
-                    PrecisionSpecifier = 6;
-                    break;
-
-                case 'F':
-                case 'f':
-                    NumericFormat = NumericFormat.FixedPoint;
-                    PrecisionSpecifier = NumberFormatInfo.NumberDecimalDigits;
-                    break;
-
-                default:
-                    displayFormat = Empty;
-                    return false;
+                displayFormat = Empty;
+                return false;
             }
 
-            if (format != null && format.Length > 1)
+            if (!ParsePrecisionSpecifier(format, ref PrecisionSpecifier))
             {
-                if (!int.TryParse(format.Substring(1), out PrecisionSpecifier))
-                {
-                    displayFormat = Empty;
-                    return false;
-                }
-
-                if (PrecisionSpecifier < 0 || PrecisionSpecifier > 99)
-                {
-                    displayFormat = Empty;
-                    return false;
-                }
+                displayFormat = Empty;
+                return false;
             }
 
             if (NumericFormat == NumericFormat.Default && PrecisionSpecifier == 0)

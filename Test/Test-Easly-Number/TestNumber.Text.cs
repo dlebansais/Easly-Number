@@ -200,9 +200,6 @@
             return false;
         }
 
-
-
-
         [Test]
         [Category("Coverage")]
         public static void TestCopiedFormats()
