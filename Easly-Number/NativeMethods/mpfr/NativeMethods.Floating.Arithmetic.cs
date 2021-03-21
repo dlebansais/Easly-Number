@@ -1,6 +1,5 @@
 ﻿namespace EaslyNumber
 {
-    using System;
     using System.Runtime.InteropServices;
 
 #pragma warning disable SA1601 // Partial elements should be documented
