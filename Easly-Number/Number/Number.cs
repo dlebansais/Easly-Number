@@ -183,16 +183,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Number"/> struct.
         /// </summary>
-        /// <param name="proxy">A fake proxy.</param>
-        private Number(mpfr_t proxy)
-        {
-            Proxy = proxy;
-            Rounding = DefaultRounding;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Number"/> struct.
-        /// </summary>
         /// <param name="precision">The precision.</param>
         /// <param name="rounding">The rounding.</param>
         private Number(ulong precision, Rounding rounding)

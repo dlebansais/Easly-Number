@@ -29,19 +29,6 @@
             FixedPointIntegerPart(ref numberString, exponent, out string IntegerPart);
             FixedPointFractionalPart(displayFormat, ref numberString, exponent, out string Separator, out string FractionalPart);
 
-            string Digits = $"{IntegerPart}{FractionalPart}";
-
-            bool IsZero = true;
-            for (int i = 0; i < Digits.Length; i++)
-                if (Digits[i] != '0')
-                {
-                    IsZero = false;
-                    break;
-                }
-
-            if (IsZero)
-                negativeSign = string.Empty;
-
             string Result = $"{negativeSign}{IntegerPart}{Separator}{FractionalPart}";
 
             return Result;
@@ -51,28 +38,22 @@
         {
             int SignificantDigitCount = exponent;
 
-            if (SignificantDigitCount <= numberString.Length)
-            {
-                if (SignificantDigitCount > 0)
-                {
-                    integerPart = numberString.Substring(0, SignificantDigitCount);
-                    numberString = numberString.Substring(SignificantDigitCount);
-                }
-                else
-                {
-                    integerPart = "0";
+            Debug.Assert(SignificantDigitCount <= numberString.Length);
 
-                    while (SignificantDigitCount < 0)
-                    {
-                        SignificantDigitCount++;
-                        numberString = "0" + numberString.Substring(0, numberString.Length - 1);
-                    }
-                }
+            if (SignificantDigitCount > 0)
+            {
+                integerPart = numberString.Substring(0, SignificantDigitCount);
+                numberString = numberString.Substring(SignificantDigitCount);
             }
             else
             {
-                integerPart = numberString;
-                numberString = string.Empty;
+                integerPart = "0";
+
+                while (SignificantDigitCount < 0)
+                {
+                    SignificantDigitCount++;
+                    numberString = "0" + numberString.Substring(0, numberString.Length - 1);
+                }
             }
         }
 
@@ -83,9 +64,6 @@
 
             while (fractionalPart.Length > 0 && fractionalPart[fractionalPart.Length - 1] == '0')
                 fractionalPart = fractionalPart.Substring(0, fractionalPart.Length - 1);
-
-            if (fractionalPart.Length > displayFormat.PrecisionSpecifier)
-                fractionalPart = fractionalPart.Substring(0, displayFormat.PrecisionSpecifier);
 
             if (fractionalPart.Length == 0)
                 separator = string.Empty;
@@ -104,27 +82,20 @@
 
         private void ScientificFirstDigit(ref string numberString, out bool isFirstDigitZero, out string firstDigit)
         {
-            if (numberString.Length > 0)
-            {
-                firstDigit = numberString.Substring(0, 1);
-                numberString = numberString.Substring(1);
-                isFirstDigitZero = firstDigit == "0";
-            }
-            else
-            {
-                firstDigit = "0";
-                isFirstDigitZero = true;
-            }
+            Debug.Assert(numberString.Length > 0);
+
+            firstDigit = numberString.Substring(0, 1);
+            numberString = numberString.Substring(1);
+            isFirstDigitZero = firstDigit == "0";
         }
 
         private void ScientificOtherDigits(DisplayFormat displayFormat, ref string numberString, out string separator, out string otherDigits)
         {
             separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
 
-            if (numberString.Length > displayFormat.PrecisionSpecifier)
-                otherDigits = numberString.Substring(0, displayFormat.PrecisionSpecifier);
-            else
-                otherDigits = numberString;
+            Debug.Assert(numberString.Length <= displayFormat.PrecisionSpecifier);
+
+            otherDigits = numberString;
 
             while (otherDigits.Length > 0 && otherDigits[otherDigits.Length - 1] == '0')
                 otherDigits = otherDigits.Substring(0, otherDigits.Length - 1);
@@ -140,18 +111,11 @@
             int ExponentDigitCount = Precision <= 24 ? 2 : 3;
             string ExponentDigitFormat = $"D0{ExponentDigitCount}";
 
-            if (isFirstDigitZero)
-            {
-                exponentSign = exponent >= 0 ? "+" : "-";
-                exponentString = (exponent >= 0 ? exponent : -exponent).ToString(ExponentDigitFormat);
-            }
-            else
-            {
+            if (!isFirstDigitZero)
                 exponent--;
 
-                exponentSign = exponent >= 0 ? "+" : "-";
-                exponentString = (exponent >= 0 ? exponent : -exponent).ToString(ExponentDigitFormat);
-            }
+            exponentSign = exponent >= 0 ? "+" : "-";
+            exponentString = (exponent >= 0 ? exponent : -exponent).ToString(ExponentDigitFormat);
         }
     }
 }

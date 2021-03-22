@@ -13,6 +13,25 @@
     {
         [Test]
         [Category("Coverage")]
+        public static void BasicToString()
+        {
+            Number n = new Number(1.5);
+
+            Assert.AreEqual(n.ToString(), "1,5");
+            Assert.AreEqual(n.ToString("G"), "1,5");
+            Assert.AreEqual(n.ToString(CultureInfo.CurrentCulture), "1,5");
+            Assert.AreEqual(n.ToString(null, CultureInfo.CurrentCulture), "1,5");
+            Assert.AreEqual(n.ToString("G", CultureInfo.CurrentCulture), "1,5");
+
+            Exception? exNumber;
+            string Message = "text";
+
+            exNumber = Assert.Throws<ArgumentException>(() => n = new Number("*"));
+            Assert.AreEqual(exNumber?.Message, Message, $"Expected: '{Message}', got: '{exNumber?.Message}'");
+        }
+
+        [Test]
+        [Category("Coverage")]
         public static void TestDoubleToString()
         {
             List<OutputDouble> TestList = new();

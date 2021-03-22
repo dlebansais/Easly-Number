@@ -172,6 +172,112 @@
 
         [Test]
         [Category("Coverage")]
+        public static void TestInitTextInteger0()
+        {
+            int p = 0;
+            Number n = new Number(p);
+
+            Assert.IsFalse(n.IsInfinite);
+            Assert.IsTrue(n.IsInteger);
+            Assert.IsFalse(n.IsNaN);
+            Assert.IsFalse(n.IsNegativeInfinity);
+            Assert.IsFalse(n.IsPositiveInfinity);
+            Assert.IsFalse(n.IsSpecial);
+            Assert.IsTrue(n.IsZero);
+
+            string Text = n.ToString();
+            Assert.That(Text == "0", $"Expected: 0, got: {Text}");
+        }
+
+        [Test]
+        [Category("Coverage")]
+        public static void TestInitTextInteger1()
+        {
+            uint p = 0;
+            Number n = new Number(p);
+
+            Assert.IsFalse(n.IsInfinite);
+            Assert.IsTrue(n.IsInteger);
+            Assert.IsFalse(n.IsNaN);
+            Assert.IsFalse(n.IsNegativeInfinity);
+            Assert.IsFalse(n.IsPositiveInfinity);
+            Assert.IsFalse(n.IsSpecial);
+            Assert.IsTrue(n.IsZero);
+
+            string Text = n.ToString();
+            Assert.That(Text == "0", $"Expected: 0, got: {Text}");
+        }
+
+        [Test]
+        [Category("Coverage")]
+        public static void TestInitTextInteger2()
+        {
+            long p = 0;
+            Number n = new Number(p);
+
+            Assert.IsFalse(n.IsInfinite);
+            Assert.IsTrue(n.IsInteger);
+            Assert.IsFalse(n.IsNaN);
+            Assert.IsFalse(n.IsNegativeInfinity);
+            Assert.IsFalse(n.IsPositiveInfinity);
+            Assert.IsFalse(n.IsSpecial);
+            Assert.IsTrue(n.IsZero);
+
+            string Text = n.ToString();
+            Assert.That(Text == "0", $"Expected: 0, got: {Text}");
+        }
+
+        [Test]
+        [Category("Coverage")]
+        public static void TestInitTextInteger3()
+        {
+            ulong p = 0;
+            Number n = new Number(p);
+
+            Assert.IsFalse(n.IsInfinite);
+            Assert.IsTrue(n.IsInteger);
+            Assert.IsFalse(n.IsNaN);
+            Assert.IsFalse(n.IsNegativeInfinity);
+            Assert.IsFalse(n.IsPositiveInfinity);
+            Assert.IsFalse(n.IsSpecial);
+            Assert.IsTrue(n.IsZero);
+
+            string Text = n.ToString();
+            Assert.That(Text == "0", $"Expected: 0, got: {Text}");
+        }
+
+        [Test]
+        [Category("Coverage")]
+        public static void TestPrecision()
+        {
+            ulong DefaultPrecision = Number.DefaultPrecision;
+            Assert.That(DefaultPrecision == 53, $"Expected: 53, got: {DefaultPrecision}");
+
+            Number.DefaultPrecision = 64;
+
+            DefaultPrecision = Number.DefaultPrecision;
+            Assert.That(DefaultPrecision == 64, $"Expected: 64, got: {DefaultPrecision}");
+
+            Number n = new Number(1.0);
+            Assert.That(n.Precision == 53, $"Expected: 53, got: {n.Precision}");
+
+            n = new Number("1");
+            Assert.That(n.Precision == 64, $"Expected: 64, got: {n.Precision}");
+
+            n.Precision = 53;
+            Assert.That(n.Precision == 53, $"Expected: 53, got: {n.Precision}");
+
+            Number.ResetDefaultPrecision();
+
+            DefaultPrecision = Number.DefaultPrecision;
+            Assert.That(DefaultPrecision == 53, $"Expected: 53, got: {DefaultPrecision}");
+
+            n = new Number("1");
+            Assert.That(n.Precision == 53, $"Expected: 53, got: {n.Precision}");
+        }
+
+        [Test]
+        [Category("Coverage")]
         public static void TestInitTextCombo()
         {
             TestInitTextCombo("");

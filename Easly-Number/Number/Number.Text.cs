@@ -97,32 +97,15 @@
         {
             GetNumberString((ulong)(displayFormat.PrecisionSpecifier + 1), out string NumberString, out int Exponent, out string NegativeSign, out _);
 
-            bool IsFirstDigitZero;
-            string FirstDigit;
-            if (NumberString.Length > 0)
-            {
-                FirstDigit = NumberString.Substring(0, 1);
-                NumberString = NumberString.Substring(1);
-                IsFirstDigitZero = FirstDigit == "0";
-            }
-            else
-            {
-                FirstDigit = "0";
-                IsFirstDigitZero = true;
-            }
+            Debug.Assert(NumberString.Length > 0);
+
+            string FirstDigit = NumberString.Substring(0, 1);
+            NumberString = NumberString.Substring(1);
+            bool IsFirstDigitZero = FirstDigit == "0";
 
             string Separator = displayFormat.NumberFormatInfo.NumberDecimalSeparator;
 
-            string OtherDigits;
-
-            if (NumberString.Length > displayFormat.PrecisionSpecifier)
-                OtherDigits = NumberString.Substring(0, displayFormat.PrecisionSpecifier);
-            else
-            {
-                OtherDigits = NumberString;
-                while (OtherDigits.Length < displayFormat.PrecisionSpecifier)
-                    OtherDigits += "0";
-            }
+            string OtherDigits = NumberString;
 
             if (OtherDigits.Length == 0)
                 Separator = string.Empty;
