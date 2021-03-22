@@ -14,9 +14,12 @@
             double d1 = 5.478231405e-3;
 
             Number Value1 = new Number(d1);
+            Assert.IsTrue(Value1.Sign > 0);
 
             double d = -d1;
             Number Value = -Value1;
+
+            Assert.IsTrue(Value.Sign < 0);
 
             string DoubleString = d.ToString("G17").Substring(0, 15);
             string NumberString = Value.ToString("G17").Substring(0, 15);

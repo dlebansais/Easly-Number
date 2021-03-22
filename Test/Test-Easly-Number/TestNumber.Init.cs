@@ -41,7 +41,7 @@
             Assert.IsFalse(n.IsZero);
 
             string Text = n.ToString();
-            Assert.That(Text == TestEaslyNumber.TestEnvironment.TextPositiveInfinity, $"Expected: {TestEaslyNumber.TestEnvironment.TextPositiveInfinity}, got: {Text}");
+            Assert.That(Text == TestEnvironment.TextPositiveInfinity, $"Expected: {TestEnvironment.TextPositiveInfinity}, got: {Text}");
         }
 
         [Test]
@@ -59,7 +59,7 @@
             Assert.IsFalse(n.IsZero);
 
             string Text = n.ToString();
-            Assert.That(Text == TestEaslyNumber.TestEnvironment.TextNegativeInfinity, $"Expected: {TestEaslyNumber.TestEnvironment.TextNegativeInfinity}, got: {Text}");
+            Assert.That(Text == TestEnvironment.TextNegativeInfinity, $"Expected: {TestEnvironment.TextNegativeInfinity}, got: {Text}");
         }
 
         [Test]
@@ -95,14 +95,14 @@
             Assert.IsFalse(n.IsZero);
 
             string Text = n.ToString();
-            Assert.That(Text == TestEaslyNumber.TestEnvironment.TextNaN, $"Expected: {TestEaslyNumber.TestEnvironment.TextNaN}, got: {Text}");
+            Assert.That(Text == TestEnvironment.TextNaN, $"Expected: {TestEnvironment.TextNaN}, got: {Text}");
         }
 
         [Test]
         [Category("Coverage")]
         public static void TestInitTextNaN()
         {
-            Number n = new Number(TestEaslyNumber.TestEnvironment.TextNaN);
+            Number n = new Number(TestEnvironment.TextNaN);
 
             Assert.IsFalse(n.IsInfinite);
             Assert.IsFalse(n.IsInteger);
@@ -113,14 +113,14 @@
             Assert.IsFalse(n.IsZero);
 
             string Text = n.ToString();
-            Assert.That(Text == TestEaslyNumber.TestEnvironment.TextNaN, $"Expected: {TestEaslyNumber.TestEnvironment.TextNaN}, got: {Text}");
+            Assert.That(Text == TestEnvironment.TextNaN, $"Expected: {TestEnvironment.TextNaN}, got: {Text}");
         }
 
         [Test]
         [Category("Coverage")]
         public static void TestInitTextPositiveInfinity()
         {
-            Number n = new Number(TestEaslyNumber.TestEnvironment.TextPositiveInfinity);
+            Number n = new Number(TestEnvironment.TextPositiveInfinity);
 
             Assert.IsTrue(n.IsInfinite);
             Assert.IsFalse(n.IsInteger);
@@ -131,14 +131,14 @@
             Assert.IsFalse(n.IsZero);
 
             string Text = n.ToString();
-            Assert.That(Text == TestEaslyNumber.TestEnvironment.TextPositiveInfinity, $"Expected: {TestEaslyNumber.TestEnvironment.TextPositiveInfinity}, got: {Text}");
+            Assert.That(Text == TestEnvironment.TextPositiveInfinity, $"Expected: {TestEnvironment.TextPositiveInfinity}, got: {Text}");
         }
 
         [Test]
         [Category("Coverage")]
         public static void TestInitTextNegativeInfinity()
         {
-            Number n = new Number(TestEaslyNumber.TestEnvironment.TextNegativeInfinity);
+            Number n = new Number(TestEnvironment.TextNegativeInfinity);
 
             Assert.IsTrue(n.IsInfinite);
             Assert.IsFalse(n.IsInteger);
@@ -149,7 +149,7 @@
             Assert.IsFalse(n.IsZero);
 
             string Text = n.ToString();
-            Assert.That(Text == TestEaslyNumber.TestEnvironment.TextNegativeInfinity, $"Expected: {TestEaslyNumber.TestEnvironment.TextNegativeInfinity}, got: {Text}");
+            Assert.That(Text == TestEnvironment.TextNegativeInfinity, $"Expected: {TestEnvironment.TextNegativeInfinity}, got: {Text}");
         }
 
         [Test]
@@ -165,6 +165,7 @@
             Assert.IsFalse(n.IsPositiveInfinity);
             Assert.IsFalse(n.IsSpecial);
             Assert.IsTrue(n.IsZero);
+            Assert.IsTrue(n.Sign == 0);
 
             string Text = n.ToString();
             Assert.That(Text == "0", $"Expected: 0, got: {Text}");
