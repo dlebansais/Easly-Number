@@ -107,16 +107,6 @@
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Number"/> struct.
-        /// This contructor creates the number from a C# decimal.
-        /// </summary>
-        /// <param name="value">The number value.</param>
-        public Number(decimal value)
-            : this(value.ToString())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Number"/> struct.
         /// This contructor creates the number from a C# int.
         /// </summary>
         /// <param name="value">The number value.</param>
