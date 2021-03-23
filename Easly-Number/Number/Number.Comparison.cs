@@ -83,7 +83,7 @@
         {
             Consolidate();
 
-            double d = mpfr_get_d(ref Proxy.MpfrStruct, DefaultRounding);
+            double d = mpfr_get_d(ref Proxy.MpfrStruct, (mpfr_rnd_t)DefaultRounding);
             uint HashCode = (uint)d.GetHashCode();
 
             HashCode ^= 0xFFFFFFFF;

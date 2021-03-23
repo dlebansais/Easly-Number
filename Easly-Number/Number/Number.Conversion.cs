@@ -22,10 +22,10 @@
             if (!IsInteger)
                 return false;
 
-            if (mpfr_fits_sint_p(ref Proxy.MpfrStruct, Rounding) == 0)
+            if (mpfr_fits_sint_p(ref Proxy.MpfrStruct, (mpfr_rnd_t)Rounding) == 0)
                 return false;
 
-            long Result = mpfr_get_si(ref Proxy.MpfrStruct, Rounding);
+            long Result = mpfr_get_si(ref Proxy.MpfrStruct, (mpfr_rnd_t)Rounding);
 
             value = (int)Result;
             return true;
@@ -44,10 +44,10 @@
             if (!IsInteger)
                 return false;
 
-            if (mpfr_fits_uint_p(ref Proxy.MpfrStruct, Rounding) == 0)
+            if (mpfr_fits_uint_p(ref Proxy.MpfrStruct, (mpfr_rnd_t)Rounding) == 0)
                 return false;
 
-            ulong Result = mpfr_get_ui(ref Proxy.MpfrStruct, Rounding);
+            ulong Result = mpfr_get_ui(ref Proxy.MpfrStruct, (mpfr_rnd_t)Rounding);
 
             value = (uint)Result;
             return true;
@@ -71,7 +71,7 @@
 
             Interop.Mpir.NativeMethods.__mpz_t IntValue = new() { Limbs = IntPtr.Zero };
             Interop.Mpir.NativeMethods.mpz_init(ref IntValue);
-            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
+            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, mpfr_rnd_t.MPFR_RNDN);
 
             byte[] Bytes = new byte[16];
 
@@ -100,7 +100,7 @@
 
             Interop.Mpir.NativeMethods.__mpz_t IntValue = new() { Limbs = IntPtr.Zero };
             Interop.Mpir.NativeMethods.mpz_init(ref IntValue);
-            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
+            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, mpfr_rnd_t.MPFR_RNDN);
 
             byte[] Bytes = new byte[16];
 

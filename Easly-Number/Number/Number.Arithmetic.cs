@@ -1,6 +1,7 @@
 ﻿namespace EaslyNumber
 {
     using System;
+    using Interop.Mpfr;
     using static Interop.Mpfr.NativeMethods;
 
     /// <summary>
@@ -23,7 +24,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_add(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, rounding);
+            mpfr_add(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)rounding);
 
             return z;
         }
@@ -43,7 +44,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_sub(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, rounding);
+            mpfr_sub(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)rounding);
 
             return z;
         }
@@ -63,7 +64,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_mul(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, rounding);
+            mpfr_mul(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)rounding);
 
             return z;
         }
@@ -83,7 +84,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_div(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, rounding);
+            mpfr_div(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)rounding);
 
             return z;
         }
@@ -101,7 +102,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_neg(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, rounding);
+            mpfr_neg(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (mpfr_rnd_t)rounding);
 
             return z;
         }
@@ -117,7 +118,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_abs(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, rounding);
+            mpfr_abs(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, (mpfr_rnd_t)rounding);
 
             return z;
         }
@@ -133,7 +134,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_exp(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, z.Rounding);
+            mpfr_exp(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -149,7 +150,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_log(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, z.Rounding);
+            mpfr_log(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -165,7 +166,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_log10(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, z.Rounding);
+            mpfr_log10(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -183,7 +184,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_pow(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, z.Rounding);
+            mpfr_pow(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -199,7 +200,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_sqrt(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, z.Rounding);
+            mpfr_sqrt(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -217,7 +218,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_mul_2exp(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (ulong)shift, z.Rounding);
+            mpfr_mul_2exp(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (ulong)shift, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -235,7 +236,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_div_2exp(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (ulong)shift, z.Rounding);
+            mpfr_div_2exp(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (ulong)shift, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -253,7 +254,7 @@
 
             Number z = new Number(precision, rounding);
 
-            mpfr_remainder(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, z.Rounding);
+            mpfr_remainder(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -325,18 +326,18 @@
         {
             Interop.Mpir.NativeMethods.__mpz_t IntValue = new() { Limbs = IntPtr.Zero };
             Interop.Mpir.NativeMethods.mpz_init(ref IntValue);
-            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
+            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, mpfr_rnd_t.MPFR_RNDN);
 
             Interop.Mpir.NativeMethods.__mpz_t OtherValue = new() { Limbs = IntPtr.Zero };
             Interop.Mpir.NativeMethods.mpz_init(ref OtherValue);
-            mpfr_get_z(ref OtherValue, ref other.Proxy.MpfrStruct, Rounding.Nearest);
+            mpfr_get_z(ref OtherValue, ref other.Proxy.MpfrStruct, mpfr_rnd_t.MPFR_RNDN);
 
             Interop.Mpir.NativeMethods.__mpz_t ResultValue = new() { Limbs = IntPtr.Zero };
             Interop.Mpir.NativeMethods.mpz_init(ref ResultValue);
 
             handler(ref ResultValue, ref IntValue, ref OtherValue);
 
-            mpfr_set_z(ref result.Proxy.MpfrStruct, ref ResultValue, Rounding);
+            mpfr_set_z(ref result.Proxy.MpfrStruct, ref ResultValue, (mpfr_rnd_t)Rounding);
         }
     }
 }

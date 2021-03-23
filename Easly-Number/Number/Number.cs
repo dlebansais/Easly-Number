@@ -74,7 +74,7 @@
                 if (text.Length > 0 && text[0] == '.')
                     text = "0" + text;
 
-                int Success = mpfr_set_str(ref Proxy.MpfrStruct, text, 10, Rounding);
+                int Success = mpfr_set_str(ref Proxy.MpfrStruct, text, 10, (mpfr_rnd_t)Rounding);
                 if (Success != 0)
                     throw new ArgumentException(nameof(text));
             }
@@ -90,7 +90,7 @@
             Proxy = new mpfr_t(24);
             Rounding = DefaultRounding;
 
-            mpfr_set_flt(ref Proxy.MpfrStruct, value, Rounding);
+            mpfr_set_flt(ref Proxy.MpfrStruct, value, (mpfr_rnd_t)Rounding);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@
             Proxy = new mpfr_t(53);
             Rounding = DefaultRounding;
 
-            mpfr_set_d(ref Proxy.MpfrStruct, value, Rounding);
+            mpfr_set_d(ref Proxy.MpfrStruct, value, (mpfr_rnd_t)Rounding);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@
             Proxy = new mpfr_t(32);
             Rounding = DefaultRounding;
 
-            mpfr_set_si(ref Proxy.MpfrStruct, value, Rounding);
+            mpfr_set_si(ref Proxy.MpfrStruct, value, (mpfr_rnd_t)Rounding);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@
             Proxy = new mpfr_t(32);
             Rounding = DefaultRounding;
 
-            mpfr_set_ui(ref Proxy.MpfrStruct, value, Rounding);
+            mpfr_set_ui(ref Proxy.MpfrStruct, value, (mpfr_rnd_t)Rounding);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@
             Proxy = new mpfr_t(64);
             Rounding = DefaultRounding;
 
-            mpfr_set_str(ref Proxy.MpfrStruct, value.ToString(), 10, Rounding);
+            mpfr_set_str(ref Proxy.MpfrStruct, value.ToString(), 10, (mpfr_rnd_t)Rounding);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@
             Proxy = new mpfr_t(64);
             Rounding = DefaultRounding;
 
-            mpfr_set_str(ref Proxy.MpfrStruct, value.ToString(), 10, Rounding);
+            mpfr_set_str(ref Proxy.MpfrStruct, value.ToString(), 10, (mpfr_rnd_t)Rounding);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@
             Proxy = new mpfr_t();
             Rounding = DefaultRounding;
 
-            mpfr_set_str(ref Proxy.MpfrStruct, text, textBase, Rounding);
+            mpfr_set_str(ref Proxy.MpfrStruct, text, textBase, (mpfr_rnd_t)Rounding);
         }
 
         /// <summary>

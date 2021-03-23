@@ -19,7 +19,7 @@
 
             Number z = new Number(Precision, Rounding);
 
-            mpfr_rint(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, rounding);
+            mpfr_rint(ref z.Proxy.MpfrStruct, ref Proxy.MpfrStruct, (mpfr_rnd_t)rounding);
 
             return z;
         }

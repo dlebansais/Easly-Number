@@ -22,7 +22,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_add(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x.Rounding);
+            mpfr_add(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -38,7 +38,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_add_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_add_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -54,7 +54,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_add_ui(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
+            mpfr_add_ui(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -70,7 +70,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_add_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_add_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -86,7 +86,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_add_si(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
+            mpfr_add_si(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -102,7 +102,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_add_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_add_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -118,7 +118,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_add_d(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
+            mpfr_add_d(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -137,7 +137,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_sub(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x.Rounding);
+            mpfr_sub(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -153,7 +153,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_sub_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_sub_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -169,7 +169,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_ui_sub(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
+            mpfr_ui_sub(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -185,7 +185,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_sub_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_sub_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -201,7 +201,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_si_sub(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
+            mpfr_si_sub(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -217,7 +217,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_sub_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_sub_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -233,7 +233,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_d_sub(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
+            mpfr_d_sub(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -252,7 +252,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_mul(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x.Rounding);
+            mpfr_mul(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -268,7 +268,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_mul_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_mul_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -284,7 +284,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_mul_ui(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
+            mpfr_mul_ui(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -300,7 +300,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_mul_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_mul_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -316,7 +316,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_mul_si(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
+            mpfr_mul_si(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -332,7 +332,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_mul_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_mul_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -348,7 +348,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_mul_d(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, y.Rounding);
+            mpfr_mul_d(ref z.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -367,7 +367,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_div(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, x.Rounding);
+            mpfr_div(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -383,7 +383,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_div_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_div_ui(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -399,7 +399,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_ui_div(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
+            mpfr_ui_div(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -415,7 +415,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_div_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_div_si(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -431,7 +431,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_si_div(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
+            mpfr_si_div(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -447,7 +447,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_div_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, x.Rounding);
+            mpfr_div_d(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, y, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }
@@ -463,7 +463,7 @@
 
             Number z = new Number(y.Precision, y.Rounding);
 
-            mpfr_d_div(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, y.Rounding);
+            mpfr_d_div(ref z.Proxy.MpfrStruct, x, ref y.Proxy.MpfrStruct, (mpfr_rnd_t)y.Rounding);
 
             return z;
         }
@@ -481,7 +481,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_mul_2exp(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (ulong)y, z.Rounding);
+            mpfr_mul_2exp(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (ulong)y, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -497,7 +497,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_div_2exp(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (ulong)y, z.Rounding);
+            mpfr_div_2exp(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (ulong)y, (mpfr_rnd_t)z.Rounding);
 
             return z;
         }
@@ -514,7 +514,7 @@
 
             Number z = new Number(x.Precision, x.Rounding);
 
-            mpfr_neg(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, x.Rounding);
+            mpfr_neg(ref z.Proxy.MpfrStruct, ref x.Proxy.MpfrStruct, (mpfr_rnd_t)x.Rounding);
 
             return z;
         }

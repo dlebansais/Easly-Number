@@ -156,7 +156,7 @@
             ulong SizeInDigits = precision > 0 ? precision : 1UL;
 
             StringBuilder Data = new StringBuilder((int)(SizeInDigits + 2));
-            Rounding StringRounding = Rounding.Nearest;
+            mpfr_rnd_t StringRounding = mpfr_rnd_t.MPFR_RNDN;
 
             mpfr_get_str(Data, out exponent, Resultbase, SizeInDigits, ref Proxy.MpfrStruct, StringRounding);
             string Result = Data.ToString();
