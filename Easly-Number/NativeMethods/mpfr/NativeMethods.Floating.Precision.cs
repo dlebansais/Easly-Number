@@ -1,4 +1,4 @@
-﻿namespace EaslyNumber
+﻿namespace Interop.Mpfr
 {
     using System.Runtime.InteropServices;
 

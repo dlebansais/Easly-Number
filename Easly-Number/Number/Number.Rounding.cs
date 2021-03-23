@@ -1,7 +1,8 @@
 ﻿namespace EaslyNumber
 {
     using System;
-    using static EaslyNumber.NativeMethods;
+    using Interop.Mpfr;
+    using static Interop.Mpfr.NativeMethods;
 
     /// <summary>
     /// Represents numbers with arbitrary precision.

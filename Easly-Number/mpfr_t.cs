@@ -1,6 +1,7 @@
 ﻿namespace EaslyNumber
 {
-    using static NativeMethods;
+    using Interop.Mpfr;
+    using static Interop.Mpfr.NativeMethods;
 
 #pragma warning disable SA1300 // Element should begin with upper-case letter
     internal class mpfr_t

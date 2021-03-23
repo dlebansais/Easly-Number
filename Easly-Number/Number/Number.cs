@@ -2,7 +2,8 @@
 {
     using System;
     using System.Globalization;
-    using static EaslyNumber.NativeMethods;
+    using Interop.Mpfr;
+    using static Interop.Mpfr.NativeMethods;
 
     /// <summary>
     /// Represents numbers with arbitrary precision.

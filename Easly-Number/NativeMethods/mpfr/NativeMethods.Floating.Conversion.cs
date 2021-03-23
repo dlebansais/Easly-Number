@@ -1,8 +1,10 @@
-﻿namespace EaslyNumber
+﻿namespace Interop.Mpfr
 {
     using System;
     using System.Runtime.InteropServices;
     using System.Text;
+    using EaslyNumber;
+    using static Interop.Mpir.NativeMethods;
 
 #pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods

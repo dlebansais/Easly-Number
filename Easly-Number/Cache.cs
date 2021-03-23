@@ -1,7 +1,7 @@
 ﻿namespace EaslyNumber
 {
     using System.Threading;
-    using static NativeMethods;
+    using static Interop.Mpfr.NativeMethods;
 
     internal class Cache : ThreadLocal<bool>
     {

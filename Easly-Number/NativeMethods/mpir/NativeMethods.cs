@@ -1,4 +1,4 @@
-﻿namespace EaslyNumber
+﻿namespace Interop.Mpir
 {
     using System;
     using System.IO;
@@ -13,22 +13,6 @@
 
         [DllImport("kernel32", CharSet = CharSet.Ansi)]
         private static extern IntPtr GetProcAddress(IntPtr hwnd, string procedureName);
-
-        private static IntPtr GetMpfrPointer(string name)
-        {
-            LoadLibrary("mpir.dll", ref hMpirLib);
-
-            if (LoadLibrary("mpfr.dll", ref hMpfrLib))
-                InitializePrecision();
-
-            string FunctionName = $"{name}";
-            IntPtr Result = GetProcAddress(hMpfrLib, FunctionName);
-
-            if (Result == IntPtr.Zero)
-                throw new ArgumentException($"Method {FunctionName} not found", nameof(name));
-
-            return Result;
-        }
 
         private static IntPtr GetMpirPointer(string name)
         {
@@ -63,7 +47,6 @@
         }
 
         private static IntPtr hMpirLib = IntPtr.Zero;
-        private static IntPtr hMpfrLib = IntPtr.Zero;
     }
 #pragma warning restore SA1601 // Partial elements should be documented
 }

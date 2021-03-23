@@ -1,4 +1,4 @@
-﻿namespace EaslyNumber
+﻿namespace Interop.Mpir
 {
     using System.Runtime.InteropServices;
 

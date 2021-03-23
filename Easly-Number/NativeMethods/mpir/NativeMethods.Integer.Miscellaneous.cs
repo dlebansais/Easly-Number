@@ -1,4 +1,4 @@
-﻿namespace EaslyNumber
+﻿namespace Interop.Mpir
 {
     using System.Runtime.InteropServices;
 
@@ -109,16 +109,10 @@
 
         #region Logical and Bit Manipulation Functions
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void __mpz_and(ref __mpz_t rop, ref __mpz_t op1, ref __mpz_t op2);
-        public static __mpz_and mpz_and { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_and>(GetMpirPointer(nameof(mpz_and)));
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void __mpz_ior(ref __mpz_t rop, ref __mpz_t op1, ref __mpz_t op2);
-        public static __mpz_ior mpz_ior { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_ior>(GetMpirPointer(nameof(mpz_ior)));
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void __mpz_xor(ref __mpz_t rop, ref __mpz_t op1, ref __mpz_t op2);
-        public static __mpz_xor mpz_xor { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_xor>(GetMpirPointer(nameof(mpz_xor)));
+        public delegate void BitwizeOperationHandler(ref __mpz_t rop, ref __mpz_t op1, ref __mpz_t op2);
+        public static BitwizeOperationHandler mpz_and { get; } = Marshal.GetDelegateForFunctionPointer<BitwizeOperationHandler>(GetMpirPointer(nameof(mpz_and)));
+        public static BitwizeOperationHandler mpz_ior { get; } = Marshal.GetDelegateForFunctionPointer<BitwizeOperationHandler>(GetMpirPointer(nameof(mpz_ior)));
+        public static BitwizeOperationHandler mpz_xor { get; } = Marshal.GetDelegateForFunctionPointer<BitwizeOperationHandler>(GetMpirPointer(nameof(mpz_xor)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void __mpz_com(ref __mpz_t rop, ref __mpz_t op);

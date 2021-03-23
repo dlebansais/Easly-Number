@@ -1,7 +1,7 @@
 ﻿namespace EaslyNumber
 {
     using System;
-    using static EaslyNumber.NativeMethods;
+    using static Interop.Mpfr.NativeMethods;
 
     /// <summary>
     /// Represents numbers with arbitrary precision.
@@ -272,22 +272,9 @@
             if (!IsInteger || !other.IsInteger)
                 throw new ArgumentException();
 
-            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref IntValue);
-            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
-
-            __mpz_t OtherValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref OtherValue);
-            mpfr_get_z(ref OtherValue, ref other.Proxy.MpfrStruct, Rounding.Nearest);
-
-            __mpz_t ResultValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref ResultValue);
-
-            mpz_and(ref ResultValue, ref IntValue, ref OtherValue);
-
             Number z = new Number(precision, rounding);
 
-            mpfr_set_z(ref z.Proxy.MpfrStruct, ref ResultValue, Rounding);
+            BitwiseOperation(z, other, Interop.Mpir.NativeMethods.mpz_and);
 
             return z;
         }
@@ -306,22 +293,9 @@
             if (!IsInteger || !other.IsInteger)
                 throw new ArgumentException();
 
-            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref IntValue);
-            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
-
-            __mpz_t OtherValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref OtherValue);
-            mpfr_get_z(ref OtherValue, ref other.Proxy.MpfrStruct, Rounding.Nearest);
-
-            __mpz_t ResultValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref ResultValue);
-
-            mpz_ior(ref ResultValue, ref IntValue, ref OtherValue);
-
             Number z = new Number(precision, rounding);
 
-            mpfr_set_z(ref z.Proxy.MpfrStruct, ref ResultValue, Rounding);
+            BitwiseOperation(z, other, Interop.Mpir.NativeMethods.mpz_ior);
 
             return z;
         }
@@ -340,24 +314,29 @@
             if (!IsInteger || !other.IsInteger)
                 throw new ArgumentException();
 
-            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref IntValue);
-            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
-
-            __mpz_t OtherValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref OtherValue);
-            mpfr_get_z(ref OtherValue, ref other.Proxy.MpfrStruct, Rounding.Nearest);
-
-            __mpz_t ResultValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref ResultValue);
-
-            mpz_xor(ref ResultValue, ref IntValue, ref OtherValue);
-
             Number z = new Number(precision, rounding);
 
-            mpfr_set_z(ref z.Proxy.MpfrStruct, ref ResultValue, Rounding);
+            BitwiseOperation(z, other, Interop.Mpir.NativeMethods.mpz_xor);
 
             return z;
+        }
+
+        private void BitwiseOperation(Number result, Number other, Interop.Mpir.NativeMethods.BitwizeOperationHandler handler)
+        {
+            Interop.Mpir.NativeMethods.__mpz_t IntValue = new() { Limbs = IntPtr.Zero };
+            Interop.Mpir.NativeMethods.mpz_init(ref IntValue);
+            mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
+
+            Interop.Mpir.NativeMethods.__mpz_t OtherValue = new() { Limbs = IntPtr.Zero };
+            Interop.Mpir.NativeMethods.mpz_init(ref OtherValue);
+            mpfr_get_z(ref OtherValue, ref other.Proxy.MpfrStruct, Rounding.Nearest);
+
+            Interop.Mpir.NativeMethods.__mpz_t ResultValue = new() { Limbs = IntPtr.Zero };
+            Interop.Mpir.NativeMethods.mpz_init(ref ResultValue);
+
+            handler(ref ResultValue, ref IntValue, ref OtherValue);
+
+            mpfr_set_z(ref result.Proxy.MpfrStruct, ref ResultValue, Rounding);
         }
     }
 }

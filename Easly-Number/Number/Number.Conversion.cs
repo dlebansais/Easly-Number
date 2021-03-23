@@ -1,7 +1,8 @@
 ﻿namespace EaslyNumber
 {
     using System;
-    using static EaslyNumber.NativeMethods;
+    using Interop.Mpfr;
+    using static Interop.Mpfr.NativeMethods;
 
     /// <summary>
     /// Represents numbers with arbitrary precision.
@@ -68,14 +69,14 @@
             if (mpfr_cmp(ref Proxy.MpfrStruct, ref LongMinValue.Proxy.MpfrStruct) < 0 || mpfr_cmp(ref Proxy.MpfrStruct, ref LongMaxValue.Proxy.MpfrStruct) > 0)
                 return false;
 
-            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref IntValue);
+            Interop.Mpir.NativeMethods.__mpz_t IntValue = new() { Limbs = IntPtr.Zero };
+            Interop.Mpir.NativeMethods.mpz_init(ref IntValue);
             mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
 
             byte[] Bytes = new byte[16];
 
             long countp;
-            mpz_export(Bytes, out countp, -1, sizeof(byte), 0, 0, ref IntValue);
+            Interop.Mpir.NativeMethods.mpz_export(Bytes, out countp, -1, sizeof(byte), 0, 0, ref IntValue);
 
             value = BitConverter.ToInt64(Bytes, 0);
             return true;
@@ -97,14 +98,14 @@
             if (mpfr_sgn(ref Proxy.MpfrStruct) < 0 || mpfr_cmp(ref Proxy.MpfrStruct, ref ULongMaxValue.Proxy.MpfrStruct) > 0)
                 return false;
 
-            __mpz_t IntValue = new() { Limbs = IntPtr.Zero };
-            mpz_init(ref IntValue);
+            Interop.Mpir.NativeMethods.__mpz_t IntValue = new() { Limbs = IntPtr.Zero };
+            Interop.Mpir.NativeMethods.mpz_init(ref IntValue);
             mpfr_get_z(ref IntValue, ref Proxy.MpfrStruct, Rounding.Nearest);
 
             byte[] Bytes = new byte[16];
 
             long countp;
-            mpz_export(Bytes, out countp, -1, sizeof(byte), 0, 0, ref IntValue);
+            Interop.Mpir.NativeMethods.mpz_export(Bytes, out countp, -1, sizeof(byte), 0, 0, ref IntValue);
 
             value = BitConverter.ToUInt64(Bytes, 0);
             return true;
