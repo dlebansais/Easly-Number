@@ -4,7 +4,6 @@
     using System.Runtime.InteropServices;
     using System.Text;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -35,5 +34,4 @@
         public delegate IntPtr __mpz_get_str(StringBuilder str, int _base, ref __mpz_t op);
         public static __mpz_get_str mpz_get_str { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_get_str>(GetMpirPointer(nameof(mpz_get_str)));
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }

@@ -3,7 +3,6 @@
     using System;
     using System.Runtime.InteropServices;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -26,5 +25,4 @@
         public delegate ulong __mpfr_get_prec(ref __mpfr_t x);
         public static __mpfr_get_prec mpfr_get_prec { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_get_prec>(GetMpfrPointer(nameof(mpfr_get_prec)));
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }

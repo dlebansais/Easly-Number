@@ -5,7 +5,6 @@
     using System.Text;
     using static Interop.Mpir.NativeMethods;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -96,5 +95,4 @@
         public delegate int __mpfr_snprintf(IntPtr buf, ulong n, string format, ref __mpfr_t op, IntPtr end);
         public static __mpfr_snprintf mpfr_snprintf { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_snprintf>(GetMpfrPointer(nameof(mpfr_snprintf)));
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }

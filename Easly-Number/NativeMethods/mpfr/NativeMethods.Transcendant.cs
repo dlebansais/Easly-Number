@@ -3,7 +3,6 @@
     using System.Runtime.InteropServices;
     using static Interop.Mpir.NativeMethods;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         #region Log
@@ -256,5 +255,4 @@
         public static __mpfr_const_catalan mpfr_const_catalan { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_const_catalan>(GetMpfrPointer(nameof(mpfr_const_catalan)));
         #endregion
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }

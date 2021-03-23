@@ -3,7 +3,6 @@
     using System;
     using System.Runtime.InteropServices;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         [StructLayout(LayoutKind.Sequential)]
@@ -15,5 +14,4 @@
             public IntPtr Limbs;
         }
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }

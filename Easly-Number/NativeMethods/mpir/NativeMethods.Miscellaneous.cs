@@ -2,7 +2,6 @@
 {
     using System.Runtime.InteropServices;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         #region Number Theoretic Functions
@@ -210,5 +209,4 @@
         }
         #endregion
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }

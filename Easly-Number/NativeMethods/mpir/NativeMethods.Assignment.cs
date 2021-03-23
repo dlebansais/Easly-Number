@@ -2,7 +2,6 @@
 {
     using System.Runtime.InteropServices;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -73,5 +72,4 @@
         public delegate int __mpz_init_set_str(ref __mpz_t rop, string str, uint strbase);
         public static __mpz_init_set_str mpz_init_set_str { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_init_set_str>(GetMpirPointer(nameof(mpz_init_set_str)));
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }

@@ -5,7 +5,6 @@
     using System.Reflection;
     using System.Runtime.InteropServices;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         [DllImport("kernel32")]
@@ -48,5 +47,4 @@
 
         private static IntPtr hMpirLib = IntPtr.Zero;
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }

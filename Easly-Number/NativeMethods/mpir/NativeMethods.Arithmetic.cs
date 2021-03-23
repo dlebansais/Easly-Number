@@ -2,7 +2,6 @@
 {
     using System.Runtime.InteropServices;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         #region Arithmetic Functions
@@ -261,5 +260,4 @@
         public static __mpz_perfect_square_p mpz_perfect_square_p { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_perfect_square_p>(GetMpirPointer(nameof(mpz_perfect_square_p)));
         #endregion
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }

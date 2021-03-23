@@ -2,7 +2,6 @@
 {
     using System.Runtime.InteropServices;
 
-#pragma warning disable SA1601 // Partial elements should be documented
     internal static partial class NativeMethods
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -101,5 +100,4 @@
         public delegate ref __mpfr_t __mpfr_print_rnd_mode(mpfr_rnd_t rnd);
         public static __mpfr_print_rnd_mode mpfr_print_rnd_mode { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_print_rnd_mode>(GetMpfrPointer(nameof(mpfr_print_rnd_mode)));
     }
-#pragma warning restore SA1601 // Partial elements should be documented
 }
