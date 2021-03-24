@@ -14,7 +14,7 @@
         public static __mpz_inits mpz_inits { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_inits>(GetMpirPointer(nameof(mpz_inits)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void __mpz_init2(ref __mpz_t integer, ulong n);
+        public delegate void __mpz_init2(ref __mpz_t integer, mp_bitcnt_t n);
         public static __mpz_init2 mpz_init2 { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_init2>(GetMpirPointer(nameof(mpz_init2)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -22,7 +22,7 @@
         public static __mpz_clear mpz_clear { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_clear>(GetMpirPointer(nameof(mpz_clear)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void __mpz_realloc2(ref __mpz_t integer, ulong n);
+        public delegate void __mpz_realloc2(ref __mpz_t integer, mp_bitcnt_t n);
         public static __mpz_realloc2 mpz_realloc2 { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_realloc2>(GetMpirPointer(nameof(mpz_realloc2)));
     }
 }

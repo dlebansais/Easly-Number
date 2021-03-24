@@ -13,11 +13,11 @@
         public static __mpz_cmp_d mpz_cmp_d { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_cmp_d>(GetMpirPointer(nameof(mpz_cmp_d)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int __mpz_cmp_si(ref __mpz_t op1, int op2);
+        public delegate int __mpz_cmp_si(ref __mpz_t op1, mpir_si op2);
         public static __mpz_cmp_si mpz_cmp_si { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_cmp_si>(GetMpirPointer(nameof(mpz_cmp_si)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int __mpz_cmp_ui(ref __mpz_t op1, uint op2);
+        public delegate int __mpz_cmp_ui(ref __mpz_t op1, mpir_ui op2);
         public static __mpz_cmp_ui mpz_cmp_ui { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_cmp_ui>(GetMpirPointer(nameof(mpz_cmp_ui)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -29,7 +29,7 @@
         public static __mpz_cmpabs_d mpz_cmpabs_d { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_cmpabs_d>(GetMpirPointer(nameof(mpz_cmpabs_d)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int __mpz_cmpabs_ui(ref __mpz_t op1, uint op2);
+        public delegate int __mpz_cmpabs_ui(ref __mpz_t op1, mpir_ui op2);
         public static __mpz_cmpabs_ui mpz_cmpabs_ui { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_cmpabs_ui>(GetMpirPointer(nameof(mpz_cmpabs_ui)));
     }
 }

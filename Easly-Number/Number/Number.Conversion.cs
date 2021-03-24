@@ -75,8 +75,8 @@
 
             byte[] Bytes = new byte[16];
 
-            long countp;
-            Interop.Mpir.NativeMethods.mpz_export(Bytes, out countp, -1, sizeof(byte), 0, 0, ref IntValue);
+            Interop.Mpir.NativeMethods.size_t countp;
+            Interop.Mpir.NativeMethods.mpz_export(Bytes, out countp, -1, (Interop.Mpir.NativeMethods.size_t)sizeof(byte), 0, (Interop.Mpir.NativeMethods.size_t)0, ref IntValue);
 
             value = BitConverter.ToInt64(Bytes, 0);
             return true;
@@ -104,8 +104,8 @@
 
             byte[] Bytes = new byte[16];
 
-            long countp;
-            Interop.Mpir.NativeMethods.mpz_export(Bytes, out countp, -1, sizeof(byte), 0, 0, ref IntValue);
+            Interop.Mpir.NativeMethods.size_t countp;
+            Interop.Mpir.NativeMethods.mpz_export(Bytes, out countp, -1, (Interop.Mpir.NativeMethods.size_t)sizeof(byte), 0, (Interop.Mpir.NativeMethods.size_t)0, ref IntValue);
 
             value = BitConverter.ToUInt64(Bytes, 0);
             return true;
