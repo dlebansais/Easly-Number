@@ -26,11 +26,9 @@
         public delegate int __mpfr_add_z(ref __mpfr_t rop, ref __mpfr_t op1, ref __mpz_t op2, mpfr_rnd_t rnd);
         public static __mpfr_add_z mpfr_add_z { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_add_z>(GetMpfrPointer(nameof(mpfr_add_z)));
 
-        /*
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_add_q(ref __mpfr_t rop, ref __mpfr_t op1, ref __mpq_t op2, mpfr_rnd_t rnd);
         public static __mpfr_add_q mpfr_add_q { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_add_q>(GetMpfrPointer(nameof(mpfr_add_q)));
-        */
         #endregion
 
         #region Sub
@@ -70,11 +68,9 @@
         public delegate int __mpfr_sub_z(ref __mpfr_t rop, ref __mpfr_t op1, ref __mpz_t op2, mpfr_rnd_t rnd);
         public static __mpfr_sub_z mpfr_sub_z { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_sub_z>(GetMpfrPointer(nameof(mpfr_sub_z)));
 
-        /*
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_sub_q(ref __mpfr_t rop, ref __mpfr_t op1, ref __mpq_t op2, mpfr_rnd_t rnd);
         public static __mpfr_sub_q mpfr_sub_q { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_sub_q>(GetMpfrPointer(nameof(mpfr_sub_q)));
-        */
         #endregion
 
         #region Mul
@@ -106,11 +102,9 @@
         public delegate int __mpfr_mul_z(ref __mpfr_t rop, ref __mpfr_t op1, ref __mpz_t op2, mpfr_rnd_t rnd);
         public static __mpfr_mul_z mpfr_mul_z { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_mul_z>(GetMpfrPointer(nameof(mpfr_mul_z)));
 
-        /*
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_mul_q(ref __mpfr_t rop, ref __mpfr_t op1, ref __mpq_t op2, mpfr_rnd_t rnd);
         public static __mpfr_mul_q mpfr_mul_q { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_mul_q>(GetMpfrPointer(nameof(mpfr_mul_q)));
-        */
         #endregion
 
         #region Div

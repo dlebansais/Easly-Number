@@ -1,5 +1,6 @@
 ﻿namespace Interop.Mpfr
 {
+    using System;
     using System.Runtime.InteropServices;
     using static Interop.Mpir.NativeMethods;
 

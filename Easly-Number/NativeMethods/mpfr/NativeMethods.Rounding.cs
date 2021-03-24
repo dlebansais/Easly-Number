@@ -1,5 +1,6 @@
 ﻿namespace Interop.Mpfr
 {
+    using System;
     using System.Runtime.InteropServices;
 
     internal static partial class NativeMethods
@@ -97,7 +98,7 @@
         public static __mpfr_min_prec mpfr_min_prec { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_min_prec>(GetMpfrPointer(nameof(mpfr_min_prec)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ref __mpfr_t __mpfr_print_rnd_mode(mpfr_rnd_t rnd);
+        public delegate IntPtr __mpfr_print_rnd_mode(mpfr_rnd_t rnd);
         public static __mpfr_print_rnd_mode mpfr_print_rnd_mode { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_print_rnd_mode>(GetMpfrPointer(nameof(mpfr_print_rnd_mode)));
     }
 }

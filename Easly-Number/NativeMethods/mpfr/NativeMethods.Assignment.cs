@@ -62,7 +62,7 @@
         public static __mpfr_set_sj_2exp mpfr_set_sj_2exp { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_set_sj_2exp>(GetMpfrPointer($"__g{nameof(mpfr_set_sj_2exp)}"));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int __mpfr_set_z_2exp(ref __mpfr_t rop, ref __mpfr_t op, long e, mpfr_rnd_t rnd);
+        public delegate int __mpfr_set_z_2exp(ref __mpfr_t rop, ref __mpz_t op, long e, mpfr_rnd_t rnd);
         public static __mpfr_set_z_2exp mpfr_set_z_2exp { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_set_z_2exp>(GetMpfrPointer(nameof(mpfr_set_z_2exp)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]

@@ -1,6 +1,8 @@
 ﻿namespace Interop.Mpfr
 {
+    using System;
     using System.Runtime.InteropServices;
+    using static Interop.Mpir.NativeMethods;
 
     internal static partial class NativeMethods
     {
@@ -24,7 +26,6 @@
         public delegate int __mpfr_max(ref __mpfr_t rop, ref __mpfr_t op1, ref __mpfr_t op2, mpfr_rnd_t rnd);
         public static __mpfr_max mpfr_max { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_max>(GetMpfrPointer(nameof(mpfr_max)));
 
-        /*
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_urandomb(ref __mpfr_t rop, ref __gmp_randstate_t state);
         public static __mpfr_urandomb mpfr_urandomb { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_urandomb>(GetMpfrPointer(nameof(mpfr_urandomb)));
@@ -44,7 +45,6 @@
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_erandom(ref __mpfr_t rop1, ref __gmp_randstate_t state, mpfr_rnd_t rnd);
         public static __mpfr_erandom mpfr_erandom { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_erandom>(GetMpfrPointer(nameof(mpfr_erandom)));
-        */
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int __mpfr_get_exp(ref __mpfr_t x);
@@ -67,11 +67,11 @@
         public static __mpfr_copysign mpfr_copysign { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_copysign>(GetMpfrPointer(nameof(mpfr_copysign)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ref __mpfr_t __mpfr_get_version();
+        public delegate IntPtr __mpfr_get_version();
         public static __mpfr_get_version mpfr_get_version { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_get_version>(GetMpfrPointer(nameof(mpfr_get_version)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ref __mpfr_t __mpfr_get_patches();
+        public delegate IntPtr __mpfr_get_patches();
         public static __mpfr_get_patches mpfr_get_patches { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_get_patches>(GetMpfrPointer(nameof(mpfr_get_patches)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -95,7 +95,7 @@
         public static __mpfr_buildopt_sharedcache_p mpfr_buildopt_sharedcache_p { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_buildopt_sharedcache_p>(GetMpfrPointer(nameof(mpfr_buildopt_sharedcache_p)));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ref __mpfr_t __mpfr_buildopt_tune_case();
+        public delegate IntPtr __mpfr_buildopt_tune_case();
         public static __mpfr_buildopt_tune_case mpfr_buildopt_tune_case { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_buildopt_tune_case>(GetMpfrPointer(nameof(mpfr_buildopt_tune_case)));
     }
 }

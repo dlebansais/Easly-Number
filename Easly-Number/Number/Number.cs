@@ -215,7 +215,7 @@
         /// </summary>
         public static void ResetDefaultPrecision()
         {
-            DefaultPrecision = NativeDefaultPrecision;
+            mpfr_set_default_prec(NativeDefaultPrecision);
         }
 
         private void Consolidate()
