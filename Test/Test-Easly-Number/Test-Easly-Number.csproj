@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Codecov" Version="1.13.0" />
-    <PackageReference Include="MpfrDotNet" Version="1.0.4" />
+    <PackageReference Include="MpfrDotNet" Version="1.0.5" />
     <PackageReference Include="NUnit" Version="3.13.1">
         <NoWarn>NU1701</NoWarn>
     </PackageReference>
