@@ -7,14 +7,14 @@
     <Platforms>x64</Platforms>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>EaslyNumber</RootNamespace>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
     <Authors>David Le Bansais</Authors>
     <Company />
     <Product />
     <Description>Arbitrary precision arithmetic for Easly</Description>
     <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.1.1.92</AssemblyVersion>
-    <FileVersion>1.1.1.25</FileVersion>
+    <AssemblyVersion>1.2.0.92</AssemblyVersion>
+    <FileVersion>1.2.0.25</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Easly-Number</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>

@@ -1,7 +1,5 @@
 ﻿namespace EaslyNumber
 {
-    using System.Diagnostics;
-
     /// <summary>
     /// Interface describing a decimal (base 10) integer.
     /// </summary>

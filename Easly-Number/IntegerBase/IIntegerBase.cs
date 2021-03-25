@@ -1,7 +1,5 @@
 ﻿namespace EaslyNumber
 {
-    using System.Diagnostics;
-
     /// <summary>
     /// Interface describing an integer with a specified digits base.
     /// </summary>

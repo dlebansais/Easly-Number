@@ -1,6 +1,5 @@
 ﻿namespace EaslyNumber
 {
-    using System;
     using System.Diagnostics;
 
     /// <summary>

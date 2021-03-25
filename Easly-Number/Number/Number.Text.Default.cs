@@ -2,10 +2,6 @@
 {
     using System;
     using System.Diagnostics;
-    using System.Globalization;
-    using System.Text;
-    using Interop.Mpfr;
-    using static Interop.Mpfr.NativeMethods;
 
     /// <summary>
     /// Represents numbers with arbitrary precision.

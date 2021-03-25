@@ -1,7 +1,5 @@
 ﻿namespace EaslyNumber
 {
-    using System.Diagnostics;
-
     /// <summary>
     /// Hold information during parsing of an integer in decimal base.
     /// </summary>
