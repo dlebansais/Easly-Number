@@ -18,6 +18,13 @@
             InitCacheManagement();
         }
 
+        public mpfr_t(__mpfr_t mpfrStruct)
+        {
+            MpfrStruct = mpfrStruct;
+
+            InitCacheManagement();
+        }
+
         private void InitCacheManagement()
         {
             if (!LibraryCache.IsValueCreated)

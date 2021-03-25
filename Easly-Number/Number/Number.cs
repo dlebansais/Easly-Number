@@ -67,17 +67,70 @@
                 mpfr_set_inf(ref Proxy.MpfrStruct, -1);
             else
             {
-                text = text.Replace(" ", string.Empty);
-                text = text.Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
-                text = text.Replace(CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator, string.Empty);
-
-                if (text.Length > 0 && text[0] == '.')
-                    text = "0" + text;
+                text = MpfrAdjustedText(text);
 
                 int Success = mpfr_set_str(ref Proxy.MpfrStruct, text, 10, (mpfr_rnd_t)Rounding);
                 if (Success != 0)
                     throw new ArgumentException(nameof(text));
             }
+        }
+
+        /// <summary>
+        /// Tries to create a number from plain text.
+        /// </summary>
+        /// <param name="text">The number in plain text.</param>
+        /// <param name="number">The new instance upon return if successful.</param>
+        /// <param name="precision">The optional precision.</param>
+        /// <param name="rounding">The optional rounding mode.</param>
+        /// <returns>True if successful; otherwise, false.</returns>
+        public static bool TryParse(string text, out Number number, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
+        {
+            if (text == CultureInfo.CurrentCulture.NumberFormat.NaNSymbol ||
+                text == CultureInfo.CurrentCulture.NumberFormat.PositiveInfinitySymbol ||
+                text == CultureInfo.CurrentCulture.NumberFormat.NegativeInfinitySymbol)
+            {
+                number = new Number(text);
+                return true;
+            }
+
+            text = MpfrAdjustedText(text);
+
+            __mpfr_t MpfrStruct = new() { Limbs = IntPtr.Zero };
+            if (precision == ulong.MaxValue)
+                mpfr_init2(ref MpfrStruct, mpfr_get_default_prec());
+            else
+                mpfr_init2(ref MpfrStruct, precision);
+
+            Rounding Rounding = (rounding == Rounding.Default) ? DefaultRounding : rounding;
+
+            int Success = mpfr_set_str(ref MpfrStruct, text, 10, (mpfr_rnd_t)Rounding);
+            if (Success == 0)
+            {
+                // Transfer ownership of MpfrStruct.
+                number = new Number(MpfrStruct, Rounding);
+                return true;
+            }
+
+            number = NaN;
+            return false;
+        }
+
+        private static string MpfrAdjustedText(string text)
+        {
+            text = text.Replace(" ", string.Empty);
+            text = text.Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+            text = text.Replace(CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator, string.Empty);
+
+            if (text.Length > 0 && text[0] == '.')
+                text = "0" + text;
+
+            return text;
+        }
+
+        private Number(__mpfr_t mpfrStruct, Rounding rounding)
+        {
+            Proxy = new mpfr_t(mpfrStruct);
+            Rounding = rounding;
         }
 
         /// <summary>

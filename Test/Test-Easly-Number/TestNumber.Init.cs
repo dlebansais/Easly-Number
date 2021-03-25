@@ -173,7 +173,30 @@
 
         [Test]
         [Category("Coverage")]
-        public static void TestInitTextInteger0()
+        public static void TestInitTryParse()
+        {
+            bool Success = Number.TryParse("0", out Number n0);
+            Assert.IsTrue(Success);
+
+            Assert.IsFalse(n0.IsInfinite);
+            Assert.IsTrue(n0.IsInteger);
+            Assert.IsFalse(n0.IsNaN);
+            Assert.IsFalse(n0.IsNegativeInfinity);
+            Assert.IsFalse(n0.IsPositiveInfinity);
+            Assert.IsFalse(n0.IsSpecial);
+            Assert.IsTrue(n0.IsZero);
+            Assert.IsTrue(n0.Sign == 0);
+
+            string Text = n0.ToString();
+            Assert.That(Text == "0", $"Expected: 0, got: {Text}");
+
+            Success = Number.TryParse("!", out Number n1);
+            Assert.IsFalse(Success);
+        }
+
+        [Test]
+        [Category("Coverage")]
+        public static void TestInitInteger0()
         {
             int p = 0;
             Number n = new Number(p);
@@ -192,7 +215,7 @@
 
         [Test]
         [Category("Coverage")]
-        public static void TestInitTextInteger1()
+        public static void TestInitInteger1()
         {
             uint p = 0;
             Number n = new Number(p);
@@ -211,7 +234,7 @@
 
         [Test]
         [Category("Coverage")]
-        public static void TestInitTextInteger2()
+        public static void TestInitInteger2()
         {
             long p = 0;
             Number n = new Number(p);
@@ -230,7 +253,7 @@
 
         [Test]
         [Category("Coverage")]
-        public static void TestInitTextInteger3()
+        public static void TestInitInteger3()
         {
             ulong p = 0;
             Number n = new Number(p);
