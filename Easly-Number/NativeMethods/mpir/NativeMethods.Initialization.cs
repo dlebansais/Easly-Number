@@ -3,6 +3,7 @@
     using System;
     using System.Runtime.InteropServices;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal static partial class NativeMethods
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -25,4 +26,5 @@
         public delegate void __mpz_realloc2(ref __mpz_t integer, mp_bitcnt_t n);
         public static __mpz_realloc2 mpz_realloc2 { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_realloc2>(GetMpirPointer(nameof(mpz_realloc2)));
     }
+#pragma warning restore SA1600 // Elements should be documented
 }

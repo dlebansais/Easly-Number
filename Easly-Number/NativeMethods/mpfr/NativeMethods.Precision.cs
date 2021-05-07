@@ -2,6 +2,7 @@
 {
     using System.Runtime.InteropServices;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal static partial class NativeMethods
     {
         private static void InitializePrecision()
@@ -32,4 +33,5 @@
         public static ulong NativeMaxPrecision { get; private set; }
         public static ulong NativeDefaultPrecision { get; private set; }
     }
+#pragma warning restore SA1600 // Elements should be documented
 }

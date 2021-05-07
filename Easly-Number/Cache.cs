@@ -3,6 +3,7 @@
     using System.Threading;
     using static Interop.Mpfr.NativeMethods;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal class Cache : ThreadLocal<bool>
     {
         protected override void Dispose(bool disposing)
@@ -18,4 +19,5 @@
 
         private bool IsCacheCleared;
     }
+#pragma warning restore SA1600 // Elements should be documented
 }

@@ -2,6 +2,7 @@
 {
     using System.Runtime.InteropServices;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal static partial class NativeMethods
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -44,4 +45,5 @@
         public delegate void __mpz_swap(ref __mpz_t rop1, ref __mpz_t rop2);
         public static __mpz_swap mpz_swap { get; } = Marshal.GetDelegateForFunctionPointer<__mpz_swap>(GetMpirPointer(nameof(mpz_swap)));
     }
+#pragma warning restore SA1600 // Elements should be documented
 }

@@ -9,7 +9,13 @@
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <RootNamespace>TestEaslyNumber</RootNamespace>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Easly-Number\Easly-Number.csproj" />

@@ -6,6 +6,7 @@ namespace EaslyNumber
     using System;
     using System.Collections.Generic;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal class TestSingle
     {
         public static void GenerateSingleOutput(List<OutputSingle> testList)
@@ -164,4 +165,5 @@ namespace EaslyNumber
             testList.Add(new OutputSingle() { Positive = positiveSingle, Negative = negativeSingle, Format = format, PositiveString = DSP, NegativeString = DSN });
         }
     }
+#pragma warning restore SA1600 // Elements should be documented
 }

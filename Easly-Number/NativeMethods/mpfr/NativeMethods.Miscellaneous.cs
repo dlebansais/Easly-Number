@@ -4,6 +4,7 @@
     using System.Runtime.InteropServices;
     using static Interop.Mpir.NativeMethods;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal static partial class NativeMethods
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -98,4 +99,5 @@
         public delegate IntPtr __mpfr_buildopt_tune_case();
         public static __mpfr_buildopt_tune_case mpfr_buildopt_tune_case { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_buildopt_tune_case>(GetMpfrPointer(nameof(mpfr_buildopt_tune_case)));
     }
+#pragma warning restore SA1600 // Elements should be documented
 }

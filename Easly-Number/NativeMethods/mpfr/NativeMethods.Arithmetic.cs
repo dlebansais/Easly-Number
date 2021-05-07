@@ -3,6 +3,7 @@
     using System.Runtime.InteropServices;
     using static Interop.Mpir.NativeMethods;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal static partial class NativeMethods
     {
         #region Add
@@ -225,4 +226,5 @@
         public static __mpfr_div_2exp mpfr_div_2exp { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_div_2exp>(GetMpfrPointer(nameof(mpfr_div_2exp)));
         #endregion
     }
+#pragma warning restore SA1600 // Elements should be documented
 }

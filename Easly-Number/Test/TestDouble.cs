@@ -6,6 +6,7 @@ namespace EaslyNumber
     using System;
     using System.Collections.Generic;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal class TestDouble
     {
         public static void GenerateDoubleOutput(List<OutputDouble> testList)
@@ -168,4 +169,5 @@ namespace EaslyNumber
             testList.Add(new OutputDouble() { Positive = positiveDouble, Negative = negativeDouble, Format = format, PositiveString = DSP, NegativeString = DSN });
         }
     }
+#pragma warning restore SA1600 // Elements should be documented
 }

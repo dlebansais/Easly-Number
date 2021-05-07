@@ -4,6 +4,7 @@
     using static Interop.Mpfr.NativeMethods;
 
 #pragma warning disable SA1300 // Element should begin with upper-case letter
+#pragma warning disable SA1600 // Elements should be documented
     internal class mpfr_t
     {
         public mpfr_t()
@@ -43,4 +44,5 @@
 #pragma warning restore SA1401 // Fields should be private
     }
 #pragma warning restore SA1300 // Element should begin with upper-case letter
+#pragma warning restore SA1600 // Elements should be documented
 }

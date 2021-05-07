@@ -3,6 +3,7 @@
     using System.Runtime.InteropServices;
     using static Interop.Mpir.NativeMethods;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal static partial class NativeMethods
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -85,4 +86,5 @@
         public delegate int __mpfr_swap(ref __mpfr_t x, ref __mpfr_t y);
         public static __mpfr_swap mpfr_swap { get; } = Marshal.GetDelegateForFunctionPointer<__mpfr_swap>(GetMpfrPointer(nameof(mpfr_swap)));
     }
+#pragma warning restore SA1600 // Elements should be documented
 }

@@ -4,6 +4,7 @@
     using System.Diagnostics;
     using System.Globalization;
 
+#pragma warning disable SA1600 // Elements should be documented
     internal class DisplayFormat
     {
         public static DisplayFormat Empty { get; } = new DisplayFormat();
@@ -105,4 +106,5 @@
             return true;
         }
     }
+#pragma warning restore SA1600 // Elements should be documented
 }
