@@ -3,7 +3,9 @@
     /// <summary>
     /// Rounding mode for operations on numbers.
     /// </summary>
+#pragma warning disable SA1300 // Element should begin with upper-case letter
     public enum mpfr_rnd_t
+#pragma warning restore SA1300 // Element should begin with upper-case letter
     {
         /// <summary>
         /// Round to nearest, with ties away from zero (mpfr_round).
