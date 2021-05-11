@@ -31,8 +31,8 @@
     </PackageReference>
     <PackageReference Include="OpenCover" Version="4.7.922" />
     <PackageReference Include="Codecov" Version="1.13.0" />
-    <PackageReference Include="MpfrDotNet-Debug" Version="1.0.5" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-    <PackageReference Include="MpfrDotNet" Version="1.0.5" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+    <PackageReference Include="MpfrDotNet-Debug" Version="1.0.7" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <PackageReference Include="MpfrDotNet" Version="1.0.7" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
   </ItemGroup>
 
   <ItemGroup>

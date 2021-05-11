@@ -21,8 +21,4 @@
     <ProjectReference Include="..\..\Easly-Number\Easly-Number.csproj" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if exist $(TargetDir)runtimes\win-x64\native\*.dll copy /Y $(TargetDir)runtimes\win-x64\native\*.dll $(TargetDir)" />
-  </Target>
-
 </Project>

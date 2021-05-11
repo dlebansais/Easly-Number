@@ -40,6 +40,13 @@
                 string LibraryLocation = Path.Combine(DirectoryName, libraryName);
 
                 hLib = LoadLibrary(LibraryLocation);
+
+                if (hLib == IntPtr.Zero)
+                    hLib = LoadLibrary(libraryName);
+
+                if (hLib == IntPtr.Zero)
+                    hLib = LoadLibrary(Path.Combine(DirectoryName, @"runtimes\win-x64\native", libraryName));
+
                 if (hLib == IntPtr.Zero)
                     throw new ArgumentException($"File {LibraryLocation} not found or not loaded");
 
