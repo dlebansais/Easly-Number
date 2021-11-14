@@ -1,44 +1,32 @@
 @echo off
-
 setlocal
-
-set PROJECTNAME=Easly-Number
-set TESTPROJECTNAME=Test-%PROJECTNAME%
-set RESULTFILENAME=Coverage-%PROJECTNAME%.xml
-set OPENCOVER_VERSION=4.7.1189
-set OPENCOVER=OpenCover.%OPENCOVER_VERSION%
-set CODECOV_VERSION=1.12.3
-set CODECOV=Codecov.%CODECOV_VERSION%
-set NUINT_CONSOLE_VERSION=3.12.0
-set NUINT_CONSOLE=NUnit.ConsoleRunner.%NUINT_CONSOLE_VERSION%
-set FRAMEWORK=net48
-
-nuget install OpenCover -Version %OPENCOVER_VERSION% -OutputDirectory packages
-nuget install CodeCov -Version %CODECOV_VERSION% -OutputDirectory packages
-nuget install NUnit.ConsoleRunner -Version %NUINT_CONSOLE_VERSION% -OutputDirectory packages
-
-if not exist ".\packages\%OPENCOVER%\tools\OpenCover.Console.exe" goto error_console1
-if not exist ".\packages\%CODECOV%\tools\codecov.exe" goto error_console2
-if not exist ".\packages\%NUINT_CONSOLE%\tools\nunit3-console.exe" goto error_console3
 
 call ..\Certification\set_tokens.bat
 
-dotnet publish Test\Test-Feature -c Debug -f %FRAMEWORK% /p:Platform=x64 -o ./Test/Test-Feature/bin/x64/Debug/publish
-dotnet publish Test\Test-Feature -c Release -f %FRAMEWORK% /p:Platform=x64 -o ./Test/Test-Feature/bin/x64/Release/publish
+set PROJECTNAME=Easly-Number
+set PROJECT_TOKEN=%EASLYNUMBER_CODECOV_TOKEN%
+set TESTPROJECTNAME=Test-%PROJECTNAME%
 
-dotnet publish Test\%TESTPROJECTNAME% -c Debug -f %FRAMEWORK% /p:Platform=x64 -o ./Test/%TESTPROJECTNAME%/bin/x64/Debug/publish
-dotnet publish Test\%TESTPROJECTNAME% -c Release -f %FRAMEWORK% /p:Platform=x64 -o ./Test/%TESTPROJECTNAME%/bin/x64/Release/publish
+set OPENCOVER_VERSION=4.7.1221
+set OPENCOVER=OpenCover.%OPENCOVER_VERSION%
+set CODECOV_VERSION=1.13.0
+set CODECOV=Codecov.%CODECOV_VERSION%
 
-if not exist ".\Test\%TESTPROJECTNAME%\bin\x64\Debug\publish\%TESTPROJECTNAME%.dll" goto error_not_built
-if not exist ".\Test\%TESTPROJECTNAME%\bin\x64\Release\publish\%TESTPROJECTNAME%.dll" goto error_not_built
-if exist .\Test\%TESTPROJECTNAME%\*.log del .\Test\%TESTPROJECTNAME%\*.log
-if exist .\Test\%TESTPROJECTNAME%\obj\x64\Debug\%RESULTFILENAME% del .\Test\%TESTPROJECTNAME%\obj\x64\Debug\%RESULTFILENAME%
-if exist .\Test\%TESTPROJECTNAME%\obj\x64\Release\%RESULTFILENAME% del .\Test\%TESTPROJECTNAME%\obj\x64\Release\%RESULTFILENAME%
-".\packages\%OPENCOVER%\tools\OpenCover.Console.exe" -register:user -target:".\packages\%NUINT_CONSOLE%\tools\nunit3-console.exe" -targetargs:".\Test\%TESTPROJECTNAME%\bin\x64\Debug\publish\%TESTPROJECTNAME%.dll --trace=Debug --labels=Before" -filter:"+[%PROJECTNAME%*]* -[%TESTPROJECTNAME%*]*" -output:".\Test\%TESTPROJECTNAME%\obj\x64\Debug\%RESULTFILENAME%"
-".\packages\%OPENCOVER%\tools\OpenCover.Console.exe" -register:user -target:".\packages\%NUINT_CONSOLE%\tools\nunit3-console.exe" -targetargs:".\Test\%TESTPROJECTNAME%\bin\x64\Release\publish\%TESTPROJECTNAME%.dll --trace=Debug --labels=Before" -filter:"+[%PROJECTNAME%*]* -[%TESTPROJECTNAME%*]*" -output:".\Test\%TESTPROJECTNAME%\obj\x64\Release\%RESULTFILENAME%"
+set RESULTFILENAME=Coverage-%PROJECTNAME%.xml
+set RESULTOUTPUT=".\Test\temp\%RESULTFILENAME%"
+set FRAMEWORK=netcoreapp3.1
 
-if exist .\Test\%TESTPROJECTNAME%\obj\x64\Debug\%RESULTFILENAME% .\packages\%CODECOV%\tools\codecov -f ".\Test\%TESTPROJECTNAME%\obj\x64\Debug\%RESULTFILENAME%" -t %EASLYNUMBER_CODECOV_TOKEN%
-if exist .\Test\%TESTPROJECTNAME%\obj\x64\Release\%RESULTFILENAME% .\packages\%CODECOV%\tools\codecov -f ".\Test\%TESTPROJECTNAME%\obj\x64\Release\%RESULTFILENAME%" -t %EASLYNUMBER_CODECOV_TOKEN%
+nuget install OpenCover -Version %OPENCOVER_VERSION% -OutputDirectory packages
+if not exist ".\packages\%OPENCOVER%\tools\OpenCover.Console.exe" goto error_console1
+nuget install CodeCov -Version %CODECOV_VERSION% -OutputDirectory packages
+if not exist ".\packages\%CODECOV%\tools\codecov.exe" goto error_console2
+
+mkdir Test\temp
+".\packages\%OPENCOVER%\tools\OpenCover.Console.exe" -register:user -target:"runtests.bat" -filter:"+[%PROJECTNAME%*]* -[%TESTPROJECTNAME%*]*" -output:%RESULTOUTPUT%
+if exist %RESULTOUTPUT% .\packages\%CODECOV%\tools\win7-x86\codecov -f %RESULTOUTPUT% -t %PROJECT_TOKEN%
+del .\Test\temp\*.xml
+rmdir Test\temp
+
 goto end
 
 :error_console1
@@ -49,13 +37,4 @@ goto end
 echo ERROR: Codecov not found.
 goto end
 
-:error_console3
-echo ERROR: nunit3-console not found.
-goto end
-
-:error_not_built
-echo ERROR: %TESTPROJECTNAME%.dll not built (both Debug and Release are required).
-goto end
-
 :end
-del *.log

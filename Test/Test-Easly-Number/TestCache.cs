@@ -31,9 +31,9 @@
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
-        private static void ExecuteThreadTest(object parameter)
+        private static void ExecuteThreadTest(object? parameter)
         {
-            TimeSpan Duration = (TimeSpan)parameter;
+            TimeSpan Duration = (TimeSpan)parameter!;
 
             Number TestNumber = new Number("1");
             TestNumber = TestNumber + 1;

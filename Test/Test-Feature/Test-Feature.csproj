@@ -5,7 +5,7 @@
     <TargetFrameworks>netcoreapp3.1;net48;net5.0-windows</TargetFrameworks>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseWPF>true</UseWPF>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <RootNamespace>TestEaslyNumber</RootNamespace>
