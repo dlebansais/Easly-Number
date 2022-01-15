@@ -27,7 +27,7 @@
             {
                 NumberAssembly = null;
             }
-            Assume.That(NumberAssembly != null);
+            Assume.That(NumberAssembly is not null);
 
             if (TextNaN.Length == 0)
             {

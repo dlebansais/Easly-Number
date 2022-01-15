@@ -49,7 +49,7 @@
         /// <returns>The string representation of the value of this instance as specified by format and provider.</returns>
         public string ToString(string? format, IFormatProvider? provider)
         {
-            if (format == null)
+            if (format is null)
                 format = "G";
 
             if (!DisplayFormat.Parse(format, provider, Precision, out DisplayFormat Format))

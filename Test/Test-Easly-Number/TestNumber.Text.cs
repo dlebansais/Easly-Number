@@ -61,7 +61,7 @@
 
             string PositiveNumberString, NegativeNumberString;
 
-            if (Format == null)
+            if (Format is null)
             {
                 PositiveNumberString = PositiveNumber.ToString();
                 NegativeNumberString = NegativeNumber.ToString();
@@ -119,7 +119,7 @@
 
             string PositiveNumberString, NegativeNumberString;
 
-            if (Format == null)
+            if (Format is null)
             {
                 PositiveNumberString = PositiveNumber.ToString();
                 NegativeNumberString = NegativeNumber.ToString();

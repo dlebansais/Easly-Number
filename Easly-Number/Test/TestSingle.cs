@@ -151,7 +151,7 @@ namespace EaslyNumber
         {
             string DSP, DSN;
 
-            if (format == null)
+            if (format is null)
             {
                 DSP = positiveSingle.ToString();
                 DSN = negativeSingle.ToString();
