@@ -244,6 +244,7 @@
             Assert.AreEqual(DoubleString3, NumberString3);
 
             string NumberString4 = Value1.ToString(null, CultureInfo.InvariantCulture);
+            string NumberString5 = Value1.ToString(null, null);
         }
 
         [Test]
