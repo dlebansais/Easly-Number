@@ -215,6 +215,39 @@
 
         [Test]
         [Category("Coverage")]
+        public static void TestToString()
+        {
+            double d = 1.2547856e2;
+            Number Value = new Number(d);
+
+            double d1 = Math.Exp(d);
+            Number Value1 = Value.Exp();
+
+            string DoubleString0 = d1.ToString("G17").Substring(0, 15);
+            string NumberString0 = Value1.ToString("G17").Substring(0, 15);
+
+            Assert.AreEqual(DoubleString0, NumberString0);
+
+            string DoubleString1 = d1.ToString("g17").Substring(0, 15);
+            string NumberString1 = Value1.ToString("g17").Substring(0, 15);
+
+            Assert.AreEqual(DoubleString1, NumberString1);
+
+            string DoubleString2 = d1.ToString("E17").Substring(0, 15);
+            string NumberString2 = Value1.ToString("E17").Substring(0, 15);
+
+            Assert.AreEqual(DoubleString2, NumberString2);
+
+            string DoubleString3 = d1.ToString("e17").Substring(0, 15);
+            string NumberString3 = Value1.ToString("e17").Substring(0, 15);
+
+            Assert.AreEqual(DoubleString3, NumberString3);
+
+            string NumberString4 = Value1.ToString(null, CultureInfo.InvariantCulture);
+        }
+
+        [Test]
+        [Category("Coverage")]
         public static void TestInitInteger0()
         {
             int p = 0;

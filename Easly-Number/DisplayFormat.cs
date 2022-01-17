@@ -60,9 +60,9 @@
             return true;
         }
 
-        private static bool ParsePrecisionSpecifier(string? format, ref int precisionSpecifier)
+        private static bool ParsePrecisionSpecifier(string format, ref int precisionSpecifier)
         {
-            if (format is not null && format.Length > 1)
+            if (format.Length > 1)
             {
                 if (!int.TryParse(format.Substring(1), out precisionSpecifier))
                     return false;
@@ -74,9 +74,9 @@
             return true;
         }
 
-        public static bool Parse(string? format, IFormatProvider? provider, ulong precision, out DisplayFormat displayFormat)
+        internal static bool Parse(string format, IFormatProvider? provider, ulong precision, out DisplayFormat displayFormat)
         {
-            char FormatCharacter = (format is null || format.Length == 0) ? 'G' : format[0];
+            char FormatCharacter = (format.Length == 0) ? 'G' : format[0];
             bool IsExponentUpperCase = char.IsUpper(FormatCharacter);
             NumberFormatInfo NumberFormatInfo = (provider is not null && provider.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo AsNumberFormatInfo) ? AsNumberFormatInfo : NumberFormatInfo.CurrentInfo;
 

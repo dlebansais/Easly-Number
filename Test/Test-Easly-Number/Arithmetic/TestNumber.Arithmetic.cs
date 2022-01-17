@@ -64,21 +64,6 @@
             string NumberString0 = Value.ToString("G17").Substring(0, 15);
 
             Assert.AreEqual(DoubleString0, NumberString0);
-
-            string DoubleString1 = d.ToString("g17").Substring(0, 15);
-            string NumberString1 = Value.ToString("g17").Substring(0, 15);
-
-            Assert.AreEqual(DoubleString1, NumberString1);
-
-            string DoubleString2 = d.ToString("E17").Substring(0, 15);
-            string NumberString2 = Value.ToString("E17").Substring(0, 15);
-
-            Assert.AreEqual(DoubleString2, NumberString2);
-
-            string DoubleString3 = d.ToString("e17").Substring(0, 15);
-            string NumberString3 = Value.ToString("e17").Substring(0, 15);
-
-            Assert.AreEqual(DoubleString3, NumberString3);
         }
 
         [Test]
