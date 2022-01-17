@@ -66,7 +66,10 @@
             if (!IsInteger)
                 return false;
 
-            if (mpfr_cmp(ref Proxy.MpfrStruct, ref LongMinValue.Proxy.MpfrStruct) < 0 || mpfr_cmp(ref Proxy.MpfrStruct, ref LongMaxValue.Proxy.MpfrStruct) > 0)
+            if (mpfr_cmp(ref Proxy.MpfrStruct, ref LongMinValue.Proxy.MpfrStruct) < 0)
+                return false;
+
+            if (mpfr_cmp(ref Proxy.MpfrStruct, ref LongMaxValue.Proxy.MpfrStruct) > 0)
                 return false;
 
             Interop.Mpir.NativeMethods.__mpz_t IntValue = new() { Limbs = IntPtr.Zero };
@@ -95,7 +98,10 @@
             if (!IsInteger)
                 return false;
 
-            if (mpfr_sgn(ref Proxy.MpfrStruct) < 0 || mpfr_cmp(ref Proxy.MpfrStruct, ref ULongMaxValue.Proxy.MpfrStruct) > 0)
+            if (mpfr_sgn(ref Proxy.MpfrStruct) < 0)
+                return false;
+
+            if (mpfr_cmp(ref Proxy.MpfrStruct, ref ULongMaxValue.Proxy.MpfrStruct) > 0)
                 return false;
 
             Interop.Mpir.NativeMethods.__mpz_t IntValue = new() { Limbs = IntPtr.Zero };

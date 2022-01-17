@@ -190,7 +190,26 @@
             string Text = n0.ToString();
             Assert.That(Text == "0", $"Expected: 0, got: {Text}");
 
-            Success = Number.TryParse("!", out Number n1);
+            Success = Number.TryParse("!", out _);
+            Assert.IsFalse(Success);
+
+            Success = Number.TryParse(CultureInfo.CurrentCulture.NumberFormat.NaNSymbol, out Number n2);
+            Assert.IsTrue(Success);
+            Assert.IsTrue(n2.IsNaN);
+
+            Success = Number.TryParse(CultureInfo.CurrentCulture.NumberFormat.PositiveInfinitySymbol, out Number n3);
+            Assert.IsTrue(Success);
+            Assert.IsTrue(n3.IsPositiveInfinity);
+
+            Success = Number.TryParse(CultureInfo.CurrentCulture.NumberFormat.NegativeInfinitySymbol, out Number n4);
+            Assert.IsTrue(Success);
+            Assert.IsTrue(n4.IsNegativeInfinity);
+
+            Success = Number.TryParse("0", out Number n5, precision: 53, rounding: Rounding.TowardZero);
+            Assert.IsTrue(Success);
+            Assert.IsTrue(n5.IsZero);
+
+            Success = Number.TryParse(string.Empty, out _);
             Assert.IsFalse(Success);
         }
 

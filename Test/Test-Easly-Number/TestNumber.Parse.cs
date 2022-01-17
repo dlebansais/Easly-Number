@@ -110,5 +110,25 @@
             bool IsParsedAsULong = Value.TryParseULong(out ulong AsULong);
             Assert.IsFalse(IsParsedAsULong);
         }
+
+        [Test]
+        [Category("Coverage")]
+        public static void TryParse5()
+        {
+            Number Value = new Number("-11119228972036854775807");
+            Assert.IsTrue(Value.IsInteger);
+
+            bool IsParsedAsInt = Value.TryParseInt(out int AsInt);
+            Assert.IsFalse(IsParsedAsInt);
+
+            bool IsParsedAsUInt = Value.TryParseUInt(out uint AsUInt);
+            Assert.IsFalse(IsParsedAsUInt);
+
+            bool IsParsedAsLong = Value.TryParseLong(out long AsLong);
+            Assert.IsFalse(IsParsedAsLong);
+
+            bool IsParsedAsULong = Value.TryParseULong(out ulong AsULong);
+            Assert.IsFalse(IsParsedAsULong);
+        }
     }
 }

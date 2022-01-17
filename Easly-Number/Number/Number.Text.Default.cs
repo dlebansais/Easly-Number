@@ -108,8 +108,8 @@
             int ExponentDigitCount = Precision <= 24 ? 2 : 3;
             string ExponentDigitFormat = $"D0{ExponentDigitCount}";
 
-            if (!isFirstDigitZero)
-                exponent--;
+            Debug.Assert(!isFirstDigitZero);
+            exponent--;
 
             exponentSign = exponent >= 0 ? "+" : "-";
             exponentString = (exponent >= 0 ? exponent : -exponent).ToString(ExponentDigitFormat);

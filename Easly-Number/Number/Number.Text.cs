@@ -117,8 +117,9 @@
 
             if (IsFirstDigitZero)
             {
-                ExponentSign = Exponent >= 0 ? "+" : "-";
-                ExponentString = (Exponent >= 0 ? Exponent : -Exponent).ToString("D03");
+                Debug.Assert(Exponent == 0);
+                ExponentSign = "+";
+                ExponentString = Exponent.ToString("D03");
             }
             else
             {
@@ -153,7 +154,8 @@
         {
             const int Resultbase = 10;
 
-            ulong SizeInDigits = precision > 0 ? precision : 1UL;
+            Debug.Assert(precision > 0);
+            ulong SizeInDigits = precision;
 
             StringBuilder Data = new StringBuilder((int)(SizeInDigits + 2));
             mpfr_rnd_t StringRounding = mpfr_rnd_t.MPFR_RNDN;
@@ -161,7 +163,9 @@
             mpfr_get_str(Data, out exponent, Resultbase, SizeInDigits, ref Proxy.MpfrStruct, StringRounding);
             string Result = Data.ToString();
 
-            if (Result.Length > 0 && Result[0] == '-')
+            Debug.Assert(Result.Length > 0);
+
+            if (Result[0] == '-')
             {
                 negativeSign = "-";
                 numberString = Result.Substring(1);
