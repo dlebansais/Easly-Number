@@ -60,10 +60,15 @@
             double d = System.Math.Exp(d1);
             Number Value = Value1.Exp();
 
-            string DoubleString = d.ToString("G17").Substring(0, 15);
-            string NumberString = Value.ToString("G17").Substring(0, 15);
+            string DoubleString0 = d.ToString("G17").Substring(0, 15);
+            string NumberString0 = Value.ToString("G17").Substring(0, 15);
 
-            Assert.AreEqual(DoubleString, NumberString);
+            Assert.AreEqual(DoubleString0, NumberString0);
+
+            string DoubleString1 = d.ToString("g17").Substring(0, 15);
+            string NumberString1 = Value.ToString("g17").Substring(0, 15);
+
+            Assert.AreEqual(DoubleString1, NumberString1);
 
             string DoubleString2 = d.ToString("E17").Substring(0, 15);
             string NumberString2 = Value.ToString("E17").Substring(0, 15);

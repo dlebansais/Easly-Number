@@ -78,6 +78,7 @@
 
             switch (format.NumericFormat)
             {
+                default:
                 case NumericFormat.Default:
                     Result = ToStringDefaultFormat(format);
                     break;
