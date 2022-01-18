@@ -1,6 +1,8 @@
 ﻿namespace EaslyNumber;
 
+using System;
 using System.Diagnostics;
+using Contracts;
 
 /// <summary>
 /// Class describing an integer with a specified digits base.
@@ -106,9 +108,23 @@ public abstract class IntegerBase
     /// <param name="text">The number to check.</param>
     /// <param name="supportLeadingZeroes">True if <paramref name="text"/> might have leading zeroes.</param>
     /// <returns>True if <paramref name="text"/> is a valid number; Otherwise, false.</returns>
-    public virtual bool IsValidNumber(string text, bool supportLeadingZeroes = true)
+    public bool IsValidNumber(string text, bool supportLeadingZeroes = true)
     {
-        if (string.IsNullOrEmpty(text))
+        Contract.RequireNotNull(text, out string Text);
+
+        return IsValidNumberInternal(Text, supportLeadingZeroes);
+    }
+
+    /// <summary>
+    /// Checks if a number is made of digits in this base.
+    /// A valid number must not start with 0 (unless it is zero or <paramref name="supportLeadingZeroes"/> is set), and must not be empty.
+    /// </summary>
+    /// <param name="text">The number to check.</param>
+    /// <param name="supportLeadingZeroes">True if <paramref name="text"/> might have leading zeroes.</param>
+    /// <returns>True if <paramref name="text"/> is a valid number; Otherwise, false.</returns>
+    protected virtual bool IsValidNumberInternal(string text, bool supportLeadingZeroes)
+    {
+        if (text.Length == 0)
             return false;
 
         for (int i = 0; i < text.Length; i++)
@@ -132,16 +148,18 @@ public abstract class IntegerBase
     /// <returns>True if <paramref name="text"/> is a valid significand; Otherwise, false.</returns>
     public virtual bool IsValidSignificand(string text)
     {
-        if (string.IsNullOrEmpty(text))
+        Contract.RequireNotNull(text, out string Text);
+
+        if (Text.Length == 0)
             return false;
 
-        for (int i = 0; i < text.Length; i++)
+        for (int i = 0; i < Text.Length; i++)
         {
-            char digit = text[i];
+            char digit = Text[i];
             if (!IsValidDigit(digit, out int Value))
                 return false;
 
-            if ((i == 0 || i + 1 == text.Length) && Value == 0 && text.Length != 1)
+            if ((i == 0 || i + 1 == Text.Length) && Value == 0 && Text.Length != 1)
                 return false;
         }
 
@@ -167,20 +185,23 @@ public abstract class IntegerBase
     /// <param name="hasCarry">True upon return if <paramref name="text"/> is odd.</param>
     public virtual string DividedByTwo(string text, out bool hasCarry)
     {
-        Debug.Assert(IsValidNumber(text));
+        Contract.RequireNotNull(text, out string Text);
+
+        if (!IsValidNumberInternal(Text, supportLeadingZeroes: true))
+            throw new ArgumentException(nameof(text));
 
         string Result = string.Empty;
         int Carry = 0;
 
-        for (int i = 0; i < text.Length; i++)
+        for (int i = 0; i < Text.Length; i++)
         {
-            bool IsValid = IsValidDigit(text[i], out int Value);
+            bool IsValid = IsValidDigit(Text[i], out int Value);
             Debug.Assert(IsValid);
 
             Value += Carry;
             char Digit = ToDigit(Value / 2);
 
-            if (Digit != '0' || i > 0 || text.Length == 1)
+            if (Digit != '0' || i > 0 || Text.Length == 1)
                 Result += Digit;
 
             Carry = Value % 2 != 0 ? Radix : 0;
@@ -188,7 +209,7 @@ public abstract class IntegerBase
 
         hasCarry = Carry != 0;
 
-        Debug.Assert(IsValidNumber(Result));
+        Debug.Assert(IsValidNumberInternal(Result, supportLeadingZeroes: false));
         return Result;
     }
 
@@ -199,14 +220,17 @@ public abstract class IntegerBase
     /// <param name="addCarry">True if a carry should be added.</param>
     public virtual string MultipliedByTwo(string text, bool addCarry)
     {
-        Debug.Assert(IsValidNumber(text));
+        Contract.RequireNotNull(text, out string Text);
+
+        if (!IsValidNumberInternal(Text, supportLeadingZeroes: true))
+            throw new ArgumentException(nameof(text));
 
         string Result = string.Empty;
         int Carry = addCarry ? 1 : 0;
 
-        for (int i = 0; i < text.Length; i++)
+        for (int i = 0; i < Text.Length; i++)
         {
-            bool IsValid = IsValidDigit(text[text.Length - 1 - i], out int Value);
+            bool IsValid = IsValidDigit(Text[Text.Length - 1 - i], out int Value);
             Debug.Assert(IsValid);
 
             Value = (Value * 2) + Carry;
@@ -224,7 +248,7 @@ public abstract class IntegerBase
         if (Carry > 0)
             Result = ToDigit(Carry) + Result;
 
-        Debug.Assert(IsValidNumber(Result));
+        Debug.Assert(IsValidNumberInternal(Result, supportLeadingZeroes: false));
         return Result;
     }
 
@@ -236,7 +260,9 @@ public abstract class IntegerBase
     /// <param name="toBase">The base in which the returned number is encoded.</param>
     public static string Convert(string text, IntegerBase fromBase, IntegerBase toBase)
     {
-        return ConvertFromBinary(ConvertToBinary(text, fromBase), toBase);
+        Contract.RequireNotNull(text, out string Text);
+
+        return ConvertFromBinary(ConvertToBinary(Text, fromBase), toBase);
     }
     #endregion
 

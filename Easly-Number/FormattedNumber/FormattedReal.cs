@@ -1,10 +1,12 @@
 ﻿namespace EaslyNumber;
 
 using System;
+using System.Diagnostics;
 
 /// <summary>
 /// A real number and its components.
 /// </summary>
+[DebuggerDisplay("{SignificandPart}{ExponentPart}{InvalidText}")]
 public class FormattedReal : FormattedNumber
 {
     #region Init
@@ -27,12 +29,12 @@ public class FormattedReal : FormattedNumber
     {
         Sign = sign;
         LeadingZeroCount = leadingZeroCount;
-        IntegerText = integerText ?? throw new ArgumentNullException(nameof(integerText), "Value cannot be null.");
+        IntegerText = integerText;
         SeparatorCharacter = separatorCharacter;
-        FractionalText = fractionalText ?? throw new ArgumentNullException(nameof(fractionalText), "Value cannot be null.");
+        FractionalText = fractionalText;
         ExponentCharacter = exponentCharacter;
         ExponentSign = exponentSign;
-        ExponentText = exponentText ?? throw new ArgumentNullException(nameof(exponentText), "Value cannot be null.");
+        ExponentText = exponentText;
 
         if (leadingZeroCount < 0)
             throw new ArgumentOutOfRangeException(nameof(leadingZeroCount));
@@ -154,16 +156,6 @@ public class FormattedReal : FormattedNumber
 
             return $"{SignText}/{LeadingZeroesText}/{IntegerText}/{(int)SeparatorCharacter}/{FractionalText}/{(int)ExponentCharacter}/{ExponentSignText}/{ExponentText}/{InvalidText}";
         }
-    }
-    #endregion
-
-    #region Client Interface
-    /// <summary>
-    /// Returns the formatted number as a string.
-    /// </summary>
-    public override string ToString()
-    {
-        return $"{SignificandPart}{ExponentPart}{InvalidText}";
     }
     #endregion
 }

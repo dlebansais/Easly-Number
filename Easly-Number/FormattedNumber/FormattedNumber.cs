@@ -1,6 +1,7 @@
 ﻿namespace EaslyNumber;
 
 using System.Diagnostics;
+using Contracts;
 
 /// <summary>
 /// Base class for a number format that can parse any string.
@@ -127,7 +128,9 @@ public abstract class FormattedNumber
     /// </returns>
     public static FormattedNumber Parse(string text)
     {
-        return Parser.Parse(text);
+        Contract.RequireNotNull(text, out string Text);
+
+        return Parser.Parse(Text);
     }
     #endregion
 
@@ -186,7 +189,10 @@ public abstract class FormattedNumber
     /// <param name="y">The second number.</param>
     public static FormattedNumber operator +(FormattedNumber x, FormattedNumber y)
     {
-        CanonicalNumber OperationResult = x.Canonical + y.Canonical;
+        Contract.RequireNotNull(x, out FormattedNumber X);
+        Contract.RequireNotNull(y, out FormattedNumber Y);
+
+        CanonicalNumber OperationResult = X.Canonical + Y.Canonical;
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -199,7 +205,10 @@ public abstract class FormattedNumber
     /// <param name="y">The second number.</param>
     public static FormattedNumber operator -(FormattedNumber x, FormattedNumber y)
     {
-        CanonicalNumber OperationResult = x.Canonical - y.Canonical;
+        Contract.RequireNotNull(x, out FormattedNumber X);
+        Contract.RequireNotNull(y, out FormattedNumber Y);
+
+        CanonicalNumber OperationResult = X.Canonical - Y.Canonical;
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -212,7 +221,10 @@ public abstract class FormattedNumber
     /// <param name="y">The second number.</param>
     public static FormattedNumber operator *(FormattedNumber x, FormattedNumber y)
     {
-        CanonicalNumber OperationResult = x.Canonical * y.Canonical;
+        Contract.RequireNotNull(x, out FormattedNumber X);
+        Contract.RequireNotNull(y, out FormattedNumber Y);
+
+        CanonicalNumber OperationResult = X.Canonical * Y.Canonical;
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -225,7 +237,10 @@ public abstract class FormattedNumber
     /// <param name="y">The second number.</param>
     public static FormattedNumber operator /(FormattedNumber x, FormattedNumber y)
     {
-        CanonicalNumber OperationResult = x.Canonical / y.Canonical;
+        Contract.RequireNotNull(x, out FormattedNumber X);
+        Contract.RequireNotNull(y, out FormattedNumber Y);
+
+        CanonicalNumber OperationResult = X.Canonical / Y.Canonical;
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -237,7 +252,9 @@ public abstract class FormattedNumber
     /// <param name="x">The number.</param>
     public static FormattedNumber operator -(FormattedNumber x)
     {
-        CanonicalNumber OperationResult = -x.Canonical;
+        Contract.RequireNotNull(x, out FormattedNumber X);
+
+        CanonicalNumber OperationResult = -X.Canonical;
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -293,7 +310,9 @@ public abstract class FormattedNumber
     /// <param name="x">The number.</param>
     public FormattedNumber Pow(FormattedNumber x)
     {
-        CanonicalNumber OperationResult = Canonical.Pow(x.Canonical);
+        Contract.RequireNotNull(x, out FormattedNumber X);
+
+        CanonicalNumber OperationResult = Canonical.Pow(X.Canonical);
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -316,7 +335,9 @@ public abstract class FormattedNumber
     /// <param name="x">The number.</param>
     public FormattedNumber ShiftLeft(FormattedNumber x)
     {
-        CanonicalNumber OperationResult = Canonical.ShiftLeft(x.Canonical);
+        Contract.RequireNotNull(x, out FormattedNumber X);
+
+        CanonicalNumber OperationResult = Canonical.ShiftLeft(X.Canonical);
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -328,7 +349,9 @@ public abstract class FormattedNumber
     /// <param name="x">The number.</param>
     public FormattedNumber ShiftRight(FormattedNumber x)
     {
-        CanonicalNumber OperationResult = Canonical.ShiftRight(x.Canonical);
+        Contract.RequireNotNull(x, out FormattedNumber X);
+
+        CanonicalNumber OperationResult = Canonical.ShiftRight(X.Canonical);
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -340,7 +363,9 @@ public abstract class FormattedNumber
     /// <param name="x">The divisor.</param>
     public FormattedNumber Remainder(FormattedNumber x)
     {
-        CanonicalNumber OperationResult = Canonical.Remainder(x.Canonical);
+        Contract.RequireNotNull(x, out FormattedNumber X);
+
+        CanonicalNumber OperationResult = Canonical.Remainder(X.Canonical);
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -352,7 +377,9 @@ public abstract class FormattedNumber
     /// <param name="x">The number.</param>
     public FormattedNumber BitwiseAnd(FormattedNumber x)
     {
-        CanonicalNumber OperationResult = Canonical.BitwiseAnd(x.Canonical);
+        Contract.RequireNotNull(x, out FormattedNumber X);
+
+        CanonicalNumber OperationResult = Canonical.BitwiseAnd(X.Canonical);
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -364,7 +391,9 @@ public abstract class FormattedNumber
     /// <param name="x">The number.</param>
     public FormattedNumber BitwiseOr(FormattedNumber x)
     {
-        CanonicalNumber OperationResult = Canonical.BitwiseOr(x.Canonical);
+        Contract.RequireNotNull(x, out FormattedNumber X);
+
+        CanonicalNumber OperationResult = Canonical.BitwiseOr(X.Canonical);
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;
@@ -376,7 +405,9 @@ public abstract class FormattedNumber
     /// <param name="x">The number.</param>
     public FormattedNumber BitwiseXor(FormattedNumber x)
     {
-        CanonicalNumber OperationResult = Canonical.BitwiseXor(x.Canonical);
+        Contract.RequireNotNull(x, out FormattedNumber X);
+
+        CanonicalNumber OperationResult = Canonical.BitwiseXor(X.Canonical);
 
         FormattedNumber Result = FromCanonical(OperationResult);
         return Result;

@@ -26,7 +26,7 @@ public partial struct Number : IFormattable
     /// </summary>
     /// <param name="provider">An object that supplies culture-specific formatting information.</param>
     /// <returns>The string representation of the value of this instance as specified by provider.</returns>
-    public string ToString(IFormatProvider provider)
+    public string ToString(IFormatProvider? provider)
     {
         return ToString("G", provider);
     }
@@ -36,7 +36,7 @@ public partial struct Number : IFormattable
     /// </summary>
     /// <param name="format">A numeric format string.</param>
     /// <returns>The string representation of the value of this instance as specified by format.</returns>
-    public string ToString(string format)
+    public string ToString(string? format)
     {
         return ToString(format, CultureInfo.CurrentCulture);
     }

@@ -1,10 +1,12 @@
 ﻿namespace EaslyNumber;
 
 using System;
+using System.Diagnostics;
 
 /// <summary>
 /// A real number and its components.
 /// </summary>
+[DebuggerDisplay("{SignificandPart}{InvalidText}")]
 public class FormattedInteger : FormattedNumber
 {
     #region Init
@@ -91,16 +93,6 @@ public class FormattedInteger : FormattedNumber
 
             return $"{SignText}/{LeadingZeroesText}/{IntegerText}/{Base.Suffix}/{InvalidText}";
         }
-    }
-    #endregion
-
-    #region Client Interface
-        /// <summary>
-        /// Returns the formatted number as a string.
-        /// </summary>
-    public override string ToString()
-    {
-        return $"{SignificandPart}{InvalidText}";
     }
     #endregion
 }

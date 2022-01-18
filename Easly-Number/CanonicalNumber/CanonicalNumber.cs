@@ -5,6 +5,7 @@ using System.Diagnostics;
 /// <summary>
 /// Interface to manipulate integer or real numbers of any size.
 /// </summary>
+[DebuggerDisplay("{CanonicalRepresentation}")]
 internal class CanonicalNumber
 {
     #region Constants
@@ -74,7 +75,7 @@ internal class CanonicalNumber
 
     private Number CreateFloat()
     {
-        return new Number(CanonicRepresentation);
+        return new Number(CanonicalRepresentation);
     }
 
     /// <summary>
@@ -160,11 +161,11 @@ internal class CanonicalNumber
         NumberFloat = f;
 
         if (f.IsPositiveInfinity)
-            CanonicRepresentation = double.PositiveInfinity.ToString();
+            CanonicalRepresentation = double.PositiveInfinity.ToString();
         else if (f.IsNegativeInfinity)
-            CanonicRepresentation = double.NegativeInfinity.ToString();
+            CanonicalRepresentation = double.NegativeInfinity.ToString();
         else
-            CanonicRepresentation = double.NaN.ToString();
+            CanonicalRepresentation = double.NaN.ToString();
     }
     #endregion
 
@@ -192,7 +193,7 @@ internal class CanonicalNumber
     /// <summary>
     /// Gets the canonic representation.
     /// </summary>
-    public string CanonicRepresentation { get; private set; } = string.Empty;
+    public string CanonicalRepresentation { get; private set; } = string.Empty;
 
     /// <summary>
     /// Gets the float.
@@ -452,7 +453,7 @@ internal class CanonicalNumber
     private void FormatCanonicString()
     {
         if (SignificandText == IntegerBase.Zero)
-            CanonicRepresentation = IntegerBase.Zero;
+            CanonicalRepresentation = IntegerBase.Zero;
         else
         {
             string Mantissa;
@@ -468,18 +469,8 @@ internal class CanonicalNumber
             else
                 Exponent = ExponentText;
 
-            CanonicRepresentation = Mantissa + "e" + Exponent;
+            CanonicalRepresentation = Mantissa + "e" + Exponent;
         }
-    }
-    #endregion
-
-    #region Debugging
-    /// <summary>
-    /// Returns a string representation of this instance.
-    /// </summary>
-    public override string ToString()
-    {
-        return CanonicRepresentation;
     }
     #endregion
 }

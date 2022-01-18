@@ -2,6 +2,7 @@
 
 using System;
 using System.Globalization;
+using Contracts;
 using Interop.Mpfr;
 using static Interop.Mpfr.NativeMethods;
 
@@ -56,20 +57,22 @@ public partial struct Number : IFormattable
     /// <exception cref="ArgumentException">The text is not a valid number.</exception>
     public Number(string text)
     {
+        Contract.RequireNotNull(text, out string Text);
+
         Proxy = new mpfr_t();
         Rounding = DefaultRounding;
 
-        if (text == CultureInfo.CurrentCulture.NumberFormat.NaNSymbol)
+        if (Text == CultureInfo.CurrentCulture.NumberFormat.NaNSymbol)
             mpfr_set_nan(ref Proxy.MpfrStruct);
-        else if (text == CultureInfo.CurrentCulture.NumberFormat.PositiveInfinitySymbol)
+        else if (Text == CultureInfo.CurrentCulture.NumberFormat.PositiveInfinitySymbol)
             mpfr_set_inf(ref Proxy.MpfrStruct, +1);
-        else if (text == CultureInfo.CurrentCulture.NumberFormat.NegativeInfinitySymbol)
+        else if (Text == CultureInfo.CurrentCulture.NumberFormat.NegativeInfinitySymbol)
             mpfr_set_inf(ref Proxy.MpfrStruct, -1);
         else
         {
-            text = MpfrAdjustedText(text);
+            string AjustedText = MpfrAdjustedText(Text);
 
-            int Success = mpfr_set_str(ref Proxy.MpfrStruct, text, 10, (mpfr_rnd_t)Rounding);
+            int Success = mpfr_set_str(ref Proxy.MpfrStruct, AjustedText, 10, (mpfr_rnd_t)Rounding);
             if (Success != 0)
                 throw new ArgumentException(nameof(text));
         }
@@ -85,15 +88,17 @@ public partial struct Number : IFormattable
     /// <returns>True if successful; otherwise, false.</returns>
     public static bool TryParse(string text, out Number number, ulong precision = ulong.MaxValue, Rounding rounding = Rounding.Default)
     {
-        if (text == CultureInfo.CurrentCulture.NumberFormat.NaNSymbol ||
-            text == CultureInfo.CurrentCulture.NumberFormat.PositiveInfinitySymbol ||
-            text == CultureInfo.CurrentCulture.NumberFormat.NegativeInfinitySymbol)
+        Contract.RequireNotNull(text, out string Text);
+
+        if (Text == CultureInfo.CurrentCulture.NumberFormat.NaNSymbol ||
+            Text == CultureInfo.CurrentCulture.NumberFormat.PositiveInfinitySymbol ||
+            Text == CultureInfo.CurrentCulture.NumberFormat.NegativeInfinitySymbol)
         {
-            number = new Number(text);
+            number = new Number(Text);
             return true;
         }
 
-        text = MpfrAdjustedText(text);
+        string AdjustedText = MpfrAdjustedText(Text);
 
         __mpfr_t MpfrStruct = new() { Limbs = IntPtr.Zero };
         if (precision == ulong.MaxValue)
@@ -103,7 +108,7 @@ public partial struct Number : IFormattable
 
         Rounding Rounding = (rounding == Rounding.Default) ? DefaultRounding : rounding;
 
-        int Success = mpfr_set_str(ref MpfrStruct, text, 10, (mpfr_rnd_t)Rounding);
+        int Success = mpfr_set_str(ref MpfrStruct, AdjustedText, 10, (mpfr_rnd_t)Rounding);
         if (Success == 0)
         {
             // Transfer ownership of MpfrStruct.

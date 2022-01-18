@@ -1,8 +1,11 @@
 ﻿namespace EaslyNumber;
 
+using System.Diagnostics;
+
 /// <summary>
 /// The format for a number parsed as totally invalid.
 /// </summary>
+[DebuggerDisplay("{InvalidText}")]
 public class FormattedInvalid : FormattedNumber
 {
     #region Init
@@ -49,15 +52,5 @@ public class FormattedInvalid : FormattedNumber
     /// Gets a diagnostic string for debug purpose.
     /// </summary>
     public override string Diagnostic { get { return $"{Canonical}/{InvalidText}"; } }
-    #endregion
-
-    #region Client Interface
-    /// <summary>
-    /// Returns the formatted number as a string.
-    /// </summary>
-    public override string ToString()
-    {
-        return InvalidText;
-    }
     #endregion
 }
