@@ -1,13 +1,12 @@
-﻿namespace EaslyNumber
+﻿namespace EaslyNumber;
+
+/// <summary>
+/// Hold information during parsing of an integer in binary base.
+/// </summary>
+internal class BinaryIntegerParsingInfo : IntegerWithBaseParsingInfo, IBinaryIntegerParsingInfo
 {
     /// <summary>
-    /// Hold information during parsing of an integer in binary base.
+    /// Gets the base to use when parsing.
     /// </summary>
-    internal class BinaryIntegerParsingInfo : IntegerWithBaseParsingInfo, IBinaryIntegerParsingInfo
-    {
-        /// <summary>
-        /// Gets the base to use when parsing.
-        /// </summary>
-        protected override IIntegerBase Base { get { return IntegerBase.Binary; } }
-    }
+    protected override IIntegerBase Base { get { return IntegerBase.Binary; } }
 }

@@ -1,13 +1,12 @@
-﻿namespace EaslyNumber
+﻿namespace EaslyNumber;
+
+/// <summary>
+/// Hold information during parsing of an integer in hexadecimal base.
+/// </summary>
+internal class HexadecimalIntegerParsingInfo : IntegerWithBaseParsingInfo, IHexadecimalIntegerParsingInfo
 {
     /// <summary>
-    /// Hold information during parsing of an integer in hexadecimal base.
+    /// Gets the base to use when parsing.
     /// </summary>
-    internal class HexadecimalIntegerParsingInfo : IntegerWithBaseParsingInfo, IHexadecimalIntegerParsingInfo
-    {
-        /// <summary>
-        /// Gets the base to use when parsing.
-        /// </summary>
-        protected override IIntegerBase Base { get { return IntegerBase.Hexadecimal; } }
-    }
+    protected override IIntegerBase Base { get { return IntegerBase.Hexadecimal; } }
 }

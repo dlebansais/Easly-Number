@@ -1,52 +1,51 @@
-﻿namespace TestEaslyNumber
+﻿namespace TestEaslyNumber;
+
+using EaslyNumber;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+
+public static class Program
 {
-    using EaslyNumber;
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
+    private static string NL = Environment.NewLine;
+    private static string SP = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 
-    public static class Program
+    public static int Main(string[] args)
     {
-        private static string NL = Environment.NewLine;
-        private static string SP = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+        //CreateSingleTextFile();
+        //CreateDoubleTextFile();
 
-        public static int Main(string[] args)
+        return 0;
+    }
+
+    private static void CreateSingleTextFile()
+    {
+        List<OutputSingle> TestList = new();
+        TestSingle.GenerateSingleOutput(TestList);
+
+        using FileStream Stream = new FileStream("SingleOutput.txt", FileMode.Create);
+        using StreamWriter Writer = new StreamWriter(Stream);
+
+        foreach (OutputSingle Item in TestList)
         {
-            //CreateSingleTextFile();
-            //CreateDoubleTextFile();
-
-            return 0;
+            Writer.WriteLine(Item.PositiveString);
+            Writer.WriteLine(Item.NegativeString);
         }
+    }
 
-        private static void CreateSingleTextFile()
+    private static void CreateDoubleTextFile()
+    {
+        List<OutputDouble> TestList = new();
+        TestDouble.GenerateDoubleOutput(TestList);
+
+        using FileStream Stream = new FileStream("DoubleOutput.txt", FileMode.Create);
+        using StreamWriter Writer = new StreamWriter(Stream);
+
+        foreach (OutputDouble Item in TestList)
         {
-            List<OutputSingle> TestList = new();
-            TestSingle.GenerateSingleOutput(TestList);
-
-            using FileStream Stream = new FileStream("SingleOutput.txt", FileMode.Create);
-            using StreamWriter Writer = new StreamWriter(Stream);
-
-            foreach (OutputSingle Item in TestList)
-            {
-                Writer.WriteLine(Item.PositiveString);
-                Writer.WriteLine(Item.NegativeString);
-            }
-        }
-
-        private static void CreateDoubleTextFile()
-        {
-            List<OutputDouble> TestList = new();
-            TestDouble.GenerateDoubleOutput(TestList);
-
-            using FileStream Stream = new FileStream("DoubleOutput.txt", FileMode.Create);
-            using StreamWriter Writer = new StreamWriter(Stream);
-
-            foreach (OutputDouble Item in TestList)
-            {
-                Writer.WriteLine(Item.PositiveString);
-                Writer.WriteLine(Item.NegativeString);
-            }
+            Writer.WriteLine(Item.PositiveString);
+            Writer.WriteLine(Item.NegativeString);
         }
     }
 }

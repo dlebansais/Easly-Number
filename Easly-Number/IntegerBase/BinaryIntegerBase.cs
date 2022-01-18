@@ -1,75 +1,74 @@
-﻿namespace EaslyNumber
+﻿namespace EaslyNumber;
+
+using System.Diagnostics;
+
+/// <summary>
+/// Class describing a binary (base 2) integer.
+/// </summary>
+public class BinaryIntegerBase : IntegerBase, IBinaryIntegerBase
 {
-    using System.Diagnostics;
+    #region Init
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BinaryIntegerBase"/> class.
+    /// </summary>
+    internal BinaryIntegerBase()
+    {
+    }
+    #endregion
+
+    #region Properties
+    /// <summary>
+    /// Gets the suffix for binary integers.
+    /// </summary>
+    public override string Suffix { get { return BinarySuffix; } }
 
     /// <summary>
-    /// Class describing a binary (base 2) integer.
+    /// Gets the number of digits for binary integers.
     /// </summary>
-    public class BinaryIntegerBase : IntegerBase, IBinaryIntegerBase
+    public override int Radix { get { return BinaryRadix; } }
+    #endregion
+
+    #region Client Interface
+    /// <summary>
+    /// Checks if a character is a binary digit, and return the corresponding value.
+    /// </summary>
+    /// <param name="digit">The character to check.</param>
+    /// <param name="value">The digit's value.</param>
+    /// <returns>True if <paramref name="digit"/> is a valid digit; Otherwise, false.</returns>
+    public override bool IsValidDigit(char digit, out int value)
     {
-        #region Init
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BinaryIntegerBase"/> class.
-        /// </summary>
-        internal BinaryIntegerBase()
+        value = 0;
+        bool IsParsed = false;
+
+        if (digit >= '0' && digit <= '1')
         {
-        }
-        #endregion
-
-        #region Properties
-        /// <summary>
-        /// Gets the suffix for binary integers.
-        /// </summary>
-        public override string Suffix { get { return BinarySuffix; } }
-
-        /// <summary>
-        /// Gets the number of digits for binary integers.
-        /// </summary>
-        public override int Radix { get { return BinaryRadix; } }
-        #endregion
-
-        #region Client Interface
-        /// <summary>
-        /// Checks if a character is a binary digit, and return the corresponding value.
-        /// </summary>
-        /// <param name="digit">The character to check.</param>
-        /// <param name="value">The digit's value.</param>
-        /// <returns>True if <paramref name="digit"/> is a valid digit; Otherwise, false.</returns>
-        public override bool IsValidDigit(char digit, out int value)
-        {
-            value = 0;
-            bool IsParsed = false;
-
-            if (digit >= '0' && digit <= '1')
-            {
-                value = digit - '0';
-                IsParsed = true;
-            }
-
-            return IsParsed;
+            value = digit - '0';
+            IsParsed = true;
         }
 
-        /// <summary>
-        /// Returns the digit corresponding to a value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        public override char ToDigit(int value)
-        {
-            Debug.Assert(value >= 0 && value < Radix);
-
-            return (char)('0' + value);
-        }
-
-        /// <summary>
-        /// Returns the value corresponding to a digit.
-        /// </summary>
-        /// <param name="digit">The digit.</param>
-        public override int ToValue(char digit)
-        {
-            Debug.Assert(digit >= '0' && digit <= '1');
-
-            return digit - '0';
-        }
-        #endregion
+        return IsParsed;
     }
+
+    /// <summary>
+    /// Returns the digit corresponding to a value.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    public override char ToDigit(int value)
+    {
+        Debug.Assert(value >= 0 && value < Radix);
+
+        return (char)('0' + value);
+    }
+
+    /// <summary>
+    /// Returns the value corresponding to a digit.
+    /// </summary>
+    /// <param name="digit">The digit.</param>
+    public override int ToValue(char digit)
+    {
+        Debug.Assert(digit >= '0' && digit <= '1');
+
+        return digit - '0';
+    }
+    #endregion
 }

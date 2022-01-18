@@ -1,9 +1,8 @@
-﻿namespace EaslyNumber
+﻿namespace EaslyNumber;
+
+/// <summary>
+/// Hold information during parsing of an integer in binary base.
+/// </summary>
+internal interface IBinaryIntegerParsingInfo : IIntegerWithBaseParsingInfo
 {
-    /// <summary>
-    /// Hold information during parsing of an integer in binary base.
-    /// </summary>
-    internal interface IBinaryIntegerParsingInfo : IIntegerWithBaseParsingInfo
-    {
-    }
 }

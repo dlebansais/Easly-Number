@@ -1,9 +1,8 @@
-﻿namespace EaslyNumber
+﻿namespace EaslyNumber;
+
+/// <summary>
+/// Never parses anything.
+/// </summary>
+internal interface IInvalidParsingInfo : IParsingInfo
 {
-    /// <summary>
-    /// Never parses anything.
-    /// </summary>
-    internal interface IInvalidParsingInfo : IParsingInfo
-    {
-    }
 }

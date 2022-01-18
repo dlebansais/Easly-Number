@@ -1,9 +1,8 @@
-﻿namespace EaslyNumber
+﻿namespace EaslyNumber;
+
+/// <summary>
+/// Hold information during parsing of an integer in hexadecimal base.
+/// </summary>
+internal interface IHexadecimalIntegerParsingInfo : IIntegerWithBaseParsingInfo
 {
-    /// <summary>
-    /// Hold information during parsing of an integer in hexadecimal base.
-    /// </summary>
-    internal interface IHexadecimalIntegerParsingInfo : IIntegerWithBaseParsingInfo
-    {
-    }
 }

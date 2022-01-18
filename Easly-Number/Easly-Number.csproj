@@ -12,8 +12,8 @@
     <Product />
     <Description>Arbitrary precision arithmetic for Easly</Description>
     <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.2.6.116</AssemblyVersion>
-    <FileVersion>1.2.6.114</FileVersion>
+    <AssemblyVersion>1.2.6.118</AssemblyVersion>
+    <FileVersion>1.2.6.115</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Easly-Number</RepositoryUrl>
     <RootNamespace>EaslyNumber</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
