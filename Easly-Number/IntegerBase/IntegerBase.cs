@@ -5,7 +5,7 @@ using System.Diagnostics;
 /// <summary>
 /// Class describing an integer with a specified digits base.
 /// </summary>
-public abstract class IntegerBase : IIntegerBase
+public abstract class IntegerBase
 {
     #region Constants
     /// <summary>
@@ -51,22 +51,22 @@ public abstract class IntegerBase : IIntegerBase
     /// <summary>
     /// The hexadecimal base.
     /// </summary>
-    public static readonly IHexadecimalIntegerBase Hexadecimal = new HexadecimalIntegerBase();
+    public static readonly HexadecimalIntegerBase Hexadecimal = new HexadecimalIntegerBase();
 
     /// <summary>
     /// The decimal base.
     /// </summary>
-    public static readonly IDecimalIntegerBase Decimal = new DecimalIntegerBase();
+    public static readonly DecimalIntegerBase Decimal = new DecimalIntegerBase();
 
     /// <summary>
     /// The octal base.
     /// </summary>
-    public static readonly IOctalIntegerBase Octal = new OctalIntegerBase();
+    public static readonly OctalIntegerBase Octal = new OctalIntegerBase();
 
     /// <summary>
     /// The binary base.
     /// </summary>
-    public static readonly IBinaryIntegerBase Binary = new BinaryIntegerBase();
+    public static readonly BinaryIntegerBase Binary = new BinaryIntegerBase();
     #endregion
 
     #region Init
@@ -234,14 +234,14 @@ public abstract class IntegerBase : IIntegerBase
     /// <param name="text">The number to convert.</param>
     /// <param name="fromBase">The base in which <paramref name="text"/> is encoded.</param>
     /// <param name="toBase">The base in which the returned number is encoded.</param>
-    public static string Convert(string text, IIntegerBase fromBase, IIntegerBase toBase)
+    public static string Convert(string text, IntegerBase fromBase, IntegerBase toBase)
     {
         return ConvertFromBinary(ConvertToBinary(text, fromBase), toBase);
     }
     #endregion
 
     #region Implementation
-    private static string ConvertToBinary(string text, IIntegerBase fromBase)
+    private static string ConvertToBinary(string text, IntegerBase fromBase)
     {
         Debug.Assert(!string.IsNullOrEmpty(text));
 
@@ -258,7 +258,7 @@ public abstract class IntegerBase : IIntegerBase
         return Result;
     }
 
-    private static string ConvertFromBinary(string text, IIntegerBase toBase)
+    private static string ConvertFromBinary(string text, IntegerBase toBase)
     {
         Debug.Assert(!string.IsNullOrEmpty(text));
 

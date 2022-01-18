@@ -5,7 +5,7 @@ using System;
 /// <summary>
 /// Hold information during parsing of a number.
 /// </summary>
-internal abstract class ParsingInfo : IParsingInfo
+internal abstract class ParsingInfo
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ParsingInfo"/> class.
@@ -36,7 +36,7 @@ internal abstract class ParsingInfo : IParsingInfo
     /// </summary>
     /// <param name="parsing">The previous best parser.</param>
     /// <param name="length">The length reached by <paramref name="parsing"/>.</param>
-    public virtual void UpdateBestParsing(ref IParsingInfo parsing, ref int length)
+    public virtual void UpdateBestParsing(ref ParsingInfo parsing, ref int length)
     {
         if (length < LengthSuccessful)
         {

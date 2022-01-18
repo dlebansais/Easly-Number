@@ -49,11 +49,11 @@ internal class Parser
     /// <exception cref="NullReferenceException"><paramref name="text"/> is null.</exception>
     public static FormattedNumber Parse(string text)
     {
-        IBinaryIntegerParsingInfo BinaryIntegerParsing = new BinaryIntegerParsingInfo();
-        IOctalIntegerParsingInfo OctalIntegerParsing = new OctalIntegerParsingInfo();
-        IDecimalIntegerParsingInfo DecimalIntegerParsing = new DecimalIntegerParsingInfo();
-        IHexadecimalIntegerParsingInfo HexadecimalIntegerParsing = new HexadecimalIntegerParsingInfo();
-        IRealParsingInfo RealParsing = new RealParsingInfo();
+        BinaryIntegerParsingInfo BinaryIntegerParsing = new BinaryIntegerParsingInfo();
+        OctalIntegerParsingInfo OctalIntegerParsing = new OctalIntegerParsingInfo();
+        DecimalIntegerParsingInfo DecimalIntegerParsing = new DecimalIntegerParsingInfo();
+        HexadecimalIntegerParsingInfo HexadecimalIntegerParsing = new HexadecimalIntegerParsingInfo();
+        RealParsingInfo RealParsing = new RealParsingInfo();
 
         foreach (char c in text)
         {
@@ -93,7 +93,7 @@ internal class Parser
                 break;
         }
 
-        IParsingInfo Parsing = new InvalidParsingInfo();
+        ParsingInfo Parsing = new InvalidParsingInfo();
         int LengthSuccessful = 0;
 
         BinaryIntegerParsing.UpdateBestParsing(ref Parsing, ref LengthSuccessful);

@@ -5,7 +5,7 @@ using System.Diagnostics;
 /// <summary>
 /// Class describing an octal (base 8) integer.
 /// </summary>
-public class OctalIntegerBase : IntegerBase, IOctalIntegerBase
+public class OctalIntegerBase : IntegerBase
 {
     #region Init
     /// <summary>

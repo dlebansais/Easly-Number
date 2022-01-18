@@ -5,7 +5,7 @@ using System.Diagnostics;
 /// <summary>
 /// Class describing a decimal (base 10) integer.
 /// </summary>
-public class DecimalIntegerBase : IntegerBase, IDecimalIntegerBase
+public class DecimalIntegerBase : IntegerBase
 {
     #region Init
     /// <summary>

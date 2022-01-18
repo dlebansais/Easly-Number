@@ -3,10 +3,10 @@
 /// <summary>
 /// Hold information during parsing of an integer in octal base.
 /// </summary>
-internal class OctalIntegerParsingInfo : IntegerWithBaseParsingInfo, IOctalIntegerParsingInfo
+internal class OctalIntegerParsingInfo : IntegerWithBaseParsingInfo
 {
     /// <summary>
     /// Gets the base to use when parsing.
     /// </summary>
-    protected override IIntegerBase Base { get { return IntegerBase.Octal; } }
+    protected override IntegerBase Base { get { return IntegerBase.Octal; } }
 }

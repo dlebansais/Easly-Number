@@ -5,7 +5,7 @@ using System.Diagnostics;
 /// <summary>
 /// Class describing an hexadecimal (base 16) integer.
 /// </summary>
-public class HexadecimalIntegerBase : IntegerBase, IHexadecimalIntegerBase
+public class HexadecimalIntegerBase : IntegerBase
 {
     #region Init
     /// <summary>

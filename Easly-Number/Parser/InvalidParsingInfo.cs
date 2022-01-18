@@ -3,7 +3,7 @@
 /// <summary>
 /// Never parses anything.
 /// </summary>
-internal class InvalidParsingInfo : ParsingInfo, IInvalidParsingInfo
+internal class InvalidParsingInfo : ParsingInfo
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="InvalidParsingInfo"/> class.

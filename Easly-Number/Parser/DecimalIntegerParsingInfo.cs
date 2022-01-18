@@ -5,7 +5,7 @@ using System.Diagnostics;
 /// <summary>
 /// Hold information during parsing of an integer in decimal base.
 /// </summary>
-internal class DecimalIntegerParsingInfo : ParsingInfo, IDecimalIntegerParsingInfo
+internal class DecimalIntegerParsingInfo : ParsingInfo
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DecimalIntegerParsingInfo"/> class.
@@ -24,7 +24,7 @@ internal class DecimalIntegerParsingInfo : ParsingInfo, IDecimalIntegerParsingIn
     /// </summary>
     /// <param name="parsing">The previous best parser.</param>
     /// <param name="length">The length reached by <paramref name="parsing"/>.</param>
-    public override void UpdateBestParsing(ref IParsingInfo parsing, ref int length)
+    public override void UpdateBestParsing(ref ParsingInfo parsing, ref int length)
     {
         if (StillParsing && LengthSuccessful == 0 && (LeadingZeroCount > 0 || Length > 0))
             LengthSuccessful = StartOffset + Length;

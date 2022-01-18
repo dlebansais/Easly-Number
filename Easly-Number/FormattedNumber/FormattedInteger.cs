@@ -11,17 +11,17 @@ public class FormattedInteger : FormattedNumber
     /// <summary>
     /// Initializes a new instance of the <see cref="FormattedInteger"/> class.
     /// </summary>
-    /// <param name="integerBase">The base.</param>
+    /// <param name="base">The base.</param>
     /// <param name="sign">The optional sign.</param>
     /// <param name="leadingZeroCount">The number of leading zeroes.</param>
     /// <param name="integerText">The integer text..</param>
     /// <param name="invalidText">The trailing invalid text, if any.</param>
     /// <param name="canonical">The canonical form of the number.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="leadingZeroCount"/> is lesser than zero.</exception>
-    internal FormattedInteger(IIntegerBase integerBase, OptionalSign sign, int leadingZeroCount, string integerText, string invalidText, CanonicalNumber canonical)
+    internal FormattedInteger(IntegerBase @base, OptionalSign sign, int leadingZeroCount, string integerText, string invalidText, CanonicalNumber canonical)
         : base(invalidText, canonical)
     {
-        IntegerBase = integerBase;
+        Base = @base;
         Sign = sign;
         LeadingZeroCount = leadingZeroCount;
         IntegerText = integerText;
@@ -35,7 +35,7 @@ public class FormattedInteger : FormattedNumber
     /// <summary>
     /// Gets the base.
     /// </summary>
-    public IIntegerBase IntegerBase { get; }
+    public IntegerBase Base { get; }
 
     /// <summary>
     /// Gets the optional sign.
@@ -63,7 +63,7 @@ public class FormattedInteger : FormattedNumber
             string SignText = GetSignText(Sign);
             string LeadingZeroesText = GetLeadingZeroesText(LeadingZeroCount);
 
-            return $"{SignText}{LeadingZeroesText}{IntegerText}{IntegerBase.Suffix}";
+            return $"{SignText}{LeadingZeroesText}{IntegerText}{Base.Suffix}";
         }
     }
 
@@ -89,7 +89,7 @@ public class FormattedInteger : FormattedNumber
             string SignText = GetSignText(Sign);
             string LeadingZeroesText = GetLeadingZeroesText(LeadingZeroCount);
 
-            return $"{SignText}/{LeadingZeroesText}/{IntegerText}/{IntegerBase.Suffix}/{InvalidText}";
+            return $"{SignText}/{LeadingZeroesText}/{IntegerText}/{Base.Suffix}/{InvalidText}";
         }
     }
     #endregion

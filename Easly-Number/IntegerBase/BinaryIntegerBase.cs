@@ -5,7 +5,7 @@ using System.Diagnostics;
 /// <summary>
 /// Class describing a binary (base 2) integer.
 /// </summary>
-public class BinaryIntegerBase : IntegerBase, IBinaryIntegerBase
+public class BinaryIntegerBase : IntegerBase
 {
     #region Init
     /// <summary>

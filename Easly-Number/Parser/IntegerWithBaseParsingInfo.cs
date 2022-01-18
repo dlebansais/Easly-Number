@@ -5,7 +5,7 @@ using System.Diagnostics;
 /// <summary>
 /// Hold information during parsing of an integer in base other than decimal.
 /// </summary>
-internal abstract class IntegerWithBaseParsingInfo : ParsingInfo, IIntegerWithBaseParsingInfo
+internal abstract class IntegerWithBaseParsingInfo : ParsingInfo
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="IntegerWithBaseParsingInfo"/> class.
@@ -26,14 +26,14 @@ internal abstract class IntegerWithBaseParsingInfo : ParsingInfo, IIntegerWithBa
     /// <summary>
     /// Gets the base to use when parsing.
     /// </summary>
-    protected abstract IIntegerBase Base { get; }
+    protected abstract IntegerBase Base { get; }
 
     /// <summary>
     /// Checks if the current parser went further than others.
     /// </summary>
     /// <param name="parsing">The previous best parser.</param>
     /// <param name="length">The length reached by <paramref name="parsing"/>.</param>
-    public override void UpdateBestParsing(ref IParsingInfo parsing, ref int length)
+    public override void UpdateBestParsing(ref ParsingInfo parsing, ref int length)
     {
         if (StillParsing && LengthSuccessful == 0 && SuffixOffset == Base.Suffix.Length)
             LengthSuccessful = StartOffset + Length + SuffixOffset;
