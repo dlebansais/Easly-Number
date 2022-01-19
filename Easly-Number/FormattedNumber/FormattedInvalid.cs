@@ -51,6 +51,6 @@ public class FormattedInvalid : FormattedNumber
     /// <summary>
     /// Gets a diagnostic string for debug purpose.
     /// </summary>
-    public override string Diagnostic { get { return $"{Canonical}/{InvalidText}"; } }
+    public override string Diagnostic { get { return $"{Canonical.CanonicalRepresentation}/{InvalidText}"; } }
     #endregion
 }

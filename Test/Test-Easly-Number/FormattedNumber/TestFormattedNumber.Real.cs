@@ -30,6 +30,20 @@ public partial class TestFormattedNumber
         Number = FormattedNumber.Parse("0.0");
         Assert.IsTrue(Number.IsValid);
 
+        Assert.IsTrue(Number is FormattedReal);
+        FormattedReal RealNumber = (FormattedReal)Number;
+        Assert.AreEqual(OptionalSign.None, RealNumber.Sign);
+        Assert.AreEqual(0, RealNumber.LeadingZeroCount);
+        Assert.AreEqual("0", RealNumber.IntegerText);
+        Assert.AreEqual('.', RealNumber.SeparatorCharacter);
+        Assert.AreEqual("0", RealNumber.FractionalText);
+        Assert.AreEqual(OptionalSign.None, RealNumber.ExponentSign);
+        Assert.AreEqual(string.Empty, RealNumber.ExponentText);
+        Assert.AreEqual("0.0", RealNumber.SignificandPart);
+        Assert.AreEqual(string.Empty, RealNumber.ExponentPart);
+        Assert.IsTrue(RealNumber.IsValid);
+        Assert.AreEqual("//0/46/0/0///", RealNumber.Diagnostic);
+
         Number = FormattedNumber.Parse("0.");
         Assert.IsTrue(Number.IsValid);
 

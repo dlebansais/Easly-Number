@@ -36,6 +36,7 @@ public partial class TestBases
         Assert.IsTrue(Base.IsValidNumber("10", false));
         Assert.IsTrue(Base.IsValidNumber("01", true));
         Assert.IsFalse(Base.IsValidNumber("01", false));
+        Assert.IsFalse(Base.IsValidNumber("*", false));
 
         Assert.IsFalse(Base.IsValidSignificand(string.Empty));
         Assert.IsTrue(Base.IsValidSignificand("0"));
@@ -151,6 +152,7 @@ public partial class TestBases
         Assert.IsTrue(Base.IsValidNumber("123456789ABCDEFabcdef0", false));
         Assert.IsTrue(Base.IsValidNumber("0123456789ABCDEFabcdef0", true));
         Assert.IsFalse(Base.IsValidNumber("01", false));
+        Assert.IsFalse(Base.IsValidNumber("*", false));
 
         Assert.IsFalse(Base.IsValidSignificand(string.Empty));
         Assert.IsTrue(Base.IsValidSignificand("0"));
@@ -255,6 +257,7 @@ public partial class TestBases
         Assert.IsTrue(Base.IsValidNumber("123456789", false));
         Assert.IsTrue(Base.IsValidNumber("0123456789", true));
         Assert.IsFalse(Base.IsValidNumber("01", false));
+        Assert.IsFalse(Base.IsValidNumber("*", false));
 
         Assert.IsFalse(Base.IsValidSignificand(string.Empty));
         Assert.IsTrue(Base.IsValidSignificand("0"));
@@ -336,6 +339,7 @@ public partial class TestBases
         Assert.IsTrue(Base.IsValidNumber("1234567", false));
         Assert.IsTrue(Base.IsValidNumber("01234567", true));
         Assert.IsFalse(Base.IsValidNumber("01", false));
+        Assert.IsFalse(Base.IsValidNumber("*", false));
 
         Assert.IsFalse(Base.IsValidSignificand(string.Empty));
         Assert.IsTrue(Base.IsValidSignificand("0"));

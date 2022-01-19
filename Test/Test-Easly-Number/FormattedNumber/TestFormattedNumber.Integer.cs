@@ -16,6 +16,17 @@ public partial class TestFormattedNumber
         Number = FormattedNumber.Parse("0");
         Assert.IsTrue(Number.IsValid);
 
+        Assert.IsTrue(Number is FormattedInteger);
+        FormattedInteger IntegerNumber = (FormattedInteger)Number;
+        Assert.AreEqual(IntegerBase.Decimal, IntegerNumber.Base);
+        Assert.AreEqual(OptionalSign.None, IntegerNumber.Sign);
+        Assert.AreEqual(0, IntegerNumber.LeadingZeroCount);
+        Assert.AreEqual("0", IntegerNumber.IntegerText);
+        Assert.AreEqual("0", IntegerNumber.SignificandPart);
+        Assert.AreEqual(string.Empty, IntegerNumber.ExponentPart);
+        Assert.IsTrue(IntegerNumber.IsValid);
+        Assert.AreEqual("//0//", IntegerNumber.Diagnostic);
+
         Number = FormattedNumber.Parse("1");
         Assert.IsTrue(Number.IsValid);
 

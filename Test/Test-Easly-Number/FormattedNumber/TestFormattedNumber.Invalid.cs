@@ -16,6 +16,13 @@ public partial class TestFormattedNumber
         Number = FormattedNumber.Parse(string.Empty);
         Assert.IsFalse(Number.IsValid);
 
+        Assert.IsTrue(Number is FormattedInvalid);
+        FormattedInvalid InvalidNumber = (FormattedInvalid)Number;
+        Assert.AreEqual(string.Empty, InvalidNumber.SignificandPart);
+        Assert.AreEqual(string.Empty, InvalidNumber.ExponentPart);
+        Assert.IsFalse(InvalidNumber.IsValid);
+        Assert.AreEqual($"{double.NaN}/", InvalidNumber.Diagnostic);
+
         Number = FormattedNumber.Parse(":H");
         Assert.IsFalse(Number.IsValid);
 
