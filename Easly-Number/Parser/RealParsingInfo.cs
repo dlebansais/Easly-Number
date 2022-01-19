@@ -242,10 +242,23 @@ internal class RealParsingInfo : ParsingInfo
 
     private void ParseExponentFirstDigit(char c)
     {
-        if (IntegerBase.Decimal.IsValidDigit(c, out int DigitValue) && DigitValue > 0)
+        if (IntegerBase.Decimal.IsValidDigit(c, out int DigitValue))
         {
             ExponentLength++;
-            Handler = ParseExponentDigits;
+
+            if (DigitValue > 0)
+            {
+                Handler = ParseExponentDigits;
+            }
+            else
+            {
+                if (SeparatorCharacter != Parser.NoSeparator && (IntegerLength > 0 || FractionalLength > 0))
+                    LengthSuccessful = StartOffset + IntegerLength + 1 + FractionalLength + 1 + ExponentStartOffset + ExponentLength;
+                else
+                    LengthSuccessful = StartOffset + IntegerLength + 1 + ExponentStartOffset + ExponentLength;
+
+                StillParsing = false;
+            }
         }
         else
         {

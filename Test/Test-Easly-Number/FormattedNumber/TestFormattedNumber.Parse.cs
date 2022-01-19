@@ -32,8 +32,11 @@ public partial class TestFormattedNumber
         FormattedNumber BadBaseNumber6 = FormattedNumber.Parse(":*");
         Assert.IsFalse(BadBaseNumber6.IsValid);
 
-        FormattedNumber BadBaseNumber7 = FormattedNumber.Parse(":H");
+        FormattedNumber BadBaseNumber7 = FormattedNumber.Parse(":");
         Assert.IsFalse(BadBaseNumber7.IsValid);
+
+        FormattedNumber BadBaseNumber8 = FormattedNumber.Parse("0*");
+        Assert.IsFalse(BadBaseNumber8.IsValid);
 
 #if !DEBUG
         string NullString = null!;
@@ -198,5 +201,38 @@ public partial class TestFormattedNumber
 
         FormattedNumber Number6 = FormattedNumber.Parse("-01:B");
         Assert.IsTrue(Number6.IsValid);
+    }
+
+    [Test]
+    [Category("Coverage")]
+    public static void ParseRealZero()
+    {
+        FormattedNumber ZeroNumber1 = FormattedNumber.Parse("0.0");
+        Assert.IsTrue(ZeroNumber1.IsValid);
+
+        FormattedNumber ZeroNumber2 = FormattedNumber.Parse("0.");
+        Assert.IsTrue(ZeroNumber2.IsValid);
+
+        FormattedNumber ZeroNumber3 = FormattedNumber.Parse(".0");
+        Assert.IsTrue(ZeroNumber3.IsValid);
+
+        FormattedNumber ZeroNumber4 = FormattedNumber.Parse("0.0e0");
+        Assert.IsTrue(ZeroNumber4.IsValid);
+
+        FormattedNumber ZeroNumber5 = FormattedNumber.Parse("0.0e1");
+        Assert.IsTrue(ZeroNumber5.IsValid);
+
+        FormattedNumber ZeroNumber6 = FormattedNumber.Parse("0.0e-1");
+        Assert.IsTrue(ZeroNumber6.IsValid);
+
+        FormattedNumber ZeroNumber7 = FormattedNumber.Parse("+0.0");
+        Assert.IsTrue(ZeroNumber7.IsValid);
+
+        FormattedNumber ZeroNumber8 = FormattedNumber.Parse("+0.");
+        Assert.IsTrue(ZeroNumber8.IsValid);
+
+        FormattedNumber ZeroNumber9 = FormattedNumber.Parse("+.0");
+        Assert.IsTrue(ZeroNumber9.IsValid);
+
     }
 }
