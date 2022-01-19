@@ -85,12 +85,7 @@ public class HexadecimalIntegerBase : IntegerBase
         if (!IsDecimalDigit && !IsHexadecimalDigitLower && !IsHexadecimalDigitUpper)
             throw new ArgumentException(nameof(digit));
 
-        if (digit >= '0' && digit <= '9')
-            return digit - '0';
-        else if (digit >= 'a' && digit <= 'f')
-            return digit - 'a' + 10;
-        else
-            return digit - 'A' + 10;
+        return (digit >= '0' && digit <= '9') ? (digit - '0') : ((digit >= 'a' && digit <= 'f') ? (digit - 'a' + 10) : (digit - 'A' + 10));
     }
     #endregion
 }
