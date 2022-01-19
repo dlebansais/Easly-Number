@@ -2,6 +2,7 @@
 
 using EaslyNumber;
 using NUnit.Framework;
+using System;
 
 [TestFixture]
 public partial class TestFormattedNumber
@@ -21,6 +22,18 @@ public partial class TestFormattedNumber
 
         FormattedNumber BadBaseNumber3 = FormattedNumber.Parse(":B");
         Assert.IsFalse(BadBaseNumber3.IsValid);
+
+        FormattedNumber BadBaseNumber4 = FormattedNumber.Parse("10*");
+        Assert.IsFalse(BadBaseNumber4.IsValid);
+
+        FormattedNumber BadBaseNumber5 = FormattedNumber.Parse("01*");
+        Assert.IsFalse(BadBaseNumber5.IsValid);
+
+        FormattedNumber BadBaseNumber6 = FormattedNumber.Parse(":*");
+        Assert.IsFalse(BadBaseNumber6.IsValid);
+
+        FormattedNumber BadBaseNumber7 = FormattedNumber.Parse(":H");
+        Assert.IsFalse(BadBaseNumber7.IsValid);
 
 #if !DEBUG
         string NullString = null!;
@@ -93,10 +106,97 @@ public partial class TestFormattedNumber
 
         FormattedNumber Number15 = FormattedNumber.Parse("010:B");
         Assert.IsTrue(Number15.IsValid);
+    }
 
-#if !DEBUG
-        string NullString = null!;
-        Assert.Throws<ArgumentNullException>(() => { FormattedNumber.Parse(NullString); });
-#endif
+    [Test]
+    [Category("Coverage")]
+    public static void ParseSignDecimal()
+    {
+        FormattedNumber Number1 = FormattedNumber.Parse("+0");
+        Assert.IsTrue(Number1.IsValid);
+
+        FormattedNumber Number2 = FormattedNumber.Parse("-0");
+        Assert.IsTrue(Number2.IsValid);
+
+        FormattedNumber Number3 = FormattedNumber.Parse("+1234567890");
+        Assert.IsTrue(Number3.IsValid);
+
+        FormattedNumber Number4 = FormattedNumber.Parse("-1234567890");
+        Assert.IsTrue(Number4.IsValid);
+
+        FormattedNumber Number5 = FormattedNumber.Parse("+01");
+        Assert.IsTrue(Number5.IsValid);
+
+        FormattedNumber Number6 = FormattedNumber.Parse("-01");
+        Assert.IsTrue(Number6.IsValid);
+    }
+
+    [Test]
+    [Category("Coverage")]
+    public static void ParseSignHexadecimal()
+    {
+        FormattedNumber Number1 = FormattedNumber.Parse("+0:H");
+        Assert.IsTrue(Number1.IsValid);
+
+        FormattedNumber Number2 = FormattedNumber.Parse("-0:H");
+        Assert.IsTrue(Number2.IsValid);
+
+        FormattedNumber Number3 = FormattedNumber.Parse("+123456789ABCDEF0:H");
+        Assert.IsTrue(Number3.IsValid);
+
+        FormattedNumber Number4 = FormattedNumber.Parse("-123456789ABCDEF0:H");
+        Assert.IsTrue(Number4.IsValid);
+
+        FormattedNumber Number5 = FormattedNumber.Parse("+01:H");
+        Assert.IsTrue(Number5.IsValid);
+
+        FormattedNumber Number6 = FormattedNumber.Parse("-01:H");
+        Assert.IsTrue(Number6.IsValid);
+    }
+
+    [Test]
+    [Category("Coverage")]
+    public static void ParseSignOctal()
+    {
+        FormattedNumber Number1 = FormattedNumber.Parse("+0:O");
+        Assert.IsTrue(Number1.IsValid);
+
+        FormattedNumber Number2 = FormattedNumber.Parse("-0:O");
+        Assert.IsTrue(Number2.IsValid);
+
+        FormattedNumber Number3 = FormattedNumber.Parse("+1234567:O");
+        Assert.IsTrue(Number3.IsValid);
+
+        FormattedNumber Number4 = FormattedNumber.Parse("-1234567:O");
+        Assert.IsTrue(Number4.IsValid);
+
+        FormattedNumber Number5 = FormattedNumber.Parse("+01:O");
+        Assert.IsTrue(Number5.IsValid);
+
+        FormattedNumber Number6 = FormattedNumber.Parse("-01:O");
+        Assert.IsTrue(Number6.IsValid);
+    }
+
+    [Test]
+    [Category("Coverage")]
+    public static void ParseSignBinary()
+    {
+        FormattedNumber Number1 = FormattedNumber.Parse("+0:B");
+        Assert.IsTrue(Number1.IsValid);
+
+        FormattedNumber Number2 = FormattedNumber.Parse("-0:B");
+        Assert.IsTrue(Number2.IsValid);
+
+        FormattedNumber Number3 = FormattedNumber.Parse("+1:B");
+        Assert.IsTrue(Number3.IsValid);
+
+        FormattedNumber Number4 = FormattedNumber.Parse("-1:B");
+        Assert.IsTrue(Number4.IsValid);
+
+        FormattedNumber Number5 = FormattedNumber.Parse("+01:B");
+        Assert.IsTrue(Number5.IsValid);
+
+        FormattedNumber Number6 = FormattedNumber.Parse("-01:B");
+        Assert.IsTrue(Number6.IsValid);
     }
 }
