@@ -93,8 +93,8 @@ internal class DecimalIntegerParsingInfo : ParsingInfo
         }
         else
         {
-            if (LengthSuccessful == 0)
-                LengthSuccessful = StartOffset + Length;
+            Debug.Assert(LengthSuccessful == 0);
+            LengthSuccessful = StartOffset + Length;
 
             StillParsing = false;
         }
@@ -106,8 +106,8 @@ internal class DecimalIntegerParsingInfo : ParsingInfo
             Length++;
         else
         {
-            if (LengthSuccessful == 0)
-                LengthSuccessful = StartOffset + Length;
+            Debug.Assert(LengthSuccessful == 0);
+            LengthSuccessful = StartOffset + Length;
 
             StillParsing = false;
         }

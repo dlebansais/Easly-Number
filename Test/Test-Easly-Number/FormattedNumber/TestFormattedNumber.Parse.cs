@@ -38,6 +38,18 @@ public partial class TestFormattedNumber
         FormattedNumber BadBaseNumber8 = FormattedNumber.Parse("0*");
         Assert.IsFalse(BadBaseNumber8.IsValid);
 
+        FormattedNumber BadBaseNumber9 = FormattedNumber.Parse("1:*");
+        Assert.IsFalse(BadBaseNumber9.IsValid);
+
+        FormattedNumber BadBaseNumber10 = FormattedNumber.Parse("1:H*");
+        Assert.IsFalse(BadBaseNumber10.IsValid);
+
+        FormattedNumber BadBaseNumber11 = FormattedNumber.Parse("1:O*");
+        Assert.IsFalse(BadBaseNumber11.IsValid);
+
+        FormattedNumber BadBaseNumber12 = FormattedNumber.Parse("1:B*");
+        Assert.IsFalse(BadBaseNumber12.IsValid);
+
 #if !DEBUG
         string NullString = null!;
         Assert.Throws<ArgumentNullException>(() => { FormattedNumber.Parse(NullString); });
@@ -234,5 +246,128 @@ public partial class TestFormattedNumber
         FormattedNumber ZeroNumber9 = FormattedNumber.Parse("+.0");
         Assert.IsTrue(ZeroNumber9.IsValid);
 
+        FormattedNumber ZeroNumber10 = FormattedNumber.Parse("0e0");
+        Assert.IsTrue(ZeroNumber10.IsValid);
+
+        FormattedNumber ZeroNumber11 = FormattedNumber.Parse("0e1");
+        Assert.IsTrue(ZeroNumber11.IsValid);
+
+        FormattedNumber ZeroNumber12 = FormattedNumber.Parse("0e-1");
+        Assert.IsTrue(ZeroNumber12.IsValid);
+
+        FormattedNumber ZeroNumber13 = FormattedNumber.Parse("00.0");
+        Assert.IsTrue(ZeroNumber13.IsValid);
+    }
+
+    [Test]
+    [Category("Coverage")]
+    public static void ParseReal()
+    {
+        FormattedNumber Number1 = FormattedNumber.Parse("123.456e0");
+        Assert.IsTrue(Number1.IsValid);
+
+        FormattedNumber Number2 = FormattedNumber.Parse("+123.456e0");
+        Assert.IsTrue(Number2.IsValid);
+
+        FormattedNumber Number3 = FormattedNumber.Parse("-123.456e0");
+        Assert.IsTrue(Number3.IsValid);
+
+        FormattedNumber Number4 = FormattedNumber.Parse("0123.456e0");
+        Assert.IsTrue(Number4.IsValid);
+
+        FormattedNumber Number5 = FormattedNumber.Parse("+0123.456e0");
+        Assert.IsTrue(Number5.IsValid);
+
+        FormattedNumber Number6 = FormattedNumber.Parse("-0123.456e0");
+        Assert.IsTrue(Number6.IsValid);
+
+        FormattedNumber Number7 = FormattedNumber.Parse("123.456e1");
+        Assert.IsTrue(Number7.IsValid);
+
+        FormattedNumber Number8 = FormattedNumber.Parse("123.456e+1");
+        Assert.IsTrue(Number8.IsValid);
+
+        FormattedNumber Number9 = FormattedNumber.Parse("123.456e-1");
+        Assert.IsTrue(Number9.IsValid);
+
+        FormattedNumber Number10 = FormattedNumber.Parse("123456e0");
+        Assert.IsTrue(Number10.IsValid);
+
+        FormattedNumber Number11 = FormattedNumber.Parse("123456e1");
+        Assert.IsTrue(Number11.IsValid);
+
+        FormattedNumber Number12 = FormattedNumber.Parse("123456e+1");
+        Assert.IsTrue(Number12.IsValid);
+
+        FormattedNumber Number13 = FormattedNumber.Parse("123456e-1");
+        Assert.IsTrue(Number13.IsValid);
+
+        FormattedNumber Number14 = FormattedNumber.Parse("123456.e0");
+        Assert.IsTrue(Number14.IsValid);
+
+        FormattedNumber Number15 = FormattedNumber.Parse("123456.e1");
+        Assert.IsTrue(Number15.IsValid);
+
+        FormattedNumber Number16 = FormattedNumber.Parse("123456.e+1");
+        Assert.IsTrue(Number16.IsValid);
+
+        FormattedNumber Number17 = FormattedNumber.Parse("123456.e-1");
+        Assert.IsTrue(Number17.IsValid);
+    }
+
+    [Test]
+    [Category("Coverage")]
+    public static void ParseRealUpperCaseExponent()
+    {
+        FormattedNumber Number1 = FormattedNumber.Parse("123.456E0");
+        Assert.IsTrue(Number1.IsValid);
+
+        FormattedNumber Number2 = FormattedNumber.Parse("+123.456E0");
+        Assert.IsTrue(Number2.IsValid);
+
+        FormattedNumber Number3 = FormattedNumber.Parse("-123.45600");
+        Assert.IsTrue(Number3.IsValid);
+
+        FormattedNumber Number4 = FormattedNumber.Parse("0123.45600");
+        Assert.IsTrue(Number4.IsValid);
+
+        FormattedNumber Number5 = FormattedNumber.Parse("+0123.456E0");
+        Assert.IsTrue(Number5.IsValid);
+
+        FormattedNumber Number6 = FormattedNumber.Parse("-0123.456E0");
+        Assert.IsTrue(Number6.IsValid);
+
+        FormattedNumber Number7 = FormattedNumber.Parse("123.456E1");
+        Assert.IsTrue(Number7.IsValid);
+
+        FormattedNumber Number8 = FormattedNumber.Parse("123.456E+1");
+        Assert.IsTrue(Number8.IsValid);
+
+        FormattedNumber Number9 = FormattedNumber.Parse("123.456E-1");
+        Assert.IsTrue(Number9.IsValid);
+
+        FormattedNumber Number10 = FormattedNumber.Parse("123456E0");
+        Assert.IsTrue(Number10.IsValid);
+
+        FormattedNumber Number11 = FormattedNumber.Parse("123456E1");
+        Assert.IsTrue(Number11.IsValid);
+
+        FormattedNumber Number12 = FormattedNumber.Parse("123456E+1");
+        Assert.IsTrue(Number12.IsValid);
+
+        FormattedNumber Number13 = FormattedNumber.Parse("123456E-1");
+        Assert.IsTrue(Number13.IsValid);
+
+        FormattedNumber Number14 = FormattedNumber.Parse("123456.E0");
+        Assert.IsTrue(Number14.IsValid);
+
+        FormattedNumber Number15 = FormattedNumber.Parse("123456.E1");
+        Assert.IsTrue(Number15.IsValid);
+
+        FormattedNumber Number16 = FormattedNumber.Parse("123456.E+1");
+        Assert.IsTrue(Number16.IsValid);
+
+        FormattedNumber Number17 = FormattedNumber.Parse("123456.E-1");
+        Assert.IsTrue(Number17.IsValid);
     }
 }
