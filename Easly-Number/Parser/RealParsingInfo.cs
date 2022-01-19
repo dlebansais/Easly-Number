@@ -76,6 +76,8 @@ internal class RealParsingInfo : ParsingInfo
             }
             else
             {
+                Debug.Assert(IntegerText.Length > 0);
+
                 ExponentText = text.Substring(StartOffset + IntegerLength + 1 + ExponentStartOffset, ExponentLength);
                 InvalidText = text.Substring(StartOffset + IntegerLength + 1 + ExponentStartOffset + ExponentLength);
 

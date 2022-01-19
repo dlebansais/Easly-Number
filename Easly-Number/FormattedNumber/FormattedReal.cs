@@ -6,7 +6,6 @@ using System.Diagnostics;
 /// <summary>
 /// A real number and its components.
 /// </summary>
-[DebuggerDisplay("{SignificandPart}{ExponentPart}{InvalidText}")]
 public class FormattedReal : FormattedNumber
 {
     #region Init
@@ -28,6 +27,7 @@ public class FormattedReal : FormattedNumber
         : base(invalidText, canonical)
     {
         Sign = sign;
+        Debug.Assert(leadingZeroCount >= 0);
         LeadingZeroCount = leadingZeroCount;
         IntegerText = integerText;
         SeparatorCharacter = separatorCharacter;
@@ -36,25 +36,13 @@ public class FormattedReal : FormattedNumber
         ExponentSign = exponentSign;
         ExponentText = exponentText;
 
-        if (leadingZeroCount < 0)
-            throw new ArgumentOutOfRangeException(nameof(leadingZeroCount));
-
         if (SeparatorCharacter != Parser.NoSeparator)
-        {
-            if (integerText.Length + fractionalText.Length == 0)
-                throw new ArgumentException($"Either {nameof(integerText)} or {nameof(fractionalText)} must not be empty.");
-        }
+            Debug.Assert(integerText.Length + fractionalText.Length > 0);
         else
-        {
-            if (integerText.Length == 0)
-                throw new ArgumentException($"{nameof(integerText)} must not be empty.");
-        }
+            Debug.Assert(integerText.Length > 0);
 
         if (exponentCharacter != Parser.NoSeparator)
-        {
-            if (exponentText.Length == 0)
-                throw new ArgumentException($"{nameof(exponentText)} must not be empty.");
-        }
+            Debug.Assert(exponentText.Length > 0);
     }
     #endregion
 
@@ -156,6 +144,17 @@ public class FormattedReal : FormattedNumber
 
             return $"{SignText}/{LeadingZeroesText}/{IntegerText}/{(int)SeparatorCharacter}/{FractionalText}/{(int)ExponentCharacter}/{ExponentSignText}/{ExponentText}/{InvalidText}";
         }
+    }
+    #endregion
+
+    #region Client Interface
+    /// <summary>
+    /// Returns a string that represents the current object.
+    /// </summary>
+    /// <returns>A string that represents the current object.</returns>
+    public override string ToString()
+    {
+        return $"{SignificandPart}{ExponentPart}{InvalidText}";
     }
     #endregion
 }

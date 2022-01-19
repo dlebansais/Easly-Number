@@ -83,6 +83,35 @@ public partial class TestFormattedNumber
 
     [Test]
     [Category("Coverage")]
+    public static void ParseNoExponent()
+    {
+        FormattedNumber Number;
+        FormattedReal RealNumber;
+
+        Number = FormattedNumber.Parse("123.456");
+        Assert.IsTrue(Number.IsValid);
+
+        Assert.IsTrue(Number is FormattedReal);
+        RealNumber = (FormattedReal)Number;
+        Assert.AreEqual("123.456", RealNumber.SignificandPart);
+
+        Number = FormattedNumber.Parse("+123.456");
+        Assert.IsTrue(Number.IsValid);
+
+        Assert.IsTrue(Number is FormattedReal);
+        RealNumber = (FormattedReal)Number;
+        Assert.AreEqual("+123.456", RealNumber.SignificandPart);
+
+        Number = FormattedNumber.Parse("-123.456");
+        Assert.IsTrue(Number.IsValid);
+
+        Assert.IsTrue(Number is FormattedReal);
+        RealNumber = (FormattedReal)Number;
+        Assert.AreEqual("-123.456", RealNumber.SignificandPart);
+    }
+
+    [Test]
+    [Category("Coverage")]
     public static void ParseReal()
     {
         ParseRealWithExponent('e');

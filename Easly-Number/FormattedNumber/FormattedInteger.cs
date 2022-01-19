@@ -6,7 +6,6 @@ using System.Diagnostics;
 /// <summary>
 /// A real number and its components.
 /// </summary>
-[DebuggerDisplay("{SignificandPart}{InvalidText}")]
 public class FormattedInteger : FormattedNumber
 {
     #region Init
@@ -25,11 +24,9 @@ public class FormattedInteger : FormattedNumber
     {
         Base = @base;
         Sign = sign;
+        Debug.Assert(leadingZeroCount >= 0);
         LeadingZeroCount = leadingZeroCount;
         IntegerText = integerText;
-
-        if (leadingZeroCount < 0)
-            throw new ArgumentOutOfRangeException(nameof(leadingZeroCount));
     }
     #endregion
 
@@ -93,6 +90,17 @@ public class FormattedInteger : FormattedNumber
 
             return $"{SignText}/{LeadingZeroesText}/{IntegerText}/{Base.Suffix}/{InvalidText}";
         }
+    }
+    #endregion
+
+    #region Client Interface
+    /// <summary>
+    /// Returns a string that represents the current object.
+    /// </summary>
+    /// <returns>A string that represents the current object.</returns>
+    public override string ToString()
+    {
+        return $"{SignificandPart}{InvalidText}";
     }
     #endregion
 }

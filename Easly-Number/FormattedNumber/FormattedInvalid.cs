@@ -5,7 +5,6 @@ using System.Diagnostics;
 /// <summary>
 /// The format for a number parsed as totally invalid.
 /// </summary>
-[DebuggerDisplay("{InvalidText}")]
 public class FormattedInvalid : FormattedNumber
 {
     #region Init
@@ -52,5 +51,16 @@ public class FormattedInvalid : FormattedNumber
     /// Gets a diagnostic string for debug purpose.
     /// </summary>
     public override string Diagnostic { get { return $"{Canonical.CanonicalRepresentation}/{InvalidText}"; } }
+    #endregion
+
+    #region Client Interface
+    /// <summary>
+    /// Returns a string that represents the current object.
+    /// </summary>
+    /// <returns>A string that represents the current object.</returns>
+    public override string ToString()
+    {
+        return $"{InvalidText}";
+    }
     #endregion
 }
