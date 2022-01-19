@@ -271,7 +271,7 @@ internal class RealParsingInfo : ParsingInfo
 
     private void ParseExponentDigits(char c)
     {
-        if (IntegerBase.Decimal.IsValidDigit(c, out int DigitValue))
+        if (IntegerBase.Decimal.IsValidDigit(c, out _))
             ExponentLength++;
         else
         {

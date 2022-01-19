@@ -272,6 +272,15 @@ public partial class TestFormattedNumber
         Number = FormattedNumber.Parse("0.0e*");
         Assert.IsFalse(Number.IsValid);
 
+        Number = FormattedNumber.Parse("0.e*");
+        Assert.IsFalse(Number.IsValid);
+
+        Number = FormattedNumber.Parse(".0e*");
+        Assert.IsFalse(Number.IsValid);
+
+        Number = FormattedNumber.Parse("0e*");
+        Assert.IsFalse(Number.IsValid);
+
         Number = FormattedNumber.Parse("0.0e+*");
         Assert.IsFalse(Number.IsValid);
 
@@ -288,6 +297,9 @@ public partial class TestFormattedNumber
         Assert.IsFalse(Number.IsValid);
 
         Number = FormattedNumber.Parse(".0e0*");
+        Assert.IsFalse(Number.IsValid);
+
+        Number = FormattedNumber.Parse("e0*");
         Assert.IsFalse(Number.IsValid);
 
         Number = FormattedNumber.Parse("1e0*");
@@ -494,6 +506,24 @@ public partial class TestFormattedNumber
         Assert.IsTrue(Number.IsValid);
 
         Number = FormattedNumber.Parse($".123456{exponentCharacter}-1");
+        Assert.IsTrue(Number.IsValid);
+
+        Number = FormattedNumber.Parse($"123456.10{exponentCharacter}1234567890");
+        Assert.IsTrue(Number.IsValid);
+
+        Number = FormattedNumber.Parse($"123456{exponentCharacter}1234567890");
+        Assert.IsTrue(Number.IsValid);
+
+        Number = FormattedNumber.Parse($"123456.0{exponentCharacter}1234567890");
+        Assert.IsTrue(Number.IsValid);
+
+        Number = FormattedNumber.Parse($"123456.{exponentCharacter}1234567890");
+        Assert.IsTrue(Number.IsValid);
+
+        Number = FormattedNumber.Parse($".0{exponentCharacter}1234567890");
+        Assert.IsTrue(Number.IsValid);
+
+        Number = FormattedNumber.Parse($".10{exponentCharacter}1234567890");
         Assert.IsTrue(Number.IsValid);
     }
 }
