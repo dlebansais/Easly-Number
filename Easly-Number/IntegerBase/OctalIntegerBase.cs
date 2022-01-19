@@ -1,5 +1,6 @@
 ﻿namespace EaslyNumber;
 
+using System;
 using System.Diagnostics;
 
 /// <summary>
@@ -55,7 +56,8 @@ public class OctalIntegerBase : IntegerBase
     /// <param name="value">The value.</param>
     public override char ToDigit(int value)
     {
-        Debug.Assert(value >= 0 && value < Radix);
+        if (value < 0 || value >= Radix)
+            throw new ArgumentException(nameof(value));
 
         return (char)('0' + value);
     }
@@ -66,7 +68,8 @@ public class OctalIntegerBase : IntegerBase
     /// <param name="digit">The digit.</param>
     public override int ToValue(char digit)
     {
-        Debug.Assert(digit >= '0' && digit <= '7');
+        if (digit < '0' || digit > '7')
+            throw new ArgumentException(nameof(digit));
 
         return digit - '0';
     }

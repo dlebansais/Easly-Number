@@ -1,5 +1,6 @@
 ﻿namespace EaslyNumber;
 
+using System;
 using System.Diagnostics;
 
 /// <summary>
@@ -65,7 +66,8 @@ public class HexadecimalIntegerBase : IntegerBase
     /// <param name="value">The value.</param>
     public override char ToDigit(int value)
     {
-        Debug.Assert(value >= 0 && value < Radix);
+        if (value < 0 || value >= Radix)
+            throw new ArgumentException(nameof(value));
 
         return value < 10 ? (char)('0' + value) : (char)('A' + value - 10);
     }
@@ -80,7 +82,8 @@ public class HexadecimalIntegerBase : IntegerBase
         bool IsHexadecimalDigitLower = digit >= 'a' && digit <= 'f';
         bool IsHexadecimalDigitUpper = digit >= 'A' && digit <= 'F';
 
-        Debug.Assert(IsDecimalDigit || IsHexadecimalDigitLower || IsHexadecimalDigitUpper);
+        if (!IsDecimalDigit && !IsHexadecimalDigitLower && !IsHexadecimalDigitUpper)
+            throw new ArgumentException(nameof(digit));
 
         if (digit >= '0' && digit <= '9')
             return digit - '0';
