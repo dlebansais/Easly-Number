@@ -1,4 +1,4 @@
-﻿namespace TestEaslyNumber;
+﻿namespace TestNumber;
 
 using NUnit.Framework;
 using System.Globalization;

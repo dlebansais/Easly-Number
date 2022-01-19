@@ -1,4 +1,4 @@
-﻿namespace TestEaslyNumber;
+﻿namespace TestNumber;
 
 using EaslyNumber;
 using NUnit.Framework;
@@ -28,6 +28,11 @@ public partial class TestNumberText
 
         exNumber = Assert.Throws<ArgumentException>(() => n = new Number("*"));
         Assert.AreEqual(exNumber?.Message, Message, $"Expected: '{Message}', got: '{exNumber?.Message}'");
+
+#if !DEBUG
+        string NullString = null!;
+        Assert.Throws<ArgumentNullException>(() => { new Number(NullString); });
+#endif
     }
 
     [Test]

@@ -1,4 +1,4 @@
-﻿namespace TestEaslyNumber;
+﻿namespace TestNumber;
 
 using EaslyNumber;
 using NUnit.Framework;
@@ -211,6 +211,11 @@ public partial class TestNumber
 
         Success = Number.TryParse(string.Empty, out _);
         Assert.IsFalse(Success);
+
+#if !DEBUG
+        string NullString = null!;
+        Assert.Throws<ArgumentNullException>(() => { Number.TryParse(NullString, out _); });
+#endif
     }
 
     [Test]
