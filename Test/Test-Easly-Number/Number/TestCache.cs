@@ -2,6 +2,7 @@
 
 using EaslyNumber;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.Threading;
 
 [TestFixture]
@@ -30,10 +31,11 @@ public partial class TestCache
 
         if (TestNumber.IsZero)
         {
-            mpfr_t SomeObject = new();
-
-            using (Cache TestCache = SomeObject.LibraryCache)
+            List<mpfr_t> ObjectList = new() { new mpfr_t(), new mpfr_t() };
+            
+            using (Cache LibraryCache = ObjectList[0].LibraryCache)
             {
+                LibraryCache.Dispose();
                 Result = true;
             }
         }
