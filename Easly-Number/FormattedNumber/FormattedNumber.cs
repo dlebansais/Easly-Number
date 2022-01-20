@@ -142,14 +142,10 @@ public abstract class FormattedNumber
     protected string GetSignText(OptionalSign sign)
     {
         string Result = string.Empty;
-        bool IsParsed = false;
+        bool IsParsed = sign == OptionalSign.None;
 
         switch (sign)
         {
-            case OptionalSign.None:
-                IsParsed = true;
-                break;
-
             case OptionalSign.Positive:
                 Result = "+";
                 IsParsed = true;

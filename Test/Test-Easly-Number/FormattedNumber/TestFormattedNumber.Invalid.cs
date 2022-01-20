@@ -25,12 +25,15 @@ public partial class TestFormattedNumber
 
         Number = FormattedNumber.Parse(":H");
         Assert.IsFalse(Number.IsValid);
+        Assert.AreEqual(":H", Number.ToString());
 
         Number = FormattedNumber.Parse(":O");
         Assert.IsFalse(Number.IsValid);
+        Assert.AreEqual(":O", Number.ToString());
 
         Number = FormattedNumber.Parse(":B");
         Assert.IsFalse(Number.IsValid);
+        Assert.AreEqual(":B", Number.ToString());
 
         Number = FormattedNumber.Parse("10*");
         Assert.IsFalse(Number.IsValid);

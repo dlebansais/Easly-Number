@@ -32,12 +32,15 @@ public partial class TestFormattedNumber
 
         Number = FormattedNumber.Parse("0:H");
         Assert.IsTrue(Number.IsValid);
+        Assert.AreEqual("0:H", Number.ToString());
 
         Number = FormattedNumber.Parse("0:O");
         Assert.IsTrue(Number.IsValid);
+        Assert.AreEqual("0:O", Number.ToString());
 
         Number = FormattedNumber.Parse("0:B");
         Assert.IsTrue(Number.IsValid);
+        Assert.AreEqual("0:B", Number.ToString());
 
         Number = FormattedNumber.Parse("1:H");
         Assert.IsTrue(Number.IsValid);
