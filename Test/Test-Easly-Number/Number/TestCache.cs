@@ -31,7 +31,7 @@ public partial class TestCache
 
         if (TestNumber.IsZero)
         {
-            List<mpfr_t> ObjectList = new() { new mpfr_t(), new mpfr_t() };
+            List<mpfr_t> ObjectList = new() { new mpfr_t(Number.DefaultPrecision), new mpfr_t(Number.DefaultPrecision) };
             
             using (Cache LibraryCache = ObjectList[0].LibraryCache)
             {
