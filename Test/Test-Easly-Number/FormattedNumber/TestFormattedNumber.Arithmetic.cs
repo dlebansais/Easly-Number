@@ -59,11 +59,11 @@ public partial class TestFormattedNumber
     [Category("Coverage")]
     public static void Neg()
     {
-        FormattedNumber Number1 = FormattedNumber.Parse("-2");
+        FormattedNumber Number1 = FormattedNumber.Parse("2");
 
         FormattedNumber Number = -Number1;
         Assert.IsTrue(Number.IsValid);
-        Assert.AreEqual("2e0", Number.ToString());
+        Assert.AreEqual("-2e0", Number.ToString());
     }
 
     [Test]
@@ -131,10 +131,15 @@ public partial class TestFormattedNumber
     {
         FormattedNumber Number1 = FormattedNumber.Parse("1");
         FormattedNumber Number2 = FormattedNumber.Parse("1");
+        FormattedNumber Number3 = FormattedNumber.Parse("0.1");
+        FormattedNumber Number;
 
-        FormattedNumber Number = Number1.ShiftLeft(Number2);
+        Number = Number1.ShiftLeft(Number2);
         Assert.IsTrue(Number.IsValid);
         Assert.AreEqual("2e0", Number.ToString());
+
+        Number = Number1.ShiftLeft(Number3);
+        Assert.IsFalse(Number.IsValid);
     }
 
     [Test]
@@ -143,10 +148,15 @@ public partial class TestFormattedNumber
     {
         FormattedNumber Number1 = FormattedNumber.Parse("4");
         FormattedNumber Number2 = FormattedNumber.Parse("1");
+        FormattedNumber Number3 = FormattedNumber.Parse("0.1");
+        FormattedNumber Number;
 
-        FormattedNumber Number = Number1.ShiftRight(Number2);
+        Number = Number1.ShiftRight(Number2);
         Assert.IsTrue(Number.IsValid);
         Assert.AreEqual("2e0", Number.ToString());
+
+        Number = Number1.ShiftRight(Number3);
+        Assert.IsFalse(Number.IsValid);
     }
 
     [Test]

@@ -54,4 +54,18 @@ public partial class TestFormattedNumber
         Formatted = FormattedNumber.FromCanonical(Canonical);
         Assert.AreEqual(FormattedNumber.NegativeInfinity, Formatted);
     }
+
+    [Test]
+    [Category("Coverage")]
+    public static void CanonicalComparison()
+    {
+        CanonicalNumber Canonical1 = new CanonicalNumber(OptionalSign.None, "1");
+        CanonicalNumber Canonical2 = new CanonicalNumber(OptionalSign.None, "2");
+
+        Assert.AreNotEqual(Canonical1, Canonical2);
+        Assert.IsFalse(Canonical1.IsEqual(Canonical2));
+
+        Assert.IsFalse(Canonical1 > Canonical2);
+        Assert.IsTrue(Canonical1 < Canonical2);
+    }
 }

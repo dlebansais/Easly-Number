@@ -61,7 +61,9 @@ internal class CanonicalNumber
     public CanonicalNumber(OptionalSign significandSign, string significandText, OptionalSign exponentSign, string exponentText)
     {
         Debug.Assert(IntegerBase.Decimal.IsValidNumber(exponentText, supportLeadingZeroes: false));
-        Debug.Assert(significandText != IntegerBase.Zero || (significandSign != OptionalSign.Negative && exponentSign != OptionalSign.Negative && exponentText == IntegerBase.Zero));
+        bool IsNonZero = significandText != IntegerBase.Zero;
+        bool IsNonNegativeZero = significandSign != OptionalSign.Negative && exponentSign != OptionalSign.Negative && exponentText == IntegerBase.Zero;
+        Debug.Assert(IsNonZero || IsNonNegativeZero);
 
         SignificandSign = significandSign;
         SignificandText = significandText;
@@ -124,8 +126,9 @@ internal class CanonicalNumber
         string ExponentText;
 
         string MantissaText = f.ToString();
+        Debug.Assert(MantissaText.Length > 0);
+        Debug.Assert(MantissaText[0] != '-' || MantissaText.Length > 1);
 
-        Debug.Assert(MantissaText.Length > 0 && (MantissaText[0] != '-' || MantissaText.Length > 1));
         if (MantissaText[0] == '-')
         {
             SignificandSign = OptionalSign.Negative;
