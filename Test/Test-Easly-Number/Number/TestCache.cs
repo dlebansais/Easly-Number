@@ -2,7 +2,6 @@
 
 using EaslyNumber;
 using NUnit.Framework;
-using System;
 using System.Threading;
 
 [TestFixture]
@@ -10,35 +9,35 @@ public partial class TestCache
 {
     [Test]
     [Category("Coverage")]
-    public static void TestMultipleThreads()
+    public static void TestCacheThread()
     {
-        Thread t1 = new Thread(new ParameterizedThreadStart(ExecuteThreadTest));
-        Thread t2 = new Thread(new ParameterizedThreadStart(ExecuteThreadTest));
-        Thread t3 = new Thread(new ParameterizedThreadStart(ExecuteThreadTest));
-
-        t1.Start(TimeSpan.FromSeconds(1));
-        t2.Start(TimeSpan.FromSeconds(1));
-        t3.Start(TimeSpan.FromSeconds(10));
-
-        t1.Join();
-        t2.Join();
-
-        GC.Collect();
-
-        t3.Join();
-
-        GC.Collect();
-        Thread.Sleep(TimeSpan.FromSeconds(1));
+        Thread ThreadObject = new Thread(new ThreadStart(ExecuteThreadTest));
+        ThreadObject.Start();
+        ThreadObject.Join();
     }
 
-    private static void ExecuteThreadTest(object? parameter)
+    private static void ExecuteThreadTest()
     {
-        TimeSpan Duration = (TimeSpan)parameter!;
+        bool Success = ThreadTestInternal();
+        Assert.IsTrue(Success);
+    }
 
-        Number TestNumber = new Number("1");
-        TestNumber = TestNumber + 1;
+    private static bool ThreadTestInternal()
+    {
+        bool Result = false;
 
-        if (TestNumber > 0)
-            Thread.Sleep(Duration);
+        Number TestNumber = new Number("0");
+
+        if (TestNumber.IsZero)
+        {
+            mpfr_t SomeObject = new();
+
+            using (Cache TestCache = SomeObject.LibraryCache)
+            {
+                Result = true;
+            }
+        }
+
+        return Result;
     }
 }

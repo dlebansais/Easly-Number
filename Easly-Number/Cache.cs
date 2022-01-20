@@ -17,6 +17,6 @@ internal class Cache : ThreadLocal<bool>
         base.Dispose(disposing);
     }
 
-    private bool IsCacheCleared;
+    internal bool IsCacheCleared { get; private set; }
 }
 #pragma warning restore SA1600 // Elements should be documented

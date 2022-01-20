@@ -61,9 +61,10 @@ public partial class TestFormattedNumber
     {
         CanonicalNumber Canonical1 = new CanonicalNumber(OptionalSign.None, "1");
         CanonicalNumber Canonical2 = new CanonicalNumber(OptionalSign.None, "2");
+        CanonicalNumber Canonical3 = new CanonicalNumber(OptionalSign.None, "1");
 
-        Assert.AreNotEqual(Canonical1, Canonical2);
         Assert.IsFalse(Canonical1.IsEqual(Canonical2));
+        Assert.IsTrue(Canonical1.IsEqual(Canonical3));
 
         Assert.IsFalse(Canonical1 > Canonical2);
         Assert.IsTrue(Canonical1 < Canonical2);

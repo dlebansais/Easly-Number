@@ -32,7 +32,7 @@ internal class mpfr_t
             LibraryCache.Value = true;
     }
 
-    private static Cache LibraryCache = new Cache();
+    internal Cache LibraryCache { get; } = new Cache();
 
     ~mpfr_t()
     {
