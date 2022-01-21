@@ -58,7 +58,11 @@ public class TestEnvironment
     [OneTimeTearDown]
     public static void ExitTestSession()
     {
-        using Cache LibraryCache = mpfr_t.LibraryCache;
+        using (Cache LibraryCache = mpfr_t.LibraryCache)
+        {
+        }
+
+        string? V = mpfr_t.LibraryCache.Value;
     }
 
     public static string TextNaN = string.Empty;
