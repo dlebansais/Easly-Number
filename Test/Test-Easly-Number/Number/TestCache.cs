@@ -27,27 +27,10 @@ public partial class TestCache
 
     private static void ExecuteThreadTest()
     {
-        ThreadTestInternal();
-        //Assert.IsTrue(Success);
-    }
+        _ = new Number(1.0);
 
-    private static void ThreadTestInternal()
-    {
-        Number TestNumber = new Number("0");
-
-        mpfr_t Object1 = new(Number.DefaultPrecision);
-        mpfr_t Object2 = new(Number.DefaultPrecision);
-
-        /*
-        using (Cache LibraryCache = Object2.LibraryCache)
-        {
-        }
-
-        using (Cache LibraryCache = Object1.LibraryCache)
-        {
-            LibraryCache.Dispose();
-            Result = true;
-        }
-        */
+        Cache LibraryCache = mpfr_t.LibraryCache;
+        LibraryCache.Dispose();
+        LibraryCache.Dispose();
     }
 }
