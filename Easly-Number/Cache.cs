@@ -16,7 +16,9 @@ internal class Cache : ThreadLocal<string>
         if (!IsCacheDisposed)
         {
             IsCacheDisposed = true;
-            mpfr_free_cache2(1);
+
+            if (IsValueCreated)
+                mpfr_free_cache2(1);
         }
 
         base.Dispose(disposing);
