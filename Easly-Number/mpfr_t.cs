@@ -1,6 +1,7 @@
 ﻿namespace EaslyNumber;
 
 using Interop.Mpfr;
+using System.Threading;
 using static Interop.Mpfr.NativeMethods;
 
 #pragma warning disable SA1300 // Element should begin with upper-case letter
@@ -28,11 +29,10 @@ internal class mpfr_t
 
     private void InitCacheManagement()
     {
-        if (!LibraryCache.IsValueCreated)
-            LibraryCache.Value = true;
+        _ = LibraryCache.Value;
     }
 
-    internal Cache LibraryCache { get; } = new Cache();
+    internal static Cache LibraryCache { get; } = new Cache();
 
     ~mpfr_t()
     {
