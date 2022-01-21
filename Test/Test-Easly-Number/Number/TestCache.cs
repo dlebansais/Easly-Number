@@ -2,7 +2,6 @@
 
 using EaslyNumber;
 using NUnit.Framework;
-using System.Threading;
 
 [TestFixture]
 public partial class TestCache
@@ -11,23 +10,21 @@ public partial class TestCache
     [Category("Coverage")]
     public static void TestCacheThread()
     {
-        Thread ThreadObject1 = new Thread(new ThreadStart(ExecuteThreadWithCache));
-        Thread ThreadObject2 = new Thread(new ThreadStart(ExecuteThreadWithoutCache));
+        long Count1 = Cache.FreeCount;
 
-        ThreadObject1.Start();
-        ThreadObject2.Start();
+        using (Cache LocalCache = new())
+        {
+        }
 
-        ThreadObject1.Join();
-        ThreadObject2.Join();
-    }
+        long Count2 = Cache.FreeCount;
+        Assert.IsTrue(Count2 == Count1);
 
-    private static void ExecuteThreadWithCache()
-    {
-        _ = new Number(1.0);
-    }
+        using (Cache LocalCache = new())
+        {
+            _ = LocalCache.Value;
+        }
 
-    private static void ExecuteThreadWithoutCache()
-    {
-        _ = new Number("0");
+        long Count3 = Cache.FreeCount;
+        Assert.IsTrue(Count3 > Count2);
     }
 }

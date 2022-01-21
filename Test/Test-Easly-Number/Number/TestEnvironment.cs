@@ -48,14 +48,6 @@ public class TestEnvironment
         TestContext.Progress.WriteLine($"Decimal Separator = {SP}");
     }
 
-    [OneTimeTearDown]
-    public static void ExitTestSession()
-    {
-        using (Cache LibraryCache = mpfr_t.LibraryCache)
-        {
-        }
-    }
-
     public static string TextNaN = string.Empty;
     public static string TextPositiveInfinity = string.Empty;
     public static string TextNegativeInfinity = string.Empty;
