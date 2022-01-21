@@ -13,13 +13,15 @@ internal class Cache : ThreadLocal<string>
 
     protected override void Dispose(bool disposing)
     {
-        if (!IsValueCreated)
+        if (!IsCacheDisposed)
         {
-            _ = Value;
+            IsCacheDisposed = true;
             mpfr_free_cache2(1);
         }
 
         base.Dispose(disposing);
     }
+
+    private bool IsCacheDisposed;
 }
 #pragma warning restore SA1600 // Elements should be documented

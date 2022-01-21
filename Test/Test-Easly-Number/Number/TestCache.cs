@@ -27,7 +27,7 @@ public partial class TestCache
         _ = new Number(1.0);
 
         Cache LibraryCache = mpfr_t.LibraryCache;
-        LibraryCache.Dispose();
+        //LibraryCache.Dispose();
     }
 
     private static void ExecuteThreadWithoutCache()
@@ -35,6 +35,6 @@ public partial class TestCache
         _ = new Number("0");
 
         Cache LibraryCache = mpfr_t.LibraryCache;
-        LibraryCache.Dispose();
+        //LibraryCache.Dispose();
     }
 }

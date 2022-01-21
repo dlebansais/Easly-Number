@@ -1,5 +1,6 @@
 ﻿namespace TestNumber;
 
+using EaslyNumber;
 using NUnit.Framework;
 using System.Globalization;
 using System.Reflection;
@@ -52,6 +53,12 @@ public class TestEnvironment
             SP = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
             TestContext.Progress.WriteLine($"Decimal Separator = {SP}");
         }
+    }
+
+    [OneTimeTearDown]
+    public static void ExitTestSession()
+    {
+        using Cache LibraryCache = mpfr_t.LibraryCache;
     }
 
     public static string TextNaN = string.Empty;
