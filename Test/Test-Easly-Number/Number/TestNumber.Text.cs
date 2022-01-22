@@ -1,12 +1,12 @@
 ﻿namespace TestNumber;
 
-using EaslyNumber;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using EaslyNumber;
+using NUnit.Framework;
 
 [TestFixture]
 public partial class TestNumberText
@@ -156,8 +156,8 @@ public partial class TestNumberText
         if (doubleString == numberString)
             return true;
 
-        int DoubleFractionalPartIndex = doubleString.IndexOf(TestNumber.SP);
-        int NumberFractionalPartIndex = numberString.IndexOf(TestNumber.SP);
+        int DoubleFractionalPartIndex = doubleString.IndexOf(TestEnvironment.SP);
+        int NumberFractionalPartIndex = numberString.IndexOf(TestEnvironment.SP);
 
         if (DoubleFractionalPartIndex != NumberFractionalPartIndex)
             return false;

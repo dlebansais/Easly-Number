@@ -1,20 +1,32 @@
 ﻿namespace EaslyNumber;
 
-using System;
 using System.Diagnostics;
 using System.Threading;
 using static Interop.Mpfr.NativeMethods;
 
-#pragma warning disable SA1600 // Elements should be documented
+/// <summary>
+/// Handles cleanup of the MPFR library cache.
+/// </summary>
 internal class Cache : ThreadLocal<string>
 {
+    #region Init
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cache"/> class.
+    /// </summary>
     public Cache()
         : base(() => { return "Thread" + Thread.CurrentThread.ManagedThreadId; })
     {
     }
+    #endregion
 
+    #region Overrides
+    /// <summary>
+    /// Releases the resources used by this <see cref="Cache"/> instance.
+    /// </summary>
+    /// <param name="disposing">A Boolean value that indicates whether this method is being called due to a call to <see cref="Cache.Dispose(bool)"/>.</param>
     protected override void Dispose(bool disposing)
     {
+        // Since this override is called from the implementation of ThreadLocal<>, it is always called only once.
         Debug.Assert(!IsCacheDisposed);
 
         IsCacheDisposed = true;
@@ -29,12 +41,17 @@ internal class Cache : ThreadLocal<string>
     }
 
     private bool IsCacheDisposed;
+    #endregion
 
+    #region Overrides
+    /// <summary>
+    /// Gets the number of calls to <see cref="Cache.Dispose(bool)"/> that cleared the cache.
+    /// </summary>
     internal static long FreeCount
     {
         get { return FreeCountInternal; }
     }
 
     private static long FreeCountInternal;
+    #endregion
 }
-#pragma warning restore SA1600 // Elements should be documented

@@ -13,6 +13,7 @@ public class TestEnvironment
     [OneTimeSetUp]
     public static void InitTestSession()
     {
+        // Called first, before all tests in the TestNumber namespace.
         CultureInfo frFR = CultureInfo.CreateSpecificCulture("fr-FR");
         CultureInfo.DefaultThreadCurrentCulture = frFR;
         CultureInfo.DefaultThreadCurrentUICulture = frFR;
